@@ -1,0 +1,150 @@
+{
+  "_source": "Агуулга нь @dreamspark_travel Instagram болон blog.naver.com/dreamspark_travel дээрх компанийн өөрсдийн бичлэгээс авсан. Солонгос эх бичвэрийг аль болох хэвээр нь, монгол/англи хувилбарыг утгачилж буулгав.",
+
+  "tours": [
+    {
+      "slug": "gobi",
+      "sortOrder": 1,
+      "cover": "/images/tours/gobi-02.jpg",
+      "regionKey": "gobi",
+      "titleMn": "Говь цөл — кемп аялал",
+      "titleEn": "Gobi Desert — camping tour",
+      "titleKr": "고비사막 캠핑 투어",
+      "areaMn": "Од харах · Гэрт хонох",
+      "areaEn": "Stargazing · Nights in a ger",
+      "areaKr": "별보기 & 게르 숙박",
+      "summaryMn": "Тэмээгээр элсээр гарч, гэрийн гадаа гал түлж, шөнө нь тэнгэр өөд харна. Аялагчид маань «Ийм од анх удаа харлаа» гэдэг.",
+      "summaryEn": "Cross the sand by camel, build a fire outside the ger, and look up. What our travellers say is: “I have never seen stars like this.”",
+      "summaryKr": "낙타를 타고 사막을 건너고, 게르 밖에서 모닥불을 피우고, 밤에는 하늘을 올려다봅니다. 여행객들이 이렇게 말합니다. “이런 별은… 처음 봐요.”",
+      "bodyMn": "Өдөр нь халуун, шөнө нь сэрүүн. Тиймээс бид халуун цагт хөдөлдөггүй — гэрийн сүүдэрт цай уугаад, нар налахаар л элсэн манхан руу гарна.\n\nОройдоо гэрийн гадаа гал түлнэ. Хэн нэг нь хөнжлөө тэвэрч, хэн нэг нь хажуугийнхаа хүнтэй шивнэлдэж инээнэ. Хамгийн сүүлд тэнгэр өөд харах цаг ирдэг. Бид тэр агшныг бэлдэхийн тулд ажилладаг.\n\nЗахиалгаар говийн шөнө самгёпсал шарж болно — манай зочдын хамгийн их дурсдаг оройн зоог.",
+      "bodyEn": "The days are hot and the nights are cool, so we do not move in the heat. We drink tea in the shade of the ger and walk out to the dunes only when the sun leans over.\n\nIn the evening we light a fire outside the ger. Someone pulls a blanket around their shoulders, someone leans in and laughs with the person next to them. Then comes the moment everyone looks up. That moment is what we work for.\n\nOn request we grill samgyeopsal under the desert stars — the evening our guests bring up most often.",
+      "bodyKr": "낮은 덥고 밤은 서늘합니다. 그래서 한낮에는 움직이지 않습니다. 게르 그늘에서 차를 마시고, 해가 기울 무렵에야 모래언덕으로 나갑니다.\n\n저녁이면 게르 밖에서 모닥불을 피웁니다. 누구는 담요를 꼭 끌어안고, 누구는 옆 사람과 조용히 웃습니다. 그리고 모두가 하늘을 올려다보는 순간이 옵니다. 저희가 준비하는 건 바로 그 순간입니다.\n\n요청하시면 사막 별밤 아래에서 삼겹살 파티도 준비합니다 — 손님들이 가장 오래 기억하시는 저녁입니다.",
+      "days": 0, "kmTotal": 0, "groupMin": 0, "groupMax": 0,
+      "seasonFrom": 5, "seasonTo": 9,
+      "highlights": [
+        { "mn": "Тэмээгээр Хонгорын элсээр гарах", "en": "Cross the Khongoryn Els dunes by camel", "kr": "낙타를 타고 홍고린 엘스 모래언덕 건너기" },
+        { "mn": "Гэрт хонож, малчин айлын өглөөг үзэх", "en": "Sleep in a ger and wake to a herder family's morning", "kr": "게르에서 하룻밤, 유목민의 아침 맞이" },
+        { "mn": "Гэрийн гадаа гал түлж, шөнийн тэнгэр харах", "en": "A fire outside the ger and the night sky above it", "kr": "게르 밖 모닥불과 쏟아지는 별" },
+        { "mn": "Захиалгаар — цөлийн шөнө самгёпсал", "en": "On request — samgyeopsal under the desert stars", "kr": "요청 시 — 사막 별밤 삼겹살 파티" }
+      ]
+    },
+    {
+      "slug": "khuvsgul",
+      "sortOrder": 2,
+      "cover": "/images/tours/khovsgol-05.jpg",
+      "regionKey": "khuvsgul",
+      "titleMn": "Хөвсгөл нуур",
+      "titleEn": "Lake Khövsgöl",
+      "titleKr": "흡수굴 호수 투어",
+      "areaMn": "Монголын хөх сувд",
+      "areaEn": "The blue pearl of Mongolia",
+      "areaKr": "몽골의 푸른 진주",
+      "summaryMn": "Завиар нуурыг гатлан салхины чимээ сонсоно. Шөнө нь од доор чимээгүй суух цаг. Өглөө нь цэвэр агаараар өдөр эхэлнэ.",
+      "summaryEn": "Cross the lake by boat with the sound of the wind. A quiet hour under the stars at night, and clean air to begin the morning.",
+      "summaryKr": "보트를 타고 호수를 가로지르며 바람 소리를 듣고, 밤에는 수많은 별 아래에서 조용한 시간을 보내고, 아침에는 맑은 공기를 마시며 하루를 시작합니다.",
+      "bodyMn": "Хотын чимээнээс түр холдмоор байвал, Монголд цаг удаан урсдаг газар бий. Тэр нь Хөвсгөл.\n\nТунгалаг нуур, төгсгөлгүй ой, нүдний өмнө дэлгэгдэх байгаль — нэг кино мэт. Зурагт багтдаггүй, өөрөө ирж байж мэдэрдэг тийм газар.\n\nНэг удаа очсон хүн яагаад Монгол руу дахин ирдгийг эндээс ойлгодог. Бид энд яардаггүй: завиар гарч, эрэг дагуу алхаж, оройдоо гал дээрээ суудаг.",
+      "bodyEn": "If you want to step away from the noise of the city for a while, there is still a place in Mongolia where time moves slowly. That place is Khövsgöl.\n\nClear water, forest without end, and a landscape that opens in front of you like a film. It does not fit in a photograph; you have to stand in it.\n\nPeople who come once understand here why they come back to Mongolia. We do not rush: out on the water, a walk along the shore, and the fire in the evening.",
+      "bodyKr": "도시의 소음에서 잠시 벗어나고 싶다면, 몽골에는 아직도 시간이 천천히 흐르는 곳이 있습니다. 바로 홉스골입니다.\n\n맑은 호수와 끝없이 이어지는 숲, 눈앞에 펼쳐지는 대자연이 한 장의 영화처럼 다가옵니다. 사진으로는 절대 담을 수 없는 풍경, 직접 와야만 느낄 수 있는 감동입니다.\n\n한 번 다녀간 분들은 왜 다시 몽골을 찾는지 이곳에서 알게 됩니다. 저희는 서두르지 않습니다. 보트를 타고, 호숫가를 걷고, 저녁에는 불 앞에 앉습니다.",
+      "days": 0, "kmTotal": 0, "groupMin": 0, "groupMax": 0,
+      "seasonFrom": 6, "seasonTo": 9,
+      "highlights": [
+        { "mn": "Завиар нуурыг гатлах", "en": "Cross the lake by boat", "kr": "보트로 호수 가로지르기" },
+        { "mn": "Эрэг дагуу яаралгүй алхах", "en": "An unhurried walk along the shore", "kr": "호숫가 느긋한 산책" },
+        { "mn": "Тайгын зах, ойн зам", "en": "The edge of the taiga and the forest track", "kr": "타이가의 가장자리와 숲길" },
+        { "mn": "Нуурын эрэг дээрх шөнийн тэнгэр", "en": "The night sky from the shore", "kr": "호숫가에서 보는 밤하늘" }
+      ]
+    },
+    {
+      "slug": "tuv",
+      "sortOrder": 3,
+      "cover": "/images/tours/horse-04.jpg",
+      "regionKey": "tuv",
+      "titleMn": "Тэрэлж ба Чингис хааны хөшөө",
+      "titleEn": "Terelj and the Chinggis Khaan statue",
+      "titleKr": "테를지 & 칭기즈칸 동상",
+      "areaMn": "Тал нутгийн амар цаг",
+      "areaEn": "Quiet hours on the steppe",
+      "areaKr": "초원 위의 평온한 시간",
+      "summaryMn": "Улаанбаатараас холдохгүйгээр тал нутагт гарна. Тэрэлжид морь унаж, буцах замдаа Чингис хааны хөшөөгөөр орно.",
+      "summaryEn": "The steppe without going far from Ulaanbaatar. Riding in Terelj, and the Chinggis Khaan statue on the way back.",
+      "summaryKr": "울란바토르에서 멀리 가지 않아도 초원이 시작됩니다. 테를지에서 승마를 하고, 돌아오는 길에 칭기즈칸 동상에 들릅니다.",
+      "bodyMn": "Хамгийн богино нь. Ажлаар ирсэн хүн амралтын өдрүүддээ багтаана, анх удаа Монголд ирж байгаа хүнд ч тохиромжтой.\n\nГорхи-Тэрэлжийн хаданд морь унана. Хүсвэл гэрт нэг хононо. Буцах замд Цонжин болдог дахь Чингис хааны хөшөө — 40 метр, дэлхийн хамгийн том морьт хөшөө.",
+      "bodyEn": "The shortest of the three. It fits into a weekend for anyone here on business, and it suits a first visit to Mongolia.\n\nRiding among the rocks of Gorkhi-Terelj, with a night in a ger if you want one. On the way back, the Chinggis Khaan statue at Tsonjin Boldog — forty metres, the largest equestrian statue in the world.",
+      "bodyKr": "가장 짧은 코스입니다. 출장 중 주말에도 다녀올 수 있고, 몽골 첫 방문에도 잘 맞습니다.\n\n고르히 테를지의 바위 사이에서 승마를 즐기고, 원하시면 게르에서 하룻밤 묵습니다. 돌아오는 길에는 촌진볼독의 칭기즈칸 동상 — 높이 40m, 세계 최대의 기마상입니다.",
+      "days": 0, "kmTotal": 0, "groupMin": 0, "groupMax": 0,
+      "seasonFrom": 5, "seasonTo": 10,
+      "highlights": [
+        { "mn": "Горхи-Тэрэлжид морь унах", "en": "Horse riding in Gorkhi-Terelj", "kr": "고르히 테를지 승마 체험" },
+        { "mn": "Чингис хааны 40 метрт хөшөө", "en": "The forty-metre Chinggis Khaan statue", "kr": "40m 칭기즈칸 기마상" },
+        { "mn": "Хүсвэл гэрт нэг хоног", "en": "A night in a ger if you want one", "kr": "원하시면 게르에서 1박" },
+        { "mn": "Улаанбаатараас 70 км", "en": "Seventy kilometres from Ulaanbaatar", "kr": "울란바토르에서 70km" }
+      ]
+    }
+  ],
+
+  "includes": [
+    { "kind": "in", "textMn": "Солонгос хэлтэй нутгийн хөтөч", "textEn": "A local guide who speaks Korean", "textKr": "한국어 가능한 현지 가이드" },
+    { "kind": "in", "textMn": "Манай өөрсдийн машин, жолооч, шатахуун", "textEn": "Our own vehicle, driver and fuel", "textKr": "현지 차량·기사·유류비" },
+    { "kind": "in", "textMn": "Хонох газар — гэр, жуулчны бааз", "textEn": "Accommodation — ger and tourist camp", "textKr": "숙박 — 게르·투어리스트 캠프" },
+    { "kind": "in", "textMn": "Өдрийн хоол, ундны ус", "textEn": "Meals and drinking water", "textKr": "식사 및 식수" },
+    { "kind": "in", "textMn": "Байгалийн цогцолборт газрын хураамж", "textEn": "National park fees", "textKr": "국립공원 입장료" },
+    { "kind": "out", "textMn": "Олон улсын нислэгийн тийз", "textEn": "International flights", "textKr": "국제선 항공권" },
+    { "kind": "out", "textMn": "Хувийн зардал, дурсгалын зүйл", "textEn": "Personal spending and souvenirs", "textKr": "개인 경비 및 기념품" },
+    { "kind": "out", "textMn": "Согтууруулах ундаа", "textEn": "Alcoholic drinks", "textKr": "주류" },
+    { "kind": "out", "textMn": "Аяллын даатгал", "textEn": "Travel insurance", "textKr": "여행자 보험" }
+  ],
+
+  "gallery": [
+    { "image": "gobi-02.jpg", "regionKey": "gobi", "placeMn": "Хонгорын элс", "placeEn": "Khongoryn Els", "placeKr": "홍고린 엘스", "captionMn": "Манхны бэлд ганц тэмээ", "captionEn": "A lone camel below the dunes", "captionKr": "모래언덕 아래 낙타 한 마리" },
+    { "image": "gobi-04.jpg", "regionKey": "gobi", "placeMn": "Хонгорын элс", "placeEn": "Khongoryn Els", "placeKr": "홍고린 엘스", "captionMn": "Дуут манхан — 180 км урт", "captionEn": "The singing dunes — 180 km long", "captionKr": "노래하는 모래언덕 — 길이 180km" },
+    { "image": "gobi2-06.jpg", "regionKey": "gobi", "placeMn": "Хонгорын элс", "placeEn": "Khongoryn Els", "placeKr": "홍고린 엘스", "captionMn": "Тэмээн жин", "captionEn": "A camel caravan", "captionKr": "낙타 카라반" },
+    { "image": "gobi-06.jpg", "regionKey": "gobi", "placeMn": "Говийн гэр буудал", "placeEn": "Ger camp, South Gobi", "placeKr": "고비 게르 캠프", "captionMn": "Шөнийн хоног энд өнгөрнө", "captionEn": "Where the night is spent", "captionKr": "밤을 보내는 곳" },
+    { "image": "ger-03.jpg", "regionKey": "gobi", "placeMn": "Гэрийн үүдний өглөө", "placeEn": "Morning at the door of the ger", "placeKr": "게르 문 앞의 아침", "captionMn": "Халуун болохоос өмнөх цаг", "captionEn": "The hour before the heat", "captionKr": "더워지기 전의 시간" },
+    { "image": "ger-04.jpg", "regionKey": "gobi", "placeMn": "Гэрийн дотор", "placeEn": "Inside the ger", "placeKr": "게르 내부", "captionMn": "Зуухны гал", "captionEn": "The stove", "captionKr": "게르 안 난로" },
+    { "image": "cliffs-04.jpg", "regionKey": "gobi", "placeMn": "Баянзаг", "placeEn": "Bayanzag", "placeKr": "바양작", "captionMn": "Улаан хад — динозаврын өндөг олдсон газар", "captionEn": "The Flaming Cliffs, where the dinosaur eggs were found", "captionKr": "불타는 절벽 — 공룡알이 발견된 곳" },
+    { "image": "cliffs-02.jpg", "regionKey": "gobi", "placeMn": "Баянзаг", "placeEn": "Bayanzag", "placeKr": "바양작", "captionMn": "Нар жаргах цаг", "captionEn": "At sunset", "captionKr": "해질 무렵" },
+    { "image": "yolyn-01.jpg", "regionKey": "gobi", "placeMn": "Ёлын ам", "placeEn": "Yolyn Am", "placeKr": "욜링암", "captionMn": "Говь дунд нарийн хавцал", "captionEn": "A narrow gorge in the middle of the desert", "captionKr": "사막 한가운데의 좁은 협곡" },
+    { "image": "yolyn-02.jpg", "regionKey": "gobi", "placeMn": "Ёлын ам", "placeEn": "Yolyn Am", "placeKr": "욜링암", "captionMn": "Сарлагууд", "captionEn": "Yaks on the valley floor", "captionKr": "계곡의 야크들" },
+    { "image": "tsagaan-02.jpg", "regionKey": "gobi", "placeMn": "Цагаан суварга", "placeEn": "Tsagaan Suvarga", "placeKr": "차간 소브라가", "captionMn": "Эртний далайн ёроол", "captionEn": "The floor of an ancient sea", "captionKr": "고대 바다의 바닥" },
+    { "image": "khovsgol-05.jpg", "regionKey": "khuvsgul", "placeMn": "Хөвсгөл нуур", "placeEn": "Lake Khövsgöl", "placeKr": "홉스골 호수", "captionMn": "Нурууны оройгоос — 136 км урт", "captionEn": "From the ridge — 136 km end to end", "captionKr": "능선에서 — 길이 136km" },
+    { "image": "khovsgol-01.jpg", "regionKey": "khuvsgul", "placeMn": "Хөвсгөл нуурын эрэг", "placeEn": "Khövsgöl shore", "placeKr": "홉스골 호숫가", "captionMn": "Наймхан хэмийн ус", "captionEn": "Water at eight degrees", "captionKr": "수온 8도의 물" },
+    { "image": "khovsgol-03.jpg", "regionKey": "khuvsgul", "placeMn": "Хөвсгөл нуур", "placeEn": "Lake Khövsgöl", "placeKr": "홉스골 호수", "captionMn": "Тайгын зах", "captionEn": "The edge of the taiga", "captionKr": "타이가의 가장자리" },
+    { "image": "reindeer-02.jpg", "regionKey": "khuvsgul", "placeMn": "Цаатан айл", "placeEn": "Tsaatan reindeer herders", "placeKr": "차탕족", "captionMn": "Цаа бугаар морь унана", "captionEn": "They ride the reindeer", "captionKr": "순록을 타고 이동합니다" },
+    { "image": "reindeer-03.jpg", "regionKey": "khuvsgul", "placeMn": "Цаатан айл", "placeEn": "Tsaatan reindeer herders", "placeKr": "차탕족", "captionMn": "Урцны дэргэд", "captionEn": "Beside the teepee", "captionKr": "천막 옆에서" },
+    { "image": "orkhon-02.jpg", "regionKey": "tuv", "placeMn": "Орхоны хүрхрээ", "placeEn": "Orkhon waterfall", "placeKr": "오르혼 폭포", "captionMn": "Улаан цутгалан — 20 метр", "captionEn": "Ulaan Tsutgalan — twenty metres", "captionKr": "울란 촛갈랑 — 20미터" },
+    { "image": "orkhon-05.jpg", "regionKey": "tuv", "placeMn": "Орхоны хөндий", "placeEn": "Orkhon valley", "placeKr": "오르혼 계곡", "captionMn": "ЮНЕСКО-гийн өвд бүртгэлтэй", "captionEn": "On the UNESCO list", "captionKr": "유네스코 등재" },
+    { "image": "terelj-02.jpg", "regionKey": "tuv", "placeMn": "Горхи-Тэрэлж", "placeEn": "Gorkhi-Terelj", "placeKr": "고르히 테를지", "captionMn": "Улаанбаатараас 70 км", "captionEn": "Seventy kilometres from Ulaanbaatar", "captionKr": "울란바토르에서 70km" },
+    { "image": "terelj-04.jpg", "regionKey": "tuv", "placeMn": "Горхи-Тэрэлж", "placeEn": "Gorkhi-Terelj", "placeKr": "고르히 테를지", "captionMn": "Хадан дунд", "captionEn": "Among the rocks", "captionKr": "바위 사이에서" },
+    { "image": "naadam-05.jpg", "regionKey": "tuv", "placeMn": "Морин уралдаан", "placeEn": "Horse racing", "placeKr": "경마", "captionMn": "Наадам — 7 сарын 11–13", "captionEn": "Naadam — 11 to 13 July", "captionKr": "나담 — 7월 11~13일" },
+    { "image": "naadam-06.jpg", "regionKey": "tuv", "placeMn": "Морин уралдаан", "placeEn": "Horse racing", "placeKr": "경마", "captionMn": "Унаачид нь хүүхдүүд", "captionEn": "The jockeys are children", "captionKr": "기수는 아이들입니다" },
+    { "image": "naadam-04.jpg", "regionKey": "other", "placeMn": "Наадмын өдөр", "placeEn": "A day at Naadam", "placeKr": "나담 축제의 하루", "captionMn": "Баян-Өлгий", "captionEn": "Bayan-Ölgii", "captionKr": "바양울기" },
+    { "image": "horse-04.jpg", "regionKey": "tuv", "placeMn": "Дээлтэй морьтон", "placeEn": "Riders in deel", "placeKr": "델을 입은 기수", "captionMn": "Хотын захын наадам", "captionEn": "A local Naadam outside the city", "captionKr": "도시 외곽의 지역 나담" },
+    { "image": "horse-01.jpg", "regionKey": "tuv", "placeMn": "Уралдааны өмнө", "placeEn": "Before the race", "placeKr": "경주 전", "captionMn": "Хүлээж буй морьтон", "captionEn": "Riders waiting", "captionKr": "대기 중인 기수들" },
+    { "image": "horse-06.jpg", "regionKey": "tuv", "placeMn": "Тал нутгийн морьтон", "placeEn": "Riders on the steppe", "placeKr": "초원의 기수들", "captionMn": "Тал нутаг эндээс эхэлнэ", "captionEn": "This is where the steppe begins", "captionKr": "여기서 초원이 시작됩니다" },
+    { "image": "steppe-01.jpg", "regionKey": "tuv", "placeMn": "Бяцхан морьтон", "placeEn": "Young riders", "placeKr": "어린 기수들", "captionMn": "Алхаж сурахаасаа өмнө морь унана", "captionEn": "They ride before they walk well", "captionKr": "걷기 전에 말을 탑니다" },
+    { "image": "eagle-05.jpg", "regionKey": "other", "placeMn": "Бүргэдчид", "placeEn": "Eagle hunters", "placeKr": "독수리 사냥꾼", "captionMn": "Баян-Өлгий — 10 сарын баяр", "captionEn": "Bayan-Ölgii — the October festival", "captionKr": "바양울기 — 10월 축제" },
+    { "image": "eagle-01.jpg", "regionKey": "other", "placeMn": "Бүргэдчин", "placeEn": "An eagle hunter", "placeKr": "독수리 사냥꾼", "captionMn": "Казах уламжлал", "captionEn": "A Kazakh tradition", "captionKr": "카자흐 전통" },
+    { "image": "ub-03.jpg", "regionKey": "tuv", "placeMn": "Улаанбаатар", "placeEn": "Ulaanbaatar", "placeKr": "울란바토르", "captionMn": "Аялал эндээс эхэлж, эндээ дуусна", "captionEn": "Where every trip begins and ends", "captionKr": "모든 여행이 시작되고 끝나는 곳" }
+  ],
+
+  "settings": {
+    "contact": {
+      "phone": "",
+      "email": "",
+      "kakao": "",
+      "instagram": "https://www.instagram.com/dreamspark_travel",
+      "naver": "https://blog.naver.com/dreamspark_travel",
+      "logo": "/images/site/logo.jpg",
+      "address": {
+        "mn": "Улаанбаатар, Монгол",
+        "en": "Ulaanbaatar, Mongolia",
+        "kr": "몽골 울란바토르"
+      },
+      "hours": {
+        "mn": "Даваа–Бямба · 09:00–19:00 (Улаанбаатарын цаг)",
+        "en": "Mon–Sat · 09:00–19:00 (Ulaanbaatar time)",
+        "kr": "월~토 · 09:00–19:00 (울란바토르 시간)"
+      }
+    }
+  }
+}

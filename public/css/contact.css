@@ -1,0 +1,106 @@
+/* ==========================================================================
+   contact.css — «Холбоо барих»
+   Маягт байхгүй. Гурван суваг гурван том карт. Улаанбаатарын цаг амьд
+   явна. Бэлэн мессежийг хуулаад л илгээнэ.
+   ========================================================================== */
+
+/* ---- Толгой: шөнийн зурвас ---------------------------------------------- */
+.ct-head{position:relative;overflow:hidden;background:var(--night);color:#fff;
+  margin-top:calc(var(--hd-h) * -1);
+  padding:calc(var(--hd-h) + clamp(48px,7vw,96px)) 0 clamp(48px,7vw,96px)}
+.ct-head::before{content:"";position:absolute;top:-30%;right:-6%;width:min(60vw,560px);aspect-ratio:1;
+  border-radius:50%;pointer-events:none;
+  background:radial-gradient(circle,rgba(240,180,41,.36) 0%,rgba(240,180,41,0) 68%)}
+.ct-head-in{position:relative;z-index:1;display:grid;gap:clamp(28px,4vw,56px);align-items:end}
+@media(min-width:960px){.ct-head-in{grid-template-columns:minmax(0,1.2fr) minmax(280px,.8fr)}}
+.ct-head .label{color:var(--mint)}
+.ct-head h1{color:#fff;max-width:15ch;margin-top:14px}
+.ct-head .lede{color:rgba(255,255,255,.84);max-width:50ch;margin-top:20px}
+
+/* Улаанбаатарын цаг */
+.ct-clock{background:rgba(255,255,255,.06);border:1px solid rgba(255,255,255,.14);border-radius:var(--r-lg);
+  padding:22px 24px;display:grid;gap:14px;backdrop-filter:blur(8px);-webkit-backdrop-filter:blur(8px)}
+.ct-clock .where{font-size:14px;color:rgba(255,255,255,.7)}
+.ct-clock .time{font-family:var(--disp);font-weight:500;font-size:clamp(44px,5vw,64px);line-height:1;
+  letter-spacing:.01em;font-variant-numeric:tabular-nums;display:flex;align-items:baseline;gap:12px}
+.ct-clock .time small{font-size:16px;color:rgba(255,255,255,.6);font-family:var(--body);font-weight:500}
+.ct-clock dl{display:grid;gap:8px;padding-top:12px;border-top:1px solid rgba(255,255,255,.14)}
+.ct-clock dl div{display:grid;grid-template-columns:auto 1fr;gap:12px;font-size:14.5px}
+.ct-clock dt{color:var(--mint);font-weight:500;min-width:84px}
+.ct-clock dd{color:rgba(255,255,255,.88)}
+
+/* ---- Сувгууд: гурван карт ----------------------------------------------- */
+.ct-chan{display:grid;grid-template-columns:1fr;gap:14px}
+@media(min-width:720px){.ct-chan{grid-template-columns:repeat(auto-fit,minmax(240px,1fr))}}
+.ct-chan a{position:relative;display:grid;gap:14px;padding:24px 24px 22px;border-radius:var(--r-lg);
+  background:var(--white);border:1px solid var(--line);overflow:hidden;
+  transition:transform .25s,box-shadow .25s,border-color .25s}
+.ct-chan a::before{content:"";position:absolute;left:0;right:0;top:0;height:6px;background:var(--bc,var(--pine))}
+.ct-chan a:hover{transform:translateY(-3px);box-shadow:var(--shadow-lg);border-color:transparent}
+.ct-chan .mark{width:52px;height:52px;border-radius:14px;display:flex;align-items:center;justify-content:center;
+  background:var(--bc,var(--pine));color:var(--bt,#fff)}
+.ct-chan .mark svg{width:26px;height:26px;fill:currentColor}
+.ct-chan b{display:block;font-family:var(--disp);font-weight:500;font-size:22px;line-height:1.1}
+.ct-chan .handle{display:block;font-size:14px;color:var(--ink-2);margin-top:4px;overflow-wrap:anywhere}
+.ct-chan .go{display:inline-flex;align-items:center;gap:8px;font-family:var(--disp);font-weight:500;
+  font-size:15px;color:var(--ink);margin-top:2px}
+.ct-chan .go::after{content:"";width:22px;height:1.5px;background:var(--ink);transition:width .25s}
+.ct-chan a:hover .go::after{width:34px}
+.ct-chan .c-kakao{--bc:#FEE500;--bt:#3C1E1E}
+.ct-chan .c-instagram{--bc:linear-gradient(135deg,#F9CE34 0%,#EE2A7B 50%,#6228D7 100%);--bt:#fff}
+.ct-chan .c-naver{--bc:#03C75A;--bt:#fff}
+.ct-chan .c-phone{--bc:var(--pine);--bt:#fff}
+.ct-chan .c-email{--bc:var(--sun);--bt:#1B1607}
+
+/* ---- Юу бичих вэ + бэлэн мессеж ----------------------------------------- */
+.ct-body{display:grid;grid-template-columns:1fr;gap:clamp(28px,4vw,64px);align-items:start}
+@media(min-width:960px){.ct-body{grid-template-columns:minmax(0,.9fr) minmax(0,1.1fr)}}
+.ct-steps{list-style:none;counter-reset:step;display:grid;gap:0;margin-top:22px}
+.ct-steps li{counter-increment:step;display:grid;grid-template-columns:38px 1fr;gap:16px;
+  align-items:start;padding:18px 0;border-top:1px solid var(--line)}
+.ct-steps li:last-child{border-bottom:1px solid var(--line)}
+.ct-steps li::before{content:counter(step);display:inline-flex;align-items:center;justify-content:center;
+  width:30px;height:30px;border-radius:50%;background:var(--sun);color:#1B1607;
+  font-family:var(--disp);font-weight:500;font-size:14px;margin-top:1px}
+.ct-steps b{display:block;font-family:var(--disp);font-weight:500;font-size:19px;margin-bottom:4px}
+.ct-steps span{font-size:15px;color:var(--ink-2);line-height:1.6}
+
+.ct-tpl{background:var(--night);color:#fff;border-radius:var(--r-lg);padding:clamp(22px,2.6vw,32px);
+  display:grid;gap:16px;position:relative;overflow:hidden}
+.ct-tpl::before{content:"";position:absolute;right:-20%;bottom:-40%;width:60%;aspect-ratio:1;border-radius:50%;
+  background:radial-gradient(circle,rgba(169,214,200,.22) 0%,rgba(169,214,200,0) 70%);pointer-events:none}
+.ct-tpl > *{position:relative}
+.ct-tpl h3{font-family:var(--disp);font-weight:500;font-size:22px;color:var(--mint)}
+.ct-tpl p{font-size:14.5px;color:rgba(255,255,255,.72);line-height:1.6}
+.ct-tpl textarea{width:100%;min-height:150px;resize:vertical;border-radius:10px;padding:16px 18px;
+  background:rgba(255,255,255,.07);border:1px solid rgba(255,255,255,.16);color:#fff;font-size:15.5px;
+  line-height:1.6;font-family:var(--body)}
+.ct-tpl textarea:focus-visible{outline:2px solid var(--sun);outline-offset:0}
+.ct-tpl .acts{display:flex;flex-wrap:wrap;align-items:center;gap:12px}
+.ct-tpl .done{font-size:14px;color:var(--mint);opacity:0;transition:opacity .25s}
+.ct-tpl .done.show{opacity:1}
+
+/* ---- Түгээмэл асуулт ---------------------------------------------------- */
+.faq{display:grid;gap:0;border-top:1px solid var(--line)}
+.faq details{border-bottom:1px solid var(--line)}
+.faq summary{list-style:none;cursor:pointer;display:flex;align-items:center;justify-content:space-between;
+  gap:20px;padding:20px 0;font-family:var(--disp);font-weight:500;font-size:clamp(18px,1.8vw,22px)}
+.faq summary::-webkit-details-marker{display:none}
+.faq summary::after{content:"";flex:0 0 auto;width:12px;height:12px;border-right:1.6px solid var(--ink);
+  border-bottom:1.6px solid var(--ink);transform:rotate(45deg);transition:transform .25s;margin-right:6px}
+.faq details[open] summary::after{transform:rotate(-135deg)}
+.faq .a{padding:0 0 22px;font-size:15.5px;color:var(--ink-2);max-width:64ch;line-height:1.66}
+
+/* ---- Гурван аялал руу шилжих зурвас ------------------------------------ */
+.ct-tours{display:grid;grid-template-columns:1fr;gap:12px}
+@media(min-width:720px){.ct-tours{grid-template-columns:repeat(3,1fr)}}
+.ct-tours a{position:relative;display:flex;align-items:flex-end;min-height:190px;
+  border-radius:var(--r-lg);overflow:hidden;color:#fff;padding:18px}
+.ct-tours img{position:absolute;inset:0;width:100%;height:100%;object-fit:cover;
+  transition:transform 1s cubic-bezier(.2,.7,.3,1)}
+.ct-tours a:hover img{transform:scale(1.05)}
+.ct-tours a::after{content:"";position:absolute;inset:0;
+  background:linear-gradient(180deg,rgba(14,28,23,.05),rgba(14,28,23,.8))}
+.ct-tours .cap{position:relative;z-index:1;display:grid;gap:6px}
+.ct-tours b{font-family:var(--disp);font-weight:500;font-size:20px;line-height:1.1}
+.ct-tours .rtag{justify-self:start;background:rgba(255,255,255,.92)}

@@ -1,0 +1,203 @@
+<!DOCTYPE html>
+<html lang="mn">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Холбоо барих — Dream Spark Travel</title>
+<meta name="description" content="KakaoTalk, Instagram, Naver блогоор шууд бичээрэй. Монгол, солонгос, англи гурван хэлээр хариулна.">
+<link rel="icon" href="/images/site/logo.jpg">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Oswald:wght@400;500&family=Golos+Text:wght@400;500&family=Noto+Sans+KR:wght@400;700&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="/css/base.css">
+<link rel="stylesheet" href="/css/layout.css">
+<link rel="stylesheet" href="/css/contact.css">
+<script type="module" src="/js/pages/contact.js"></script>
+</head>
+<body class="hd-over hd-solid">
+
+<header class="hd">
+  <div class="wrap hd-in">
+    <a class="brand" href="/">
+      <img src="/images/site/logo.jpg" data-c="logo" alt="Dream Spark Travel Agency" width="38" height="38">
+      <span class="brand-name">Dream Spark<span class="brand-sub">Travel Agency</span></span>
+    </a>
+    <nav class="nav" id="nav">
+      <a href="/" data-en="Home" data-kr="홈">Нүүр</a>
+      <a href="/tours" data-en="Tours" data-kr="투어">Аялал</a>
+      <a href="/gallery" data-en="Gallery" data-kr="갤러리">Зургийн цомог</a>
+      <a href="/about" data-en="About us" data-kr="소개">Бидний тухай</a>
+      <a href="/contact" data-en="Contact" data-kr="문의">Холбоо барих</a>
+    </nav>
+    <div class="lang" role="group" aria-label="Хэл сонгох">
+      <button type="button" data-lang="mn" aria-pressed="true">MN</button>
+      <button type="button" data-lang="en" aria-pressed="false">EN</button>
+      <button type="button" data-lang="kr" aria-pressed="false">KR</button>
+    </div>
+    <button class="burger" id="burger" type="button" aria-label="Цэс" aria-expanded="false" aria-controls="nav">
+      <span></span><span></span><span></span>
+    </button>
+  </div>
+</header>
+
+<main>
+
+  <!-- ===== ТОЛГОЙ ===== -->
+  <section class="ct-head">
+    <div class="wrap ct-head-in">
+      <div>
+        <p class="label" data-en="No booking form" data-kr="예약 양식 없음">Маягт байхгүй</p>
+        <h1 class="h1" data-en="Contact" data-kr="문의">Холбоо барих</h1>
+        <p class="lede"
+           data-en="Write on the messenger you already use. We answer in Korean, Mongolian or English."
+           data-kr="쓰시던 메신저로 보내주세요. 한국어·몽골어·영어로 답변드립니다.">Ердийн мессенжерээрээ бичээрэй. Солонгос, монгол, англи хэлээр хариулна.</p>
+      </div>
+      <div class="ct-clock" aria-live="off">
+        <p class="where" data-en="It is now in Ulaanbaatar" data-kr="지금 울란바토르는">Улаанбаатарт одоо</p>
+        <p class="time"><span id="ubTime">--:--</span><small id="ubDate"></small></p>
+        <dl>
+          <div>
+            <dt data-en="Hours" data-kr="운영 시간">Ажлын цаг</dt>
+            <dd data-c="hours">Даваа–Бямба · 09:00–19:00</dd>
+          </div>
+          <div>
+            <dt data-en="Reply" data-kr="답변">Хариу</dt>
+            <dd data-en="Same day during office hours, otherwise the next morning" data-kr="영업시간 내 당일, 그 외에는 다음 날 오전">Ажлын цагт тухайн өдөртөө, бусад үед маргааш өглөө</dd>
+          </div>
+          <div>
+            <dt data-en="Office" data-kr="위치">Байршил</dt>
+            <dd data-c="address">Улаанбаатар, Монгол</dd>
+          </div>
+        </dl>
+      </div>
+    </div>
+  </section>
+
+  <!-- ===== СУВГУУД ===== -->
+  <section class="sect bg-white">
+    <div class="wrap">
+      <div class="sect-head">
+        <div>
+          <h2 class="h2 dot-head" data-en="Channels" data-kr="채널">Сувгууд</h2>
+        </div>
+      </div>
+      <div class="ct-chan rv-stg" id="ctChan"></div>
+    </div>
+  </section>
+
+  <!-- ===== ЮУ БИЧИХ ВЭ + БЭЛЭН МЕССЕЖ ===== -->
+  <section class="sect">
+    <div class="wrap ct-body">
+      <div class="rv">
+        <h2 class="h2 dot-head" data-en="What to tell us" data-kr="알려주실 내용">Юу бичих вэ</h2>
+        <ol class="ct-steps">
+          <li>
+            <div>
+              <b data-en="When, and for how long" data-kr="언제, 며칠">Хэзээ, хэдэн өдөр</b>
+              <span data-en="Even an approximate month is enough to start."
+                    data-kr="대략적인 월만 알려주셔도 시작할 수 있습니다.">Ойролцоогоор ямар сар гэдгээ хэлэхэд л хангалттай.</span>
+            </div>
+          </li>
+          <li>
+            <div>
+              <b data-en="How many of you" data-kr="몇 분이신지">Хэдүүлээ</b>
+              <span data-en="Family, a couple, or friends. The trip is put together around the group."
+                    data-kr="가족, 커플, 친구 — 인원에 맞춰 일정을 구성합니다.">Гэр бүл, хос, найзууд. Бүлгийнхээ хэмжээнд тохируулж зохионо.</span>
+            </div>
+          </li>
+          <li>
+            <div>
+              <b data-en="Which of the three" data-kr="어느 코스">Аль аялал</b>
+              <span data-en="Gobi, Khövsgöl or Terelj. Not sure? Say so and we will suggest one."
+                    data-kr="고비·홉스골·테를지 중에서. 고민되시면 말씀만 주세요, 저희가 추천해 드립니다.">Говь, Хөвсгөл, Тэрэлж. Шийдэж чадахгүй байвал хэлээрэй, бид санал болгоно.</span>
+            </div>
+          </li>
+        </ol>
+      </div>
+
+      <div class="ct-tpl rv">
+        <h3 data-en="A ready-made first message" data-kr="바로 보낼 수 있는 첫 메시지">Бэлэн эхний мессеж</h3>
+        <p data-en="Copy, fill in the brackets, send." data-kr="복사하고, 괄호를 채우고, 보내세요.">Хуулаад, хаалтыг бөглөөд, илгээ.</p>
+        <textarea id="tplText" rows="6" aria-label="Мессежийн загвар"></textarea>
+        <div class="acts">
+          <button type="button" class="btn btn-sun" id="tplCopy" data-en="Copy the message" data-kr="메시지 복사">Мессежийг хуулах</button>
+          <span class="done" id="tplDone" data-en="Copied" data-kr="복사됨">Хуулагдлаа</span>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ===== ТҮГЭЭМЭЛ АСУУЛТ ===== -->
+  <section class="sect bg-white">
+    <div class="wrap-n">
+      <div class="sect-head">
+        <h2 class="h2 dot-head" data-en="Common questions" data-kr="자주 묻는 질문">Түгээмэл асуулт</h2>
+      </div>
+      <div class="faq rv">
+        <details>
+          <summary data-en="How long is a tour?" data-kr="투어 기간은 얼마나 되나요?">Аялал хэдэн хоног үргэлжлэх вэ?</summary>
+          <p class="a" data-en="None of the three has a fixed length. Tell us your dates and the plan is shaped around them, one or two stops a day with rest in between." data-kr="세 투어 모두 정해진 일수가 없습니다. 날짜를 알려주시면 하루 1~2곳, 중간 휴식이 있는 일정으로 맞춰드립니다.">Гурвуулаа тогтмол хугацаагүй. Огноогоо хэлэхэд өдөрт нэг, хоёр цэгтэй, дунд нь амралттай хуваарийг түүнд тааруулна.</p>
+        </details>
+        <details>
+          <summary data-en="Do I need a visa?" data-kr="비자가 필요한가요?">Виз хэрэгтэй юу?</summary>
+          <p class="a" data-en="Korean, Japanese and Kazakh passports enter visa-free for 30 days. For other passports we prepare the invitation letter." data-kr="한국·일본·카자흐스탄 여권은 30일 무비자입니다. 그 외 여권은 초청장을 준비해 드립니다.">Солонгос, Япон, Казахстаны паспорттай зорчигчид 30 хоног визгүй. Бусад паспортад урилга бэлдэж өгнө.</p>
+        </details>
+        <details>
+          <summary data-en="When is the season?" data-kr="시즌은 언제인가요?">Улирал хэзээ вэ?</summary>
+          <p class="a" data-en="May to September for the Gobi and Khövsgöl. Terelj works from May into October. June to August is 25–30°C by day and 5–10°C at night, so bring a warm jacket." data-kr="고비·홉스골은 5~9월, 테를지는 5~10월. 6~8월은 낮 25~30도, 밤 5~10도이니 따뜻한 겉옷을 챙기세요.">Говь, Хөвсгөл 5–9 сар. Тэрэлж 5–10 сар хүртэл. 6–8 сард өдөр 25–30, шөнө 5–10 хэм тул дулаан хүрэм авчраарай.</p>
+        </details>
+        <details>
+          <summary data-en="Which languages do you answer in?" data-kr="어떤 언어로 답변하나요?">Ямар хэлээр хариулах вэ?</summary>
+          <p class="a" data-en="Korean, Mongolian and English. The guide on the trip speaks Korean too." data-kr="한국어, 몽골어, 영어. 여행 중 가이드도 한국어가 가능합니다.">Солонгос, монгол, англи. Аяллын хөтөч ч солонгосоор ярьдаг.</p>
+        </details>
+        <details>
+          <summary data-en="How far is it from Seoul?" data-kr="서울에서 얼마나 걸리나요?">Сөүлээс хэр хол вэ?</summary>
+          <p class="a" data-en="Three hours by air from Seoul or Incheon to Ulaanbaatar. We meet you at the airport." data-kr="서울·인천에서 울란바토르까지 비행기로 3시간. 공항에서 뵙겠습니다.">Сөүл, Инчеоноос Улаанбаатар хүртэл нислэг гурван цаг. Нисэх буудал дээр угтана.</p>
+        </details>
+      </div>
+    </div>
+  </section>
+
+</main>
+
+<footer class="ft">
+  <div class="wrap">
+    <div class="ft-in">
+      <div>
+        <a class="brand" href="/">
+          <img src="/images/site/logo.jpg" data-c="logo" alt="" width="38" height="38">
+          <span class="brand-name">Dream Spark<span class="brand-sub">Travel Agency</span></span>
+        </a>
+        <p class="ft-tag" data-en="A travel company run locally in Mongolia. Gobi, Khövsgöl, Terelj."
+           data-kr="몽골 현지에서 운영하는 여행사. 고비·홉스골·테를지.">Монголд өөрсдөө үйл ажиллагаа явуулдаг аялалын компани. Говь, Хөвсгөл, Тэрэлж.</p>
+      </div>
+      <div>
+        <h4 data-en="Contact" data-kr="연락처">Холбоо барих</h4>
+        <a class="lnk" data-c="kakao" href="#"></a>
+        <a class="lnk" data-c="instagram" href="#"></a>
+        <a class="lnk" data-c="naver" href="#"></a>
+        <a class="lnk" data-c="phone" href="#"></a>
+        <a class="lnk" data-c="email" href="#"></a>
+      </div>
+      <div>
+        <h4 data-en="Pages" data-kr="페이지">Хуудас</h4>
+        <a class="lnk" href="/" data-en="Home" data-kr="홈">Нүүр</a>
+        <a class="lnk" href="/tours" data-en="Tours" data-kr="투어">Аялал</a>
+        <a class="lnk" href="/gallery" data-en="Gallery" data-kr="갤러리">Зургийн цомог</a>
+        <a class="lnk" href="/about" data-en="About us" data-kr="소개">Бидний тухай</a>
+      </div>
+      <div>
+        <h4 data-en="Office hours" data-kr="운영 시간">Ажлын цаг</h4>
+        <p data-c="hours"></p>
+        <p data-c="address"></p>
+      </div>
+    </div>
+    <div class="ft-note">
+      <span>© <span data-year>2026</span> Dream Spark Travel Agency</span>
+      <span data-en="Ulaanbaatar, Mongolia" data-kr="몽골 울란바토르">Улаанбаатар, Монгол</span>
+    </div>
+  </div>
+</footer>
+
+</body>
+</html>

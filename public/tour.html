@@ -1,0 +1,129 @@
+<!DOCTYPE html>
+<html lang="mn">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Аялал — Dream Spark Travel</title>
+<meta name="description" content="Dream Spark Travel — аяллын дэлгэрэнгүй: онцлох мөчүүд, багцад юу багтсан, юу багтаагүй.">
+<link rel="icon" href="/images/site/logo.jpg">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Oswald:wght@400;500&family=Golos+Text:wght@400;500&family=Noto+Sans+KR:wght@400;700&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="/css/base.css">
+<link rel="stylesheet" href="/css/layout.css">
+<link rel="stylesheet" href="/css/tour.css">
+<script type="module" src="/js/pages/tour.js"></script>
+</head>
+<body class="hd-over">
+
+<header class="hd">
+  <div class="wrap hd-in">
+    <a class="brand" href="/">
+      <img src="/images/site/logo.jpg" data-c="logo" alt="Dream Spark Travel Agency" width="38" height="38">
+      <span class="brand-name">Dream Spark<span class="brand-sub">Travel Agency</span></span>
+    </a>
+    <nav class="nav" id="nav">
+      <a href="/" data-en="Home" data-kr="홈">Нүүр</a>
+      <a href="/tours" data-en="Tours" data-kr="투어">Аялал</a>
+      <a href="/gallery" data-en="Gallery" data-kr="갤러리">Зургийн цомог</a>
+      <a href="/about" data-en="About us" data-kr="소개">Бидний тухай</a>
+      <a href="/contact" data-en="Contact" data-kr="문의">Холбоо барих</a>
+    </nav>
+    <div class="lang" role="group" aria-label="Хэл сонгох">
+      <button type="button" data-lang="mn" aria-pressed="true">MN</button>
+      <button type="button" data-lang="en" aria-pressed="false">EN</button>
+      <button type="button" data-lang="kr" aria-pressed="false">KR</button>
+    </div>
+    <button class="burger" id="burger" type="button" aria-label="Цэс" aria-expanded="false" aria-controls="nav">
+      <span></span><span></span><span></span>
+    </button>
+  </div>
+</header>
+
+<main id="tourRoot">
+  <section class="tour-hero">
+    <img id="tourCover" src="/images/tours/gobi-02.jpg" alt="" fetchpriority="high">
+    <div class="veil"></div>
+    <div class="cap">
+      <div class="wrap">
+        <div class="crumbs">
+          <span class="rtag" id="tourRegion"></span>
+          <span class="area" id="tourArea"></span>
+        </div>
+        <h1 class="h1" id="tourTitle">…</h1>
+      </div>
+    </div>
+  </section>
+
+  <section class="sect">
+    <div class="wrap tour-body">
+      <div>
+        <div class="tour-prose rv" id="tourProse"></div>
+        <div id="tourHigh" class="rv" style="margin-top:clamp(28px,3.4vw,48px)"></div>
+        <div id="tourChart" class="rv"></div>
+        <div id="tourDays" class="rv" style="margin-top:clamp(28px,3.4vw,46px)"></div>
+        <div id="tourIncl" class="rv" style="margin-top:clamp(32px,4vw,56px)"></div>
+      </div>
+      <aside class="tour-side" id="tourSide"></aside>
+    </div>
+  </section>
+
+  <section class="sect-tight">
+    <div class="wrap">
+      <div class="cta rv">
+        <div class="cta-in">
+          <div>
+            <h2 class="h2" data-en="Questions about this tour?" data-kr="이 투어가 궁금하신가요?">Энэ аяллаар асуух зүйл байна уу?</h2>
+            <p data-en="No booking form. Write on KakaoTalk, Instagram or the Naver blog and a person in Ulaanbaatar answers." data-kr="예약 양식은 없습니다. 카카오톡·인스타그램·네이버 블로그로 보내주시면 울란바토르에서 직접 답변드립니다.">Захиалгын маягт байхгүй. KakaoTalk, Instagram, Naver блогоор бичихэд Улаанбаатараас хүн хариулна.</p>
+          </div>
+          <div class="cta-acts">
+            <a class="btn btn-sun" href="/contact" data-en="Message us" data-kr="문의하기">Бидэн рүү бичих</a>
+            <a class="btn btn-line" href="/tours" data-en="All tours" data-kr="모든 투어">Бүх аялал</a>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+</main>
+
+<footer class="ft">
+  <div class="wrap">
+    <div class="ft-in">
+      <div>
+        <a class="brand" href="/">
+          <img src="/images/site/logo.jpg" data-c="logo" alt="" width="38" height="38">
+          <span class="brand-name">Dream Spark<span class="brand-sub">Travel Agency</span></span>
+        </a>
+        <p class="ft-tag" data-en="A travel company run locally in Mongolia. Gobi, Khövsgöl, Terelj."
+           data-kr="몽골 현지에서 운영하는 여행사. 고비·홉스골·테를지.">Монголд өөрсдөө үйл ажиллагаа явуулдаг аялалын компани. Говь, Хөвсгөл, Тэрэлж.</p>
+      </div>
+      <div>
+        <h4 data-en="Contact" data-kr="연락처">Холбоо барих</h4>
+        <a class="lnk" data-c="kakao" href="#"></a>
+        <a class="lnk" data-c="instagram" href="#"></a>
+        <a class="lnk" data-c="naver" href="#"></a>
+        <a class="lnk" data-c="phone" href="#"></a>
+        <a class="lnk" data-c="email" href="#"></a>
+      </div>
+      <div>
+        <h4 data-en="Pages" data-kr="페이지">Хуудас</h4>
+        <a class="lnk" href="/" data-en="Home" data-kr="홈">Нүүр</a>
+        <a class="lnk" href="/tours" data-en="Tours" data-kr="투어">Аялал</a>
+        <a class="lnk" href="/gallery" data-en="Gallery" data-kr="갤러리">Зургийн цомог</a>
+        <a class="lnk" href="/about" data-en="About us" data-kr="소개">Бидний тухай</a>
+      </div>
+      <div>
+        <h4 data-en="Office hours" data-kr="운영 시간">Ажлын цаг</h4>
+        <p data-c="hours"></p>
+        <p data-c="address"></p>
+      </div>
+    </div>
+    <div class="ft-note">
+      <span>© <span data-year>2026</span> Dream Spark Travel Agency</span>
+      <span data-en="Ulaanbaatar, Mongolia" data-kr="몽골 울란바토르">Улаанбаатар, Монгол</span>
+    </div>
+  </div>
+</footer>
+
+</body>
+</html>

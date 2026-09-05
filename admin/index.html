@@ -1,0 +1,56 @@
+<!DOCTYPE html>
+<html lang="mn">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Удирдлага — Dream Spark Travel</title>
+<meta name="robots" content="noindex">
+<link rel="icon" href="/images/site/logo.jpg">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Oswald:wght@400;500;600&family=Golos+Text:wght@400;500;600&family=JetBrains+Mono:wght@400;500&family=Noto+Sans+KR:wght@400;500&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="/admin/css/admin.css">
+<script type="module" src="/admin/js/admin.js"></script>
+</head>
+<body>
+
+<div class="shell">
+  <aside class="side">
+    <a class="brand" href="/admin/dashboard">
+      <img src="/images/site/logo.jpg" alt="">
+      <b>Dream Spark<span>Admin</span></b>
+    </a>
+    <nav id="sideNav">
+      <a href="/admin/dashboard" data-view="dashboard">Хяналт</a>
+      <a href="/admin/tours" data-view="tours">Аялал</a>
+      <a href="/admin/gallery" data-view="gallery">Зургийн цомог</a>
+      <a href="/admin/settings" data-view="settings">Тохиргоо</a>
+    </nav>
+    <div class="foot">
+      <span class="who" id="who"></span>
+      <a class="out" href="/" target="_blank" rel="noopener">Сайт нээх</a>
+      <button class="out" type="button" id="logout">Гарах</button>
+    </div>
+  </aside>
+
+  <main class="main" id="view">
+    <p class="empty">Ачаалж байна…</p>
+  </main>
+</div>
+
+<div class="modal" id="modal" role="dialog" aria-modal="true">
+  <div class="modal-card" id="modalCard">
+    <h3 id="modalTitle"></h3>
+    <p id="modalText"></p>
+    <div id="modalBody"></div>
+    <div class="ops">
+      <button class="btn btn-line" type="button" id="modalNo">Болих</button>
+      <button class="btn btn-danger" type="button" id="modalYes">Устгах</button>
+    </div>
+  </div>
+</div>
+
+<div class="toast" id="toast"></div>
+
+</body>
+</html>

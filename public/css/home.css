@@ -1,0 +1,113 @@
+/* ==========================================================================
+   home.css — нүүр хуудас (+ Бидний тухай-д дахин ашиглагдах хэсгүүд)
+   Бүтэц: бүтэн дэлгэцийн зурган нүүр → цайвар хуудас → шөнийн уриалга.
+   ========================================================================== */
+
+/* ---- Нүүрний зураг ------------------------------------------------------ */
+.hero{position:relative;min-height:clamp(520px,76svh,780px);display:flex;align-items:flex-end;
+  overflow:hidden;background:var(--night);margin-top:calc(var(--hd-h) * -1)}
+.hero-img{position:absolute;inset:0;z-index:0}
+.hero-img img{width:100%;height:100%;object-fit:cover;filter:saturate(1.02) brightness(.9);
+  transform:scale(1.04);animation:hero-settle 2.4s cubic-bezier(.2,.7,.2,1) both}
+@keyframes hero-settle{from{transform:scale(1.1)}to{transform:scale(1.04)}}
+/* Ганц гэрлийн эх үүсвэр — логоны нар */
+.hero-sun{position:absolute;z-index:1;top:clamp(56px,14vh,160px);right:clamp(24px,12vw,190px);
+  width:min(50vw,360px);aspect-ratio:1;border-radius:50%;pointer-events:none;
+  background:radial-gradient(circle,rgba(240,180,41,.86) 0%,rgba(240,180,41,.36) 26%,
+    rgba(240,180,41,.1) 52%,rgba(240,180,41,0) 72%);
+  animation:sun-breathe 9s ease-in-out infinite}
+@keyframes sun-breathe{0%,100%{opacity:.85;transform:scale(1)}50%{opacity:1;transform:scale(1.04)}}
+.hero-veil{position:absolute;inset:0;z-index:2;background:linear-gradient(180deg,
+  rgba(15,26,43,.5) 0%,rgba(15,26,43,.08) 32%,rgba(15,26,43,.55) 70%,rgba(15,26,43,.9) 100%)}
+.hero-in{position:relative;z-index:3;width:100%;padding-block:clamp(40px,7vw,84px) clamp(28px,4vw,48px)}
+.hero h1{color:#fff;max-width:14ch;text-shadow:0 2px 40px rgba(0,0,0,.3);font-size:clamp(36px,5.8vw,76px)}
+.hero h1 em{font-style:normal;color:var(--sun)}
+.hero .lede{color:rgba(255,255,255,.88);max-width:44ch;margin:18px 0 26px}
+.hero-acts{display:flex;flex-wrap:wrap;gap:12px}
+/* Гурван нутаг — нүүрний доод зурвас */
+.hero-regions{display:flex;flex-wrap:wrap;gap:8px 10px;margin-top:clamp(24px,4vw,44px);
+  padding-top:18px;border-top:1px solid rgba(255,255,255,.18)}
+.hero-regions a{display:inline-flex;align-items:center;gap:9px;color:#fff;font-size:14.5px;
+  font-weight:500;padding:8px 14px 8px 10px;border-radius:999px;
+  background:rgba(255,255,255,.1);border:1px solid rgba(255,255,255,.18);
+  backdrop-filter:blur(6px);-webkit-backdrop-filter:blur(6px);transition:background .2s}
+.hero-regions a:hover{background:rgba(255,255,255,.22)}
+.hero-regions a::before{content:"";width:9px;height:9px;border-radius:50%;background:var(--rc)}
+.hero-regions .note{margin-left:auto;color:rgba(255,255,255,.6);font-size:14px;align-self:center}
+@media(max-width:640px){.hero-regions .note{display:none}}
+
+/* ---- Мэдэгдэл ----------------------------------------------------------- */
+.creed{padding-block:clamp(60px,9vw,128px)}
+.creed p{font-family:var(--disp);font-weight:400;font-size:clamp(26px,3.8vw,52px);
+  line-height:1.16;letter-spacing:-.006em;max-width:22ch;text-wrap:balance}
+.creed p em{font-style:normal;color:var(--pine);display:block;font-weight:500}
+.creed .sig{margin-top:26px;font-size:14.5px;color:var(--ink-3);max-width:none;
+  font-family:var(--body);font-weight:500}
+
+/* ---- Гурван аялал — карт --------------------------------------------- */
+.tour-grid{display:grid;grid-template-columns:1fr;gap:clamp(16px,2vw,26px)}
+@media(min-width:700px){.tour-grid{grid-template-columns:repeat(3,1fr)}}
+.poster{display:flex;flex-direction:column;border-radius:var(--r-lg);overflow:hidden;
+  background:var(--white);border:1px solid var(--line);
+  transition:transform .3s,box-shadow .3s,border-color .3s}
+.poster:hover{transform:translateY(-4px);box-shadow:var(--shadow-lg);border-color:transparent}
+.poster .shot{position:relative;aspect-ratio:4/3;overflow:hidden;background:var(--bg-2)}
+@media(min-width:700px){.poster .shot{aspect-ratio:4/4.4}}
+.poster .shot img{width:100%;height:100%;object-fit:cover;
+  transition:transform 1.1s cubic-bezier(.2,.7,.3,1)}
+.poster:hover .shot img{transform:scale(1.05)}
+.poster .shot .rtag{position:absolute;left:14px;top:14px;background:rgba(255,255,255,.92);
+  backdrop-filter:blur(6px);-webkit-backdrop-filter:blur(6px)}
+.poster-in{display:flex;flex-direction:column;flex:1;padding:clamp(18px,2vw,26px)}
+.poster h3{margin:0 0 8px}
+.poster .area{font-size:14.5px;color:var(--rc,var(--pine));font-weight:500;margin-bottom:10px}
+.poster p{font-size:15px;line-height:1.6;color:var(--ink-2)}
+.poster .meta{display:flex;flex-wrap:wrap;gap:6px 14px;margin-top:auto;padding-top:16px;
+  font-size:13.5px;color:var(--ink-3)}
+.poster .meta span+span::before{content:"";display:inline-block;width:3px;height:3px;
+  border-radius:50%;background:var(--ink-3);margin:0 10px 3px 0;vertical-align:middle}
+
+/* ---- Мэдэх зүйлс -------------------------------------------------------- */
+.facts{display:grid;grid-template-columns:1fr;gap:20px}
+@media(min-width:640px){.facts{grid-template-columns:1fr 1fr}}
+@media(min-width:1040px){.facts{grid-template-columns:repeat(4,1fr)}}
+.facts > div{background:var(--white);border:1px solid var(--line);border-radius:var(--r-lg);
+  padding:22px 22px 24px}
+.facts dt{font-family:var(--disp);font-weight:500;font-size:20px;margin-bottom:10px;color:var(--ink)}
+.facts dd{font-size:15px;line-height:1.66;color:var(--ink-2)}
+
+/* ---- Яагаад бид -------------------------------------------------------- */
+.why{display:grid;grid-template-columns:1fr;gap:clamp(28px,4vw,64px)}
+@media(min-width:900px){.why{grid-template-columns:minmax(0,.85fr) minmax(0,1.15fr)}}
+.why-list{display:grid;gap:clamp(18px,2.2vw,28px)}
+@media(min-width:640px){.why-list{grid-template-columns:1fr 1fr}}
+.why-list > div{padding:22px 0 0;border-top:2px solid var(--line)}
+.why-list h3{font-family:var(--disp);font-weight:500;font-size:22px;margin-bottom:8px;line-height:1.15}
+.why-list p{font-size:15px;color:var(--ink-2);line-height:1.66}
+.why-quote{margin-top:18px;font-size:clamp(17px,1.5vw,20px);line-height:1.6;color:var(--ink);
+  padding-left:18px;border-left:3px solid var(--sun);max-width:44ch}
+.why-quote+p{margin-top:16px;color:var(--ink-2);max-width:50ch}
+
+/* ---- Түүх (Бидний тухай) ------------------------------------------------ */
+.story{display:grid;grid-template-columns:1fr;gap:clamp(26px,3.6vw,56px);align-items:start}
+@media(min-width:900px){.story{grid-template-columns:minmax(0,.82fr) minmax(0,1.18fr)}}
+.story-shot{margin:0}
+.story-shot img{width:100%;aspect-ratio:4/5;object-fit:cover;border-radius:var(--r-lg)}
+@media(max-width:899px){.story-shot img{aspect-ratio:16/10}}
+.story-shot figcaption{margin-top:10px}
+.story-quote{margin:22px 0 0;padding-left:clamp(16px,2vw,26px);border-left:3px solid var(--sun)}
+.story-quote p{font-size:clamp(16.5px,1.5vw,19.5px);line-height:1.7;color:var(--ink);
+  max-width:60ch;margin-bottom:16px}
+.story-quote p:last-child{margin-bottom:0}
+.story-by{margin-top:18px}
+
+/* ---- Гурван амлалт ------------------------------------------------------ */
+.steps{display:grid;grid-template-columns:1fr;gap:clamp(18px,2.4vw,28px)}
+@media(min-width:820px){.steps{grid-template-columns:repeat(3,1fr)}}
+.steps > div{background:var(--white);border:1px solid var(--line);border-radius:var(--r-lg);
+  padding:26px 24px 28px}
+.steps .num{display:inline-flex;align-items:center;justify-content:center;width:34px;height:34px;
+  border-radius:50%;background:var(--sun);color:#1B1607;font-family:var(--disp);font-weight:500;
+  font-size:15px;margin-bottom:18px}
+.steps h3{margin-bottom:10px}
+.steps p{font-size:15px;color:var(--ink-2);line-height:1.66}

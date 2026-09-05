@@ -1,0 +1,36 @@
+<!DOCTYPE html>
+<html lang="mn">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Нэвтрэх — Dream Spark Admin</title>
+<meta name="robots" content="noindex">
+<link rel="icon" href="/images/site/logo.jpg">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Oswald:wght@400;500;600&family=Golos+Text:wght@400;500;600&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="/admin/css/admin.css">
+<script type="module" src="/admin/js/login.js"></script>
+</head>
+<body>
+<main class="login">
+  <form class="login-card" id="loginForm" autocomplete="on">
+    <img src="/images/site/logo.jpg" alt="Dream Spark Travel Agency">
+    <h1>Dream Spark</h1>
+    <p class="sub">Удирдлагын самбар</p>
+
+    <div id="loginAlert"></div>
+
+    <label class="field">
+      <span>Нэвтрэх нэр</span>
+      <input type="text" name="username" id="u" autocomplete="username" required autofocus>
+    </label>
+    <label class="field">
+      <span>Нууц үг</span>
+      <input type="password" name="password" id="p" autocomplete="current-password" required>
+    </label>
+    <button class="btn btn-pine btn-block" type="submit" id="loginBtn">Нэвтрэх</button>
+  </form>
+</main>
+</body>
+</html>

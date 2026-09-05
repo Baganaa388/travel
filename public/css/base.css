@@ -1,0 +1,174 @@
+/* ==========================================================================
+   base.css — design token, reset, бичвэр, товч, туслах анги
+   Үсэг: Oswald (гарчиг, mixed case) · Golos Text (бичвэр) · JetBrains Mono (зөвхөн тоо)
+   Өнгө: газар нутгаас — Говийн улаан хад, Хөвсгөлийн хөх, талын ногоон.
+         Логоны хар-ногоон нь шөнийн хэсэг, шар нар нь гол товч.
+   ========================================================================== */
+
+/* Монгол Ө/Ү баталгаатай локал fallback — интернэтгүй үед ажиллана */
+@font-face{font-family:'OS';font-style:normal;font-weight:300 800;font-display:swap;
+  src:url('../assets/fonts/open-sans-cyrillic-ext.woff2') format('woff2');
+  unicode-range:U+0460-052F,U+1C80-1C88,U+20B4,U+2DE0-2DFF,U+A640-A69F,U+FE2E-FE2F}
+@font-face{font-family:'OS';font-style:normal;font-weight:300 800;font-display:swap;
+  src:url('../assets/fonts/open-sans-cyrillic.woff2') format('woff2');
+  unicode-range:U+0301,U+0400-045F,U+0490-0491,U+04B0-04B1,U+2116}
+@font-face{font-family:'OS';font-style:normal;font-weight:300 800;font-display:swap;
+  src:url('../assets/fonts/open-sans-latin-ext.woff2') format('woff2');
+  unicode-range:U+0100-02BA,U+02BD-02C5,U+02C7-02CC,U+02CE-02D7,U+02DD-02FF,U+1E00-1E9F,U+2020,U+20A0-20AB,U+2113,U+2C60-2C7F,U+A720-A7FF}
+@font-face{font-family:'OS';font-style:normal;font-weight:300 800;font-display:swap;
+  src:url('../assets/fonts/open-sans-latin.woff2') format('woff2');
+  unicode-range:U+0000-00FF,U+0131,U+0152-0153,U+2000-206F,U+20AC,U+2122,U+2212,U+FEFF,U+FFFD}
+
+:root{
+  /* суурь */
+  --bg:#F8F6F1;
+  --bg-2:#EFEBE1;
+  --white:#FFFFFF;
+  --ink:#161C19;
+  --ink-2:#4B5550;
+  --ink-3:#8A938E;
+  --line:#E2DED4;
+  --line-2:#ECE9E1;
+
+  /* брэнд: Монголын хөх тэнгэр — гүн хөх, шөнийн хөх, тэнгэрийн цайвар хөх */
+  --pine:#1F3B63;
+  --pine-2:#2C5187;
+  --night:#0F1A2B;
+  --night-2:#172640;
+  --mint:#BFD6EE;
+  --mint-soft:#E4EDF7;
+  --sun:#F0B429;
+  --sun-deep:#C98F12;
+  --sun-soft:#FBEFD2;
+
+  /* нутгийн өнгө — газрын зураг, аяллын карт, шошго бүгд үүнийг дагана */
+  --gobi:#BF4E22;      --gobi-soft:#F5E1D7;
+  --lake:#1A8A8C;      --lake-soft:#DAEFEF;
+  --steppe:#3F7D52;    --steppe-soft:#DFEDE2;
+  --west:#6B6E8C;      --west-soft:#E5E5EE;
+
+  --disp:'Oswald','OS',system-ui,sans-serif;
+  --body:'Golos Text','OS',system-ui,sans-serif;
+  --mono:'Golos Text','OS',system-ui,sans-serif;
+
+  --gut:clamp(18px,4.4vw,56px);
+  --max:1280px;
+  --hd-h:68px;
+  --r:6px;
+  --r-lg:14px;
+  --shadow:0 12px 34px rgba(15,26,43,.08);
+  --shadow-lg:0 30px 70px rgba(15,26,43,.16);
+}
+/* Нутаг бүрийн өнгийг data-region-оор авна */
+[data-region="gobi"]{--rc:var(--gobi);--rs:var(--gobi-soft)}
+[data-region="khuvsgul"]{--rc:var(--lake);--rs:var(--lake-soft)}
+[data-region="tuv"]{--rc:var(--steppe);--rs:var(--steppe-soft)}
+[data-region="other"]{--rc:var(--west);--rs:var(--west-soft)}
+
+*{margin:0;padding:0;box-sizing:border-box}
+html{scroll-behavior:smooth;-webkit-text-size-adjust:100%;scroll-padding-top:calc(var(--hd-h) + 16px)}
+body{background:var(--bg);color:var(--ink);font-family:var(--body);font-size:16.5px;
+  font-weight:400;line-height:1.66;overflow-x:hidden;-webkit-font-smoothing:antialiased;
+  min-height:100svh;display:flex;flex-direction:column}
+main{flex:1 0 auto}
+img{display:block;max-width:100%}
+a{color:inherit;text-decoration:none}
+button,input,select,textarea{font:inherit;color:inherit}
+button{background:none;border:0;cursor:pointer}
+::selection{background:var(--sun-soft);color:var(--ink)}
+:focus-visible{outline:2px solid var(--sun-deep);outline-offset:3px;border-radius:2px}
+:lang(ko) body,:lang(ko) .h1,:lang(ko) .h2,:lang(ko) .h3{font-family:'Noto Sans KR',var(--body)}
+:lang(ko) .h1,:lang(ko) .h2{font-weight:700;letter-spacing:-.02em}
+
+/* ---- Layout ------------------------------------------------------------- */
+.wrap{max-width:var(--max);margin:0 auto;padding-inline:var(--gut)}
+.wrap-n{max-width:920px;margin:0 auto;padding-inline:var(--gut)}
+.sect{padding-block:clamp(56px,8vw,112px)}
+.sect-tight{padding-block:clamp(40px,5.4vw,72px)}
+.bg-paper{background:var(--bg-2)}
+.bg-white{background:var(--white)}
+.bg-night{background:var(--night);color:#fff}
+.sr-only{position:absolute;width:1px;height:1px;padding:0;margin:-1px;overflow:hidden;
+  clip:rect(0 0 0 0);white-space:nowrap;border:0}
+
+/* ---- Бичвэр ------------------------------------------------------------- */
+.h1{font-family:var(--disp);font-weight:500;line-height:1.0;letter-spacing:-.008em;
+  font-size:clamp(36px,5.6vw,72px);text-wrap:balance}
+.h2{font-family:var(--disp);font-weight:500;line-height:1.06;letter-spacing:-.006em;
+  font-size:clamp(28px,3.8vw,50px);text-wrap:balance}
+.h3{font-family:var(--disp);font-weight:500;line-height:1.14;letter-spacing:0;
+  font-size:clamp(20px,2.1vw,27px)}
+.h4{font-family:var(--disp);font-weight:500;line-height:1.2;font-size:18px}
+/* Жижиг шошго — sentence case, том үсэггүй */
+.mono,.label{font-family:var(--body);font-size:13.5px;font-weight:500;color:var(--ink-3);
+  letter-spacing:0;text-transform:none}
+.num{font-variant-numeric:tabular-nums}
+.lede{font-size:clamp(16px,1.3vw,18px);line-height:1.62;color:var(--ink-2);max-width:52ch}
+.muted{color:var(--ink-2)}
+.accent{color:var(--pine)}
+
+/* Хэсгийн гарчгийн өмнөх шар нар (логоны нар) */
+.dot-head{display:flex;align-items:baseline;gap:14px}
+.dot-head::before{content:"";flex:0 0 auto;width:9px;height:9px;border-radius:50%;
+  background:var(--sun);transform:translateY(-.3em);box-shadow:0 0 0 4px var(--sun-soft)}
+.bg-night .dot-head::before{box-shadow:0 0 0 4px rgba(240,180,41,.22)}
+.sect-head{display:flex;flex-wrap:wrap;align-items:flex-end;justify-content:space-between;
+  gap:12px 24px;margin-bottom:clamp(26px,3.6vw,48px)}
+.sect-head .lede{margin-top:12px}
+
+/* ---- Товч --------------------------------------------------------------- */
+.btn{display:inline-flex;align-items:center;justify-content:center;gap:10px;
+  font-family:var(--disp);font-weight:500;font-size:15px;letter-spacing:.03em;
+  padding:13px 24px;border-radius:var(--r);border:1px solid transparent;
+  transition:background .2s,color .2s,border-color .2s,transform .2s,box-shadow .2s}
+.btn:active{transform:translateY(1px)}
+.btn-sun{background:var(--sun);color:#1B1607}
+.btn-sun:hover{background:var(--sun-deep);color:#fff}
+.btn-pine{background:var(--pine);color:#fff}
+.btn-pine:hover{background:var(--night)}
+.btn-line{border-color:var(--line);color:var(--ink);background:var(--white)}
+.btn-line:hover{border-color:var(--ink)}
+.btn-ghost{border-color:rgba(255,255,255,.45);color:#fff;background:rgba(255,255,255,.06);
+  backdrop-filter:blur(6px);-webkit-backdrop-filter:blur(6px)}
+.btn-ghost:hover{background:rgba(255,255,255,.16);border-color:#fff}
+.btn-sm{padding:9px 16px;font-size:14px}
+.btn-block{width:100%}
+
+/* Заагч холбоос */
+.lnk-go{display:inline-flex;align-items:center;gap:8px;font-family:var(--disp);font-weight:500;
+  font-size:16px;color:var(--pine);padding-bottom:3px;border-bottom:1.5px solid var(--sun);
+  transition:color .2s,border-color .2s}
+.lnk-go:hover{color:var(--ink);border-color:var(--ink)}
+.bg-night .lnk-go{color:var(--mint)}
+.bg-night .lnk-go:hover{color:#fff;border-color:#fff}
+
+/* ---- Нутгийн шошго ------------------------------------------------------ */
+.rtag{display:inline-flex;align-items:center;gap:8px;font-size:13.5px;font-weight:500;
+  color:var(--rc,var(--pine));background:var(--rs,var(--mint-soft));border-radius:999px;
+  padding:5px 12px 5px 8px;line-height:1.3}
+.rtag::before{content:"";width:8px;height:8px;border-radius:50%;background:var(--rc,var(--pine))}
+.tag-row{display:flex;flex-wrap:wrap;gap:6px 16px;font-size:14px;color:var(--ink-2)}
+
+/* ---- Илрэх хөдөлгөөн (зөөлөн, богино) ----------------------------------- */
+.rv{opacity:0;transform:translateY(14px);transition:opacity .5s ease,transform .5s ease}
+.rv.in{opacity:1;transform:none}
+.rv-stg>*{opacity:0;transform:translateY(12px);transition:opacity .45s ease,transform .45s ease}
+.rv-stg.in>*{opacity:1;transform:none}
+.rv-stg.in>*:nth-child(2){transition-delay:.06s}
+.rv-stg.in>*:nth-child(3){transition-delay:.12s}
+.rv-stg.in>*:nth-child(4){transition-delay:.18s}
+
+[data-lang-hide]{display:none}
+
+/* ---- Ачаалж буй / хоосон төлөв ------------------------------------------ */
+.state{padding:34px 0;text-align:center;color:var(--ink-3);font-size:14.5px}
+.skel{background:linear-gradient(90deg,var(--bg-2) 25%,var(--line-2) 37%,var(--bg-2) 63%);
+  background-size:400% 100%;animation:skel 1.4s ease infinite;border-radius:var(--r)}
+@keyframes skel{0%{background-position:100% 50%}100%{background-position:0 50%}}
+
+@media(prefers-reduced-motion:reduce){
+  *{animation-duration:.001ms!important;animation-iteration-count:1!important;
+    transition-duration:.001ms!important}
+  html{scroll-behavior:auto}
+  .rv,.rv-stg>*{opacity:1!important;transform:none!important}
+}

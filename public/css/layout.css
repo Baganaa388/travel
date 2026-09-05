@@ -1,0 +1,105 @@
+/* ==========================================================================
+   layout.css — толгой, цэс, хэл сэлгэгч, хөл, төгсгөлийн уриалга
+   ========================================================================== */
+
+/* ---- Толгой ------------------------------------------------------------- */
+.hd{position:sticky;top:0;z-index:60;background:rgba(248,246,241,.9);
+  backdrop-filter:blur(14px);-webkit-backdrop-filter:blur(14px);
+  border-bottom:1px solid var(--line);transition:background .3s,border-color .3s}
+/* Зурган дээр (нүүр, аяллын дэлгэрэнгүй) — эхэндээ тунгалаг */
+body.hd-over .hd{background:transparent;border-bottom-color:transparent}
+body.hd-over .hd .brand-name,
+body.hd-over .hd .nav a,
+body.hd-over .hd .lang button{color:#fff}
+body.hd-over .hd .burger span{background:#fff}
+body.hd-over .hd .brand-sub{color:rgba(255,255,255,.62)}
+body.hd-over.hd-solid .hd{background:rgba(248,246,241,.92);border-bottom-color:var(--line)}
+body.hd-over.hd-solid .hd .brand-name,
+body.hd-over.hd-solid .hd .nav a,
+body.hd-over.hd-solid .hd .lang button{color:var(--ink)}
+body.hd-over.hd-solid .hd .brand-sub{color:var(--ink-3)}
+body.hd-over.hd-solid .hd .burger span{background:var(--ink)}
+
+.hd-in{display:flex;align-items:center;gap:16px;min-height:var(--hd-h)}
+
+.brand{display:flex;align-items:center;gap:12px;flex-shrink:0}
+.brand img{width:38px;height:38px;border-radius:50%;object-fit:cover;flex:0 0 auto;
+  box-shadow:0 0 0 1px rgba(22,28,25,.08)}
+.brand-name{font-family:var(--body);font-weight:500;font-size:16px;letter-spacing:0;
+  line-height:1.05;white-space:nowrap;color:var(--ink);transition:color .3s}
+.brand-sub{display:block;font-family:var(--body);font-size:11px;font-weight:400;
+  letter-spacing:.04em;color:var(--ink-3);transition:color .3s;margin-top:2px}
+
+.nav{margin-left:auto;display:flex;align-items:center;gap:clamp(14px,2.2vw,32px)}
+.nav a{font-family:var(--body);font-weight:400;font-size:15.5px;letter-spacing:0;
+  color:var(--ink);padding:6px 0;position:relative;transition:color .2s}
+.nav a::after{content:"";position:absolute;left:0;right:0;bottom:0;height:2px;
+  background:var(--sun);transform:scaleX(0);transform-origin:left;transition:transform .25s}
+.nav a:hover::after,.nav a.on::after{transform:scaleX(1)}
+body.hd-over:not(.hd-solid) .nav a:hover{color:#fff}
+
+.lang{display:flex;border:1px solid var(--line);border-radius:999px;overflow:hidden;
+  flex:0 0 auto;padding:3px;gap:2px;background:rgba(255,255,255,.5)}
+body.hd-over:not(.hd-solid) .lang{border-color:rgba(255,255,255,.3);background:rgba(255,255,255,.08)}
+.lang button{font-family:var(--body);font-size:12.5px;font-weight:400;letter-spacing:.02em;
+  padding:5px 10px;border-radius:999px;color:var(--ink-2);transition:background .2s,color .2s}
+.lang button:hover{color:var(--ink)}
+.lang button.on{background:var(--ink);color:#fff}
+body.hd-over:not(.hd-solid) .lang button.on{background:var(--sun);color:#1B1607}
+
+.burger{display:none;flex-direction:column;justify-content:center;gap:5px;
+  width:38px;height:38px;padding:8px 6px;flex:0 0 auto}
+.burger span{display:block;height:1.7px;background:var(--ink);border-radius:2px;
+  transition:transform .25s,opacity .2s,background .3s}
+.burger[aria-expanded="true"] span:nth-child(1){transform:translateY(6.7px) rotate(45deg)}
+.burger[aria-expanded="true"] span:nth-child(2){opacity:0}
+.burger[aria-expanded="true"] span:nth-child(3){transform:translateY(-6.7px) rotate(-45deg)}
+
+@media(max-width:900px){
+  .burger{display:flex}
+  .nav{position:absolute;left:0;right:0;top:100%;flex-direction:column;align-items:stretch;
+    gap:0;background:var(--bg);border-bottom:1px solid var(--line);
+    padding:6px var(--gut) 16px;margin-left:auto;box-shadow:var(--shadow);display:none}
+  .nav.open{display:flex}
+  .nav a{padding:14px 0;font-size:17px;border-bottom:1px solid var(--line-2);color:var(--ink)!important}
+  .nav a::after{display:none}
+  .nav a.on{color:var(--pine)!important}
+  .lang{margin-left:auto}
+  .brand-sub{display:none}
+}
+
+/* ---- Хөл --------------------------------------------------------------- */
+.ft{background:var(--night);color:#C9D4E2;padding-block:clamp(48px,6vw,80px) clamp(24px,3vw,36px);
+  margin-top:auto}
+.ft a{color:#DCE5F0;transition:color .2s}
+.ft a:hover{color:var(--sun)}
+.ft-in{display:grid;grid-template-columns:1fr;gap:32px}
+.ft .brand-name{color:#fff}
+.ft .brand-sub{color:rgba(255,255,255,.5)}
+.ft h4{font-family:var(--disp);font-size:15px;font-weight:500;color:var(--mint);margin-bottom:14px}
+.ft p,.ft .lnk{display:block;font-size:15px;margin-bottom:8px;color:rgba(220,229,240,.86)}
+.ft-tag{font-size:15px;color:rgba(220,229,240,.7);max-width:34ch;margin-top:16px;line-height:1.6}
+.ft-note{margin-top:44px;padding-top:20px;border-top:1px solid rgba(255,255,255,.12);
+  display:flex;flex-wrap:wrap;gap:12px 24px;justify-content:space-between;
+  font-size:13px;color:rgba(255,255,255,.45)}
+@media(min-width:720px){.ft-in{grid-template-columns:repeat(3,1fr)}}
+@media(min-width:1040px){.ft-in{grid-template-columns:1.6fr 1fr 1fr 1fr}}
+
+/* ---- Төгсгөлийн уриалга ------------------------------------------------- */
+.cta{background:var(--night);color:#fff;border-radius:var(--r-lg);overflow:hidden;position:relative;
+  padding:clamp(32px,5.4vw,68px)}
+.cta::before{content:"";position:absolute;top:-34%;right:-8%;width:min(56vw,460px);aspect-ratio:1;
+  border-radius:50%;pointer-events:none;
+  background:radial-gradient(circle,rgba(240,180,41,.38) 0%,rgba(240,180,41,0) 68%)}
+.cta-in{position:relative;z-index:1;display:grid;gap:26px;align-items:center}
+@media(min-width:860px){.cta-in{grid-template-columns:minmax(0,1fr) auto;gap:48px}}
+.cta h2{color:#fff;max-width:20ch}
+.cta p{color:rgba(255,255,255,.78);margin-top:14px;max-width:54ch;font-size:16px}
+.cta .btn-line{background:transparent;border-color:rgba(255,255,255,.4);color:#fff}
+.cta .btn-line:hover{border-color:#fff;background:rgba(255,255,255,.1)}
+.cta-acts{display:flex;flex-wrap:wrap;gap:12px}
+
+/* ---- Хуудасны толгой (энгийн хуудсууд) --------------------------------- */
+.page-head{padding-block:clamp(30px,4.2vw,52px) clamp(18px,2.6vw,30px)}
+.page-head h1{max-width:18ch;margin-top:10px}
+.page-head .lede{margin-top:12px}

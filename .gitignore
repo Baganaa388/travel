@@ -1,0 +1,18 @@
+node_modules/
+dist/
+.env
+.env.local
+server/data/
+server/uploads/*
+!server/uploads/.gitkeep
+*.log
+.DS_Store
+Thumbs.db
+ref/
+*.zip
+shots/
+# Claude Code-той ажиллах заавар (локал)
+Claude.md
+CLAUDE.md
+*.png
+!public/**/*.png

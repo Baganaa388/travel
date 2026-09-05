@@ -1,0 +1,196 @@
+<!DOCTYPE html>
+<html lang="mn">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Dream Spark Travel — Монголын нутгийн аялалын компани</title>
+<meta name="description" content="Яарсан хуваарь биш, жинхэнэ амралт. Өдөрт нэг, хоёрхон гол цэг. Говь, Хөвсгөл, Тэрэлж. Солонгос хэлтэй нутгийн хөтөч.">
+<link rel="icon" href="/images/site/logo.jpg">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Oswald:wght@400;500&family=Golos+Text:wght@400;500&family=Noto+Sans+KR:wght@400;700&display=swap" rel="stylesheet">
+<link rel="preload" as="image" href="/images/gallery/cliffs-04.jpg" fetchpriority="high">
+<link rel="stylesheet" href="/css/base.css">
+<link rel="stylesheet" href="/css/layout.css">
+<link rel="stylesheet" href="/css/home.css">
+<link rel="stylesheet" href="/css/gallery.css">
+<script type="module" src="/js/pages/home.js"></script>
+</head>
+<body class="hd-over">
+
+<header class="hd">
+  <div class="wrap hd-in">
+    <a class="brand" href="/">
+      <img src="/images/site/logo.jpg" data-c="logo" alt="Dream Spark Travel Agency" width="38" height="38">
+      <span class="brand-name">Dream Spark<span class="brand-sub">Travel Agency</span></span>
+    </a>
+    <nav class="nav" id="nav">
+      <a href="/" data-en="Home" data-kr="홈">Нүүр</a>
+      <a href="/tours" data-en="Tours" data-kr="투어">Аялал</a>
+      <a href="/gallery" data-en="Gallery" data-kr="갤러리">Зургийн цомог</a>
+      <a href="/about" data-en="About us" data-kr="소개">Бидний тухай</a>
+      <a href="/contact" data-en="Contact" data-kr="문의">Холбоо барих</a>
+    </nav>
+    <div class="lang" role="group" aria-label="Хэл сонгох">
+      <button type="button" data-lang="mn" aria-pressed="true">MN</button>
+      <button type="button" data-lang="en" aria-pressed="false">EN</button>
+      <button type="button" data-lang="kr" aria-pressed="false">KR</button>
+    </div>
+    <button class="burger" id="burger" type="button" aria-label="Цэс" aria-expanded="false" aria-controls="nav">
+      <span></span><span></span><span></span>
+    </button>
+  </div>
+</header>
+
+<main>
+
+  <!-- ===== НҮҮР ===== -->
+  <section class="hero">
+    <div class="hero-img">
+      <img src="/images/gallery/cliffs-04.jpg" alt="Баянзаг — Говийн улаан хад" fetchpriority="high">
+    </div>
+    <div class="hero-sun" aria-hidden="true"></div>
+    <div class="hero-veil"></div>
+    <div class="hero-in">
+      <div class="wrap">
+        <h1 class="h1">
+          <span data-en="Not a packed schedule." data-kr="빡센 일정은 그만.">Яарсан хуваарь биш.</span><br>
+          <em data-en="A real rest." data-kr="진짜 힐링.">Жинхэнэ амралт.</em>
+        </h1>
+        <p class="lede"
+           data-en="One or two stops a day. A Korean-speaking guide."
+           data-kr="하루 1~2곳. 한국어 가능한 가이드.">Өдөрт нэг, хоёр цэг. Солонгос хэлтэй хөтөч.</p>
+        <div class="hero-acts">
+          <a class="btn btn-sun" href="/tours" data-en="See the three tours" data-kr="세 가지 투어 보기">Гурван аяллыг үзэх</a>
+          <a class="btn btn-ghost" href="/contact" data-en="Message us" data-kr="문의하기">Бидэн рүү бичих</a>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ===== ГУРВАН АЯЛАЛ ===== -->
+  <section class="sect bg-white">
+    <div class="wrap">
+      <div class="sect-head">
+        <div>
+          <h2 class="h2 dot-head" data-en="Three tours" data-kr="세 가지 투어">Гурван аялал</h2>
+        </div>
+        <a class="lnk-go" href="/tours" data-en="All tours" data-kr="투어 전체">Бүгдийг үзэх</a>
+      </div>
+      <div class="tour-grid rv-stg" id="tourGrid">
+        <p class="state">Ачаалж байна…</p>
+      </div>
+    </div>
+  </section>
+
+  <!-- ===== МОНГОЛ УЛС — НУТГААР (газрын зурагтай цомог) ===== -->
+  <section class="sect bg-white">
+    <div class="wrap gal" id="gal">
+      <div class="sect-head">
+        <div>
+          <h2 class="h2 dot-head" data-en="Mongolia, region by region" data-kr="지역별로 보는 몽골">Монгол улс, нутаг нутгаараа</h2>
+        </div>
+        <a class="lnk-go" href="/gallery" data-en="Full album" data-kr="전체 앨범">Бүтэн цомог</a>
+      </div>
+
+      <div class="gal-filter" id="galFilter" role="group" aria-label="Нутгаар шүүх"></div>
+      <p class="state" id="galState">Ачаалж байна…</p>
+      <div class="mn-stage" aria-label="Монгол улсын газрын зураг"></div>
+      <div class="gal-album" id="galAlbum"></div>
+    </div>
+  </section>
+
+  <!-- ===== ТОВЧ МЭДЭЭЛЭЛ ===== -->
+  <section class="sect">
+    <div class="wrap">
+      <div class="sect-head">
+        <h2 class="h2 dot-head" data-en="Good to know" data-kr="알아두면 좋은 것">Мэдэх зүйл</h2>
+      </div>
+      <dl class="facts rv-stg">
+        <div>
+          <dt data-en="Getting here" data-kr="오시는 길">Ирэх зам</dt>
+          <dd data-en="Three hours by air from Seoul or Incheon, and a completely different world at the other end."
+              data-kr="서울·인천에서 비행기로 단 3시간. 하지만 전혀 다른 세상이 펼쳐집니다.">Сөүл, Инчеоноос гурван цагийн нислэг. Гэхдээ буухад тэс өөр ертөнц.</dd>
+        </div>
+        <div>
+          <dt data-en="Visa" data-kr="비자">Виз</dt>
+          <dd data-en="Korean, Japanese and Kazakh passports enter visa-free for 30 days. For other passports we prepare the invitation."
+              data-kr="한국·일본·카자흐스탄 여권은 30일 무비자입니다. 그 외 여권은 초청장을 준비해 드립니다.">Солонгос, Япон, Казахстаны паспорттай зорчигчид 30 хоног визгүй. Бусад паспортад урилга бэлдэж өгнө.</dd>
+        </div>
+        <div>
+          <dt data-en="Season" data-kr="시즌">Улирал</dt>
+          <dd data-en="May to September for the Gobi and Khövsgöl. Terelj works from May into October."
+              data-kr="고비·홉스골은 5~9월. 테를지는 5~10월까지 가능합니다.">Говь, Хөвсгөл 5–9 сар. Тэрэлж 5–10 сар хүртэл.</dd>
+        </div>
+        <div>
+          <dt data-en="Weather" data-kr="날씨">Цаг агаар</dt>
+          <dd data-en="June to August: 25–30°C by day and 5–10°C at night. A warm jacket is not optional."
+              data-kr="6~8월 낮 25~30도, 밤 5~10도. 따뜻한 겉옷은 꼭 챙기세요.">6–8 сард өдөр 25–30, шөнө 5–10 хэм. Дулаан хүрэм заавал хэрэгтэй.</dd>
+        </div>
+      </dl>
+    </div>
+  </section>
+
+  <!-- ===== УРИАЛГА ===== -->
+  <section class="sect-tight">
+    <div class="wrap">
+      <div class="cta rv">
+        <div class="cta-in">
+          <div>
+            <h2 class="h2" data-en="Have a question? Just ask." data-kr="궁금한 점, 편하게 물어보세요">Асуух зүйл байвал шууд бичээрэй</h2>
+            <p data-en="KakaoTalk, Instagram or the Naver blog. No forms."
+               data-kr="카카오톡·인스타그램·네이버 블로그. 양식은 없습니다.">KakaoTalk, Instagram, Naver блог. Маягт байхгүй.</p>
+          </div>
+          <div class="cta-acts">
+            <a class="btn btn-sun" href="/contact" data-en="Message us" data-kr="문의하기">Бидэн рүү бичих</a>
+            <a class="btn btn-line" href="/tours" data-en="See the tours" data-kr="투어 보기">Аяллыг үзэх</a>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+</main>
+
+<footer class="ft">
+  <div class="wrap">
+    <div class="ft-in">
+      <div>
+        <a class="brand" href="/">
+          <img src="/images/site/logo.jpg" data-c="logo" alt="" width="38" height="38">
+          <span class="brand-name">Dream Spark<span class="brand-sub">Travel Agency</span></span>
+        </a>
+        <p class="ft-tag" data-en="A travel company run locally in Mongolia. Gobi, Khövsgöl, Terelj."
+           data-kr="몽골 현지에서 운영하는 여행사. 고비·홉스골·테를지.">Монголд өөрсдөө үйл ажиллагаа явуулдаг аялалын компани. Говь, Хөвсгөл, Тэрэлж.</p>
+      </div>
+      <div>
+        <h4 data-en="Contact" data-kr="연락처">Холбоо барих</h4>
+        <a class="lnk" data-c="kakao" href="#"></a>
+        <a class="lnk" data-c="instagram" href="#"></a>
+        <a class="lnk" data-c="naver" href="#"></a>
+        <a class="lnk" data-c="phone" href="#"></a>
+        <a class="lnk" data-c="email" href="#"></a>
+      </div>
+      <div>
+        <h4 data-en="Pages" data-kr="페이지">Хуудас</h4>
+        <a class="lnk" href="/" data-en="Home" data-kr="홈">Нүүр</a>
+        <a class="lnk" href="/tours" data-en="Tours" data-kr="투어">Аялал</a>
+        <a class="lnk" href="/gallery" data-en="Gallery" data-kr="갤러리">Зургийн цомог</a>
+        <a class="lnk" href="/about" data-en="About us" data-kr="소개">Бидний тухай</a>
+      </div>
+      <div>
+        <h4 data-en="Office hours" data-kr="운영 시간">Ажлын цаг</h4>
+        <p data-c="hours"></p>
+        <p data-c="address"></p>
+      </div>
+    </div>
+    <div class="ft-note">
+      <span>© <span data-year>2026</span> Dream Spark Travel Agency</span>
+      <span data-en="Ulaanbaatar, Mongolia" data-kr="몽골 울란바토르">Улаанбаатар, Монгол</span>
+    </div>
+  </div>
+</footer>
+
+
+</body>
+</html>
