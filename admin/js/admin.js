@@ -1,5 +1,6 @@
 /* ==========================================================================
    admin.js — удирдлагын самбар (цэвэр URL, History API)
+   Хэсгүүд: Хяналт · Аялал (ангилал + аялал) · Зургийн цомог · Тохиргоо (сайт + хөл)
    Бүх бичвэрийг textContent-ээр байрлуулна. Бичих хүсэлт бүр CSRF токентой.
    ========================================================================== */
 
@@ -101,45 +102,67 @@ function confirmDialog(title, text, okLabel = 'Устгах') {
   });
 }
 
-/** Цомгоос зураг сонгох цонх. Сонгосон зургийн замыг буцаана. */
-async function pickFromGallery() {
-  let photos = [];
+const thumbOf = (src) =>
+  src
+    .replace('/images/gallery/', '/images/gallery/thumbs/')
+    .replace('/images/tours/', '/images/tours/thumbs/');
+
+function thumbImg(src, alt = '') {
+  return el('img', {
+    src: thumbOf(src),
+    alt,
+    loading: 'lazy',
+    onerror: (e) => {
+      e.target.onerror = null;
+      e.target.src = src;
+    },
+  });
+}
+
+/** Сайтад байгаа зургуудаас (цомог + аяллын зураг) сонгох цонх. Замыг буцаана. */
+async function pickImage() {
+  let items = [];
   try {
-    photos = (await api('/gallery')).photos;
+    const [{ photos }, { tours }] = await Promise.all([api('/gallery'), api('/tours')]);
+    const seen = new Set();
+    for (const t of tours) {
+      for (const src of t.images || []) {
+        if (seen.has(src)) continue;
+        seen.add(src);
+        items.push({ src, label: t.title_kr });
+      }
+    }
+    for (const p of photos) {
+      if (seen.has(p.image)) continue;
+      seen.add(p.image);
+      items.push({ src: p.image, label: p.place_kr || p.image.split('/').pop() });
+    }
   } catch (err) {
     toast(err.message, 'err');
     return null;
   }
   return new Promise((resolve) => {
     const m = $('#modal');
-    $('#modalTitle').textContent = 'Цомгоос зураг сонгох';
-    $('#modalText').textContent = `${photos.length} зураг. Дарж сонгоно уу.`;
+    $('#modalTitle').textContent = 'Зураг сонгох';
+    $('#modalText').textContent = `${items.length} зураг. Дарж сонгоно уу.`;
     $('#modalYes').hidden = true;
     $('#modalCard').classList.add('wide');
 
     const grid = el(
       'div',
       { class: 'pick-grid' },
-      photos.map((p) =>
+      items.map((p) =>
         el(
           'button',
           {
             type: 'button',
             onclick: () => {
               closeModal();
-              resolve(p.image);
+              resolve(p.src);
             },
           },
-          el('img', {
-            src: p.image.replace('/images/gallery/', '/images/gallery/thumbs/'),
-            alt: '',
-            loading: 'lazy',
-            onerror: (e) => {
-              e.target.onerror = null;
-              e.target.src = p.image;
-            },
-          }),
-          el('span', { text: p.place_mn || p.image.split('/').pop() })
+          thumbImg(p.src),
+          el('span', { text: p.label })
         )
       )
     );
@@ -157,18 +180,43 @@ async function pickFromGallery() {
   });
 }
 
-/* ---- Зургийн талбар ----------------------------------------------------- */
-/** Зураг сонгох/байршуулах бүрэн хэсэг. form.elements[name]-аар утга нь уншигдана. */
+async function uploadFile(f) {
+  const fd = new FormData();
+  fd.append('file', f);
+  const { url } = await api('/upload', { method: 'POST', form: fd });
+  return url;
+}
+
+function dropZone(box, onFiles) {
+  for (const ev of ['dragenter', 'dragover']) {
+    box.addEventListener(ev, (e) => {
+      e.preventDefault();
+      box.classList.add('drag');
+    });
+  }
+  for (const ev of ['dragleave', 'dragend'])
+    box.addEventListener(ev, () => box.classList.remove('drag'));
+  box.addEventListener('drop', (e) => {
+    e.preventDefault();
+    box.classList.remove('drag');
+    onFiles([...(e.dataTransfer?.files || [])]);
+  });
+}
+
+/* ---- Зургийн талбар (нэг зураг) ---------------------------------------- */
 function imageField(label, name, value = '') {
-  const input = el('input', { type: 'text', name, value, placeholder: '/images/… эсвэл /uploads/…' });
+  const input = el('input', {
+    type: 'text',
+    name,
+    value,
+    placeholder: '/images/… эсвэл /uploads/…',
+  });
 
   const prevBox = el('div', { class: 'prev' });
   const paint = () => {
     const v = input.value.trim();
     prevBox.replaceChildren(
-      v
-        ? el('img', { src: v, alt: '' })
-        : el('span', { class: 'none', text: 'Зураг алга' })
+      v ? el('img', { src: v, alt: '' }) : el('span', { class: 'none', text: 'Зураг алга' })
     );
   };
   input.addEventListener('input', paint);
@@ -178,15 +226,10 @@ function imageField(label, name, value = '') {
     accept: 'image/jpeg,image/png,image/webp,image/avif',
     hidden: true,
   });
-
   async function upload(f) {
     if (!f) return;
-    const fd = new FormData();
-    fd.append('file', f);
-    box.classList.remove('drag');
     try {
-      const { url } = await api('/upload', { method: 'POST', form: fd });
-      input.value = url;
+      input.value = await uploadFile(f);
       paint();
       toast('Зураг байршууллаа');
     } catch (err) {
@@ -200,22 +243,25 @@ function imageField(label, name, value = '') {
   const ops = el(
     'div',
     { class: 'ops' },
-    el('button', { class: 'btn btn-pine btn-sm', type: 'button', onclick: () => file.click() },
-      'Компьютерээс байршуулах'),
+    el(
+      'button',
+      { class: 'btn btn-pine btn-sm', type: 'button', onclick: () => file.click() },
+      'Компьютерээс байршуулах'
+    ),
     el(
       'button',
       {
         class: 'btn btn-line btn-sm',
         type: 'button',
         onclick: async () => {
-          const url = await pickFromGallery();
+          const url = await pickImage();
           if (url) {
             input.value = url;
             paint();
           }
         },
       },
-      'Цомгоос сонгох'
+      'Сайтаас сонгох'
     ),
     el(
       'button',
@@ -240,27 +286,163 @@ function imageField(label, name, value = '') {
       { class: 'if-side' },
       ops,
       input,
-      el('span', { class: 'hint', text: 'Зургаа энд чирж оруулж болно · JPG, PNG, WebP · 6 МБ хүртэл' })
+      el('span', {
+        class: 'hint',
+        text: 'Зургаа энд чирж оруулж болно · JPG, PNG, WebP · 6 МБ хүртэл',
+      })
     ),
     file
   );
-
-  for (const ev of ['dragenter', 'dragover']) {
-    box.addEventListener(ev, (e) => {
-      e.preventDefault();
-      box.classList.add('drag');
-    });
-  }
-  for (const ev of ['dragleave', 'dragend']) {
-    box.addEventListener(ev, () => box.classList.remove('drag'));
-  }
-  box.addEventListener('drop', (e) => {
-    e.preventDefault();
-    upload(e.dataTransfer?.files?.[0]);
-  });
-
+  dropZone(box, (files) => upload(files[0]));
   paint();
   return el('div', { class: 'field' }, el('span', { text: label }), box);
+}
+
+/* ---- Олон зургийн талбар (аяллын зургууд) ------------------------------ */
+/** Буцаасан элемент дээр `.values()` дуудвал замуудын массив өгнө. */
+function imagesField(label, values = []) {
+  let list = [...values];
+  const rows = el('div', { class: 'imgs' });
+
+  const paint = () => {
+    rows.replaceChildren(
+      ...list.map((src, i) =>
+        el(
+          'div',
+          { class: 'imgs-row' },
+          el('div', { class: 'prev' }, thumbImg(src)),
+          el('input', {
+            type: 'text',
+            value: src,
+            oninput: (e) => {
+              list[i] = e.target.value.trim();
+            },
+          }),
+          el('span', { class: 'mono', text: i === 0 ? 'Нүүр' : '' }),
+          el(
+            'button',
+            {
+              class: 'btn btn-line btn-sm',
+              type: 'button',
+              title: 'Дээш',
+              disabled: i === 0,
+              onclick: () => {
+                [list[i - 1], list[i]] = [list[i], list[i - 1]];
+                paint();
+              },
+            },
+            '↑'
+          ),
+          el(
+            'button',
+            {
+              class: 'btn btn-line btn-sm',
+              type: 'button',
+              title: 'Доош',
+              disabled: i === list.length - 1,
+              onclick: () => {
+                [list[i + 1], list[i]] = [list[i], list[i + 1]];
+                paint();
+              },
+            },
+            '↓'
+          ),
+          el(
+            'button',
+            {
+              class: 'btn btn-danger btn-sm',
+              type: 'button',
+              onclick: () => {
+                list.splice(i, 1);
+                paint();
+              },
+            },
+            'Хасах'
+          )
+        )
+      ),
+      ...(list.length ? [] : [el('p', { class: 'empty', text: 'Зураг алга' })])
+    );
+  };
+
+  const file = el('input', {
+    type: 'file',
+    multiple: true,
+    accept: 'image/jpeg,image/png,image/webp,image/avif',
+    hidden: true,
+  });
+  async function upload(files) {
+    for (const f of files) {
+      try {
+        list.push(await uploadFile(f));
+        paint();
+      } catch (err) {
+        toast(err.message, 'err');
+      }
+    }
+    file.value = '';
+    if (files.length) toast('Зураг байршууллаа');
+  }
+  file.addEventListener('change', () => upload([...(file.files || [])]));
+
+  const ops = el(
+    'div',
+    { class: 'ops' },
+    el(
+      'button',
+      { class: 'btn btn-pine btn-sm', type: 'button', onclick: () => file.click() },
+      'Компьютерээс байршуулах'
+    ),
+    el(
+      'button',
+      {
+        class: 'btn btn-line btn-sm',
+        type: 'button',
+        onclick: async () => {
+          const url = await pickImage();
+          if (url) {
+            list.push(url);
+            paint();
+          }
+        },
+      },
+      'Сайтаас сонгох'
+    ),
+    el(
+      'button',
+      {
+        class: 'btn btn-line btn-sm',
+        type: 'button',
+        onclick: () => {
+          list.push('');
+          paint();
+          rows.querySelector('.imgs-row:last-child input')?.focus();
+        },
+      },
+      'Замаар нэмэх'
+    )
+  );
+
+  const box = el(
+    'div',
+    { class: 'imgfield imgfield-multi' },
+    el(
+      'div',
+      { class: 'if-side' },
+      ops,
+      rows,
+      el('span', {
+        class: 'hint',
+        text: 'Эхний зураг нь карт дээр харагдана · олон зураг чирж оруулж болно',
+      })
+    ),
+    file
+  );
+  dropZone(box, upload);
+  paint();
+  const wrap = el('div', { class: 'field' }, el('span', { text: label }), box);
+  wrap.values = () => list.map((s) => s.trim()).filter(Boolean);
+  return wrap;
 }
 
 /* ---- Хэлбэрийн туслах --------------------------------------------------- */
@@ -283,23 +465,24 @@ const select = (name, options, value) =>
   el(
     'select',
     { name },
-    options.map((o) => el('option', { value: o.value, selected: o.value === value }, o.label))
+    options.map((o) =>
+      el('option', { value: o.value, selected: String(o.value) === String(value) }, o.label)
+    )
   );
 
-/** Гурван хэлний талбар (MN/EN/KR) */
-function i18nFields(labelBase, prefix, row, kind = 'input') {
+/** Хоёр хэлний талбар (KR / EN). row нь {x_kr, x_en} эсвэл {kr, en}. */
+function i18nFields(labelBase, prefix, row, kind = 'input', rows = 4) {
   const make = (suffix) => {
     const v = row?.[`${prefix}_${suffix}`] ?? row?.[suffix] ?? '';
     return kind === 'textarea'
-      ? textarea(`${prefix}_${suffix}`, v, { rows: 4 })
+      ? textarea(`${prefix}_${suffix}`, v, { rows })
       : input(`${prefix}_${suffix}`, v);
   };
   return el(
     'div',
-    { class: 'row row-3' },
-    field(`${labelBase} · MN`, make('mn')),
-    field(`${labelBase} · EN`, make('en')),
-    field(`${labelBase} · KR`, make('kr'))
+    { class: 'row row-2' },
+    field(`${labelBase} · KR`, make('kr')),
+    field(`${labelBase} · EN`, make('en'))
   );
 }
 
@@ -308,6 +491,7 @@ const num = (form, name, d = 0) => {
   const n = Number(form.elements[name]?.value);
   return Number.isFinite(n) ? n : d;
 };
+const i18nOf = (form, prefix) => ({ kr: val(form, `${prefix}_kr`), en: val(form, `${prefix}_en`) });
 
 function showErrors(form, details) {
   for (const f of form.querySelectorAll('.field.err')) {
@@ -329,6 +513,9 @@ const REGION_COLOR = { gobi: '#D9930F', khuvsgul: '#20463A', tuv: '#8FBBAA', oth
 const regionOptions = () =>
   Object.entries(REGION_LABEL).map(([value, label]) => ({ value, label }));
 
+const statusChip = (on) =>
+  el('span', { class: `chip ${on ? 'chip-on' : 'chip-off'}`, text: on ? 'Идэвхтэй' : 'Нуусан' });
+
 /* ==========================================================================
    1. Хяналтын самбар
    ========================================================================== */
@@ -347,10 +534,10 @@ async function viewDashboard() {
   const { stats, byRegion, missing, recent } = await api('/stats');
 
   const cards = [
-    { k: 'Идэвхтэй аялал', v: stats.toursActive, s: `нийт ${stats.tours}` },
+    { k: 'Ангилал', v: stats.categoriesActive, s: `нийт ${stats.categories}` },
+    { k: 'Аялал', v: stats.toursActive, s: `нийт ${stats.tours}` },
     { k: 'Харагдах зураг', v: stats.photosActive, s: `нийт ${stats.photos}` },
-    { k: 'Онцлох мөч', v: stats.highlights, s: 'аяллуудад' },
-    { k: 'Орчуулга дутуу', v: missing.length, s: 'аялал', warn: missing.length > 0 },
+    { k: 'Англи орчуулга дутуу', v: missing.length, s: 'аялал', warn: missing.length > 0 },
   ];
 
   const statsBox = el(
@@ -367,7 +554,6 @@ async function viewDashboard() {
     )
   );
 
-  /* Зургийн бүсийн харьцаа */
   const total = byRegion.reduce((a, b) => a + b.n, 0) || 1;
   let acc = 0;
   const slices = byRegion
@@ -381,7 +567,7 @@ async function viewDashboard() {
   const donut = el(
     'div',
     { class: 'card' },
-    el('div', { class: 'card-h' }, el('h2', { text: 'Зураг — нутгаар' })),
+    el('div', { class: 'card-h' }, el('h2', { text: 'Цомгийн зураг — нутгаар' })),
     el(
       'div',
       { class: 'card-b' },
@@ -422,7 +608,11 @@ async function viewDashboard() {
             el(
               'thead',
               {},
-              el('tr', {}, ['Аялал', 'Дутуу хэл', ''].map((h) => el('th', { text: h })))
+              el(
+                'tr',
+                {},
+                ['Аялал', 'Дутуу', ''].map((h) => el('th', { text: h }))
+              )
             ),
             el(
               'tbody',
@@ -431,14 +621,8 @@ async function viewDashboard() {
                 el(
                   'tr',
                   {},
-                  el('td', {}, el('strong', { text: t.title_mn })),
-                  el(
-                    'td',
-                    {},
-                    t.en_gap && el('span', { class: 'chip chip-new', text: 'EN' }),
-                    ' ',
-                    t.kr_gap && el('span', { class: 'chip chip-new', text: 'KR' })
-                  ),
+                  el('td', {}, el('strong', { text: t.title_kr })),
+                  el('td', {}, el('span', { class: 'chip chip-new', text: 'EN' })),
                   el(
                     'td',
                     { class: 'act' },
@@ -448,7 +632,7 @@ async function viewDashboard() {
               )
             )
           )
-        : el('p', { class: 'empty', text: 'Бүх аялал гурван хэлээр бүрэн' })
+        : el('p', { class: 'empty', text: 'Бүх аялал хоёр хэлээр бүрэн' })
     )
   );
 
@@ -463,15 +647,20 @@ async function viewDashboard() {
         ? el(
             'table',
             { class: 'tbl' },
-            el('tbody', {},
+            el(
+              'tbody',
+              {},
               recent.map((t) =>
                 el(
                   'tr',
                   {},
-                  el('td', {}, el('strong', { text: t.title_mn })),
+                  el('td', {}, el('strong', { text: t.title_kr })),
                   el('td', { class: 'mono', text: t.updated_at }),
-                  el('td', { class: 'act' },
-                    el('a', { class: 'btn btn-line btn-sm', href: `/admin/tours/${t.id}` }, 'Засах'))
+                  el(
+                    'td',
+                    { class: 'act' },
+                    el('a', { class: 'btn btn-line btn-sm', href: `/admin/tours/${t.id}` }, 'Засах')
+                  )
                 )
               )
             )
@@ -485,8 +674,15 @@ async function viewDashboard() {
       'div',
       { class: 'head' },
       el('h1', { text: 'Хяналтын самбар' }),
-      el('div', { class: 'tools' },
-        el('a', { class: 'btn btn-line', href: '/', target: '_blank', rel: 'noopener' }, 'Сайтыг харах'))
+      el(
+        'div',
+        { class: 'tools' },
+        el(
+          'a',
+          { class: 'btn btn-line', href: '/', target: '_blank', rel: 'noopener' },
+          'Сайтыг харах'
+        )
+      )
     ),
     statsBox,
     el('div', { style: { height: '16px' } }),
@@ -499,26 +695,31 @@ async function viewDashboard() {
 }
 
 /* ==========================================================================
-   2. Аялал
+   2. Аялал — ангилал бүр өөрийн аяллуудтай
    ========================================================================== */
 async function viewTours() {
-  const { tours } = await api('/tours');
+  const [{ categories }, { tours }] = await Promise.all([api('/categories'), api('/tours')]);
 
-  const rows = tours.map((t) =>
+  const tourRow = (t) =>
     el(
       'tr',
       {},
-      el('td', {},
-        t.cover
-          ? el('img', { class: 'thumb', src: t.cover, alt: '', loading: 'lazy' })
-          : el('span', { class: 'mono', text: '—' })),
-      el('td', {}, el('strong', { text: t.title_mn })),
+      el(
+        'td',
+        {},
+        t.images?.[0]
+          ? el('img', { class: 'thumb', src: thumbOf(t.images[0]), alt: '', loading: 'lazy' })
+          : el('span', { class: 'mono', text: '—' })
+      ),
+      el('td', { class: 'n', text: t.day_no ? `${t.day_no}` : '—' }),
+      el(
+        'td',
+        {},
+        el('strong', { text: t.title_kr }),
+        el('div', { class: 'mono', text: t.title_en || '' })
+      ),
       el('td', { class: 'mono', text: t.slug }),
-      el('td', { text: REGION_LABEL[t.region_key] || t.region_key }),
-      el('td', {}, el('span', {
-        class: `chip ${t.is_active ? 'chip-on' : 'chip-off'}`,
-        text: t.is_active ? 'Идэвхтэй' : 'Нуусан',
-      })),
+      el('td', {}, statusChip(t.is_active)),
       el(
         'td',
         { class: 'act' },
@@ -530,7 +731,7 @@ async function viewTours() {
             class: 'btn btn-danger btn-sm',
             type: 'button',
             onclick: async () => {
-              if (!(await confirmDialog('Аялал устгах', `«${t.title_mn}» устгах уу?`))) return;
+              if (!(await confirmDialog('Аялал устгах', `«${t.title_kr}» устгах уу?`))) return;
               await api(`/tours/${t.id}`, { method: 'DELETE' });
               toast('Устгалаа');
               route();
@@ -539,133 +740,112 @@ async function viewTours() {
           'Устгах'
         )
       )
-    )
-  );
+    );
+
+  const catCard = (c) => {
+    const list = tours.filter((t) => t.category_id === c.id);
+    return el(
+      'div',
+      { class: 'card' },
+      el(
+        'div',
+        { class: 'card-h' },
+        el(
+          'div',
+          {},
+          el('h2', {}, c.name_kr, ' ', el('span', { class: 'mono', text: c.sub_kr })),
+          el('span', { class: 'mono', text: `${c.slug} · ${list.length} аялал` }),
+          ' ',
+          statusChip(c.is_active)
+        ),
+        el(
+          'div',
+          { class: 'tools' },
+          el(
+            'a',
+            { class: 'btn btn-pine btn-sm', href: `/admin/tours/new?cat=${c.id}` },
+            'Аялал нэмэх'
+          ),
+          el(
+            'a',
+            { class: 'btn btn-line btn-sm', href: `/admin/categories/${c.id}` },
+            'Ангилал засах'
+          ),
+          el(
+            'button',
+            {
+              class: 'btn btn-danger btn-sm',
+              type: 'button',
+              onclick: async () => {
+                if (
+                  !(await confirmDialog(
+                    'Ангилал устгах',
+                    `«${c.name_kr}» болон доторх ${list.length} аяллыг устгах уу?`
+                  ))
+                )
+                  return;
+                await api(`/categories/${c.id}`, { method: 'DELETE' });
+                toast('Устгалаа');
+                route();
+              },
+            },
+            'Устгах'
+          )
+        )
+      ),
+      el(
+        'div',
+        { class: 'card-b' },
+        list.length
+          ? el(
+              'table',
+              { class: 'tbl' },
+              el(
+                'thead',
+                {},
+                el(
+                  'tr',
+                  {},
+                  ['', 'Өдөр', 'Нэр', 'Slug', 'Төлөв', ''].map((h) => el('th', { text: h }))
+                )
+              ),
+              el('tbody', {}, list.map(tourRow))
+            )
+          : el('p', { class: 'empty', text: 'Энэ ангилалд аялал алга' })
+      )
+    );
+  };
 
   view.replaceChildren(
     el(
       'div',
       { class: 'head' },
       el('h1', { text: 'Аялал' }),
-      el('div', { class: 'tools' }, el('a', { class: 'btn btn-pine', href: '/admin/tours/new' }, 'Шинэ аялал'))
-    ),
-    el(
-      'div',
-      { class: 'card' },
       el(
         'div',
-        { class: 'card-b' },
-        tours.length
-          ? el(
-              'table',
-              { class: 'tbl' },
-              el('thead', {},
-                el('tr', {}, ['', 'Нэр', 'Slug', 'Нутаг', 'Төлөв', ''].map((h) => el('th', { text: h })))),
-              el('tbody', {}, rows)
-            )
-          : el('p', { class: 'empty', text: 'Аялал алга' })
+        { class: 'tools' },
+        el('a', { class: 'btn btn-pine', href: '/admin/categories/new' }, 'Шинэ ангилал')
       )
-    )
-  );
-}
-
-function lineRow(x = {}) {
-  const row = el(
-    'div',
-    { class: 'line-row' },
-    el(
-      'div',
-      { class: 'row row-3' },
-      field('MN', input('textMn', x.text_mn ?? x.textMn ?? '')),
-      field('EN', input('textEn', x.text_en ?? x.textEn ?? '')),
-      field('KR', input('textKr', x.text_kr ?? x.textKr ?? ''))
     ),
-    el('button', { class: 'btn btn-line btn-sm', type: 'button', onclick: () => row.remove() }, 'Хасах')
+    ...(categories.length
+      ? categories.map(catCard)
+      : [el('p', { class: 'empty', text: 'Ангилал алга — эхлээд ангилал үүсгэнэ үү' })])
   );
-  return row;
 }
 
-function dayRow(d = {}, i = 0) {
-  const row = el(
-    'div',
-    { class: 'day-row' },
-    el('div', { class: 'no', text: String(i + 1) }),
-    el(
-      'div',
-      { class: 'fields' },
-      field('Маршрут MN', input('routeMn', d.route_mn ?? d.routeMn ?? '')),
-      field('Хонох MN', input('sleepMn', d.sleep_mn ?? d.sleepMn ?? '')),
-      field('км', input('km', String(d.km ?? 0), { type: 'number', min: 0, max: 3000 })),
-      el(
-        'button',
-        {
-          class: 'btn btn-line btn-sm drop',
-          type: 'button',
-          onclick: () => {
-            const box = row.parentElement;
-            row.remove();
-            [...box.children].forEach((r, n) => (r.querySelector('.no').textContent = String(n + 1)));
-          },
-        },
-        'Хасах'
-      ),
-      el('div', { class: 'row row-2', style: { gridColumn: '1 / -1' } },
-        field('Маршрут EN', input('routeEn', d.route_en ?? d.routeEn ?? '')),
-        field('Маршрут KR', input('routeKr', d.route_kr ?? d.routeKr ?? ''))),
-      el('div', { class: 'row row-2', style: { gridColumn: '1 / -1' } },
-        field('Хонох EN', input('sleepEn', d.sleep_en ?? d.sleepEn ?? '')),
-        field('Хонох KR', input('sleepKr', d.sleep_kr ?? d.sleepKr ?? '')))
-    )
-  );
-  return row;
-}
-
-async function viewTourEdit(id) {
+/* ---- Ангилал засах ------------------------------------------------------ */
+async function viewCategoryEdit(id) {
   const isNew = id === 'new';
-  const tour = isNew ? null : (await api(`/tours/${id}`)).tour;
-  const g = (k, d = '') => tour?.[k] ?? d;
-
-  const daysBox = el('div', { class: 'days' });
-  for (const [i, d] of (tour?.itinerary ?? []).entries()) daysBox.append(dayRow(d, i));
-
-  const highBox = el('div', { class: 'lines' });
-  const inBox = el('div', { class: 'lines' });
-  const outBox = el('div', { class: 'lines' });
-  for (const x of tour?.includes ?? []) {
-    if (x.kind === 'high') highBox.append(lineRow(x));
-    else if (x.kind === 'out') outBox.append(lineRow(x));
-    else inBox.append(lineRow(x));
-  }
-
-  const listCard = (title, box, note) =>
-    el(
-      'div',
-      { class: 'card' },
-      el(
-        'div',
-        { class: 'card-h' },
-        el('div', {}, el('h2', { text: title }), note && el('span', { class: 'mono', text: note })),
-        el('button', { class: 'btn btn-line btn-sm', type: 'button', onclick: () => box.append(lineRow()) },
-          'Мөр нэмэх')
-      ),
-      el('div', { class: 'card-b' }, box)
-    );
+  const cat = isNew ? null : (await api(`/categories/${id}`)).category;
+  const g = (k, d = '') => cat?.[k] ?? d;
 
   const form = el(
     'form',
-    { id: 'tourForm' },
-
+    {},
     el(
       'div',
       { class: 'card' },
-      el('div', { class: 'card-h' }, el('h2', { text: 'Нүүр зураг' })),
-      el('div', { class: 'card-b' }, imageField('Аяллын нүүр зураг', 'cover', g('cover')))
-    ),
-
-    el(
-      'div',
-      { class: 'card' },
-      el('div', { class: 'card-h' }, el('h2', { text: 'Үндсэн мэдээлэл' })),
+      el('div', { class: 'card-h' }, el('h2', { text: 'Ангилал' })),
       el(
         'div',
         { class: 'card-b' },
@@ -673,53 +853,33 @@ async function viewTourEdit(id) {
           'div',
           { class: 'row row-3' },
           field('Slug (URL)', input('slug', g('slug'), { required: true, pattern: '[a-z0-9-]+' })),
-          field('Нутаг', select('regionKey', regionOptions(), g('region_key', 'other'))),
-          field('Дараалал', input('sortOrder', String(g('sort_order', 0)), { type: 'number', min: 0 }))
+          field(
+            'Дараалал',
+            input('sortOrder', String(g('sort_order', 0)), { type: 'number', min: 0 })
+          ),
+          field(
+            'Төлөв',
+            select(
+              'isActive',
+              [
+                { value: '1', label: 'Идэвхтэй' },
+                { value: '0', label: 'Нуусан' },
+              ],
+              String(g('is_active', 1))
+            )
+          )
         ),
-        i18nFields('Гарчиг', 'title', tour),
-        i18nFields('Дэд гарчиг', 'area', tour),
-        i18nFields('Товч', 'summary', tour, 'textarea'),
-        i18nFields('Дэлгэрэнгүй', 'body', tour, 'textarea'),
-        el(
-          'div',
-          { class: 'row row-3' },
-          field('Төлөв', select('isActive',
-            [{ value: '1', label: 'Идэвхтэй' }, { value: '0', label: 'Нуусан' }],
-            String(g('is_active', 1)))),
-          field('Улирал эхлэх (сар)', input('seasonFrom', String(g('season_from', 5)), { type: 'number', min: 1, max: 12 })),
-          field('Улирал дуусах (сар)', input('seasonTo', String(g('season_to', 9)), { type: 'number', min: 1, max: 12 }))
-        ),
-        el(
-          'div',
-          { class: 'row row-3' },
-          field('Хоног (0 = тохиролцоно)', input('days', String(g('days', 0)), { type: 'number', min: 0, max: 60 })),
-          field('Нийт км (0 = харуулахгүй)', input('kmTotal', String(g('km_total', 0)), { type: 'number', min: 0 })),
-          field('Бүлэг (0 = тохиролцоно)', el('div', { class: 'row row-2' },
-            input('groupMin', String(g('group_min', 0)), { type: 'number', min: 0, max: 50 }),
-            input('groupMax', String(g('group_max', 0)), { type: 'number', min: 0, max: 50 })))
-        )
+        i18nFields('Нэр', 'name', cat),
+        i18nFields('Хугацаа (ж: 4박5일)', 'sub', cat),
+        i18nFields('Тайлбар (заавал биш)', 'note', cat)
       )
     ),
-
-    listCard('Онцлох мөчүүд', highBox, 'Хуудсан дээр дугаарласан жагсаалт болно'),
-    listCard('Багтсан', inBox),
-    listCard('Багтаагүй', outBox),
-
     el(
       'div',
       { class: 'card' },
-      el(
-        'div',
-        { class: 'card-h' },
-        el('div', {},
-          el('h2', { text: 'Өдрийн хуваарь' }),
-          el('span', { class: 'mono', text: 'Заавал биш — бөглөвөл хуудсанд хүснэгт, график гарна' })),
-        el('button', { class: 'btn btn-line btn-sm', type: 'button',
-          onclick: () => daysBox.append(dayRow({}, daysBox.children.length)) }, 'Өдөр нэмэх')
-      ),
-      el('div', { class: 'card-b' }, daysBox)
+      el('div', { class: 'card-h' }, el('h2', { text: 'Нүүр зураг (заавал биш)' })),
+      el('div', { class: 'card-b' }, imageField('Ангиллын зураг', 'cover', g('cover')))
     ),
-
     el(
       'div',
       { style: { display: 'flex', gap: '9px', marginTop: '16px', flexWrap: 'wrap' } },
@@ -730,51 +890,151 @@ async function viewTourEdit(id) {
 
   form.addEventListener('submit', async (e) => {
     e.preventDefault();
-    const rows = (box, kind) =>
-      [...box.children].map((r) => ({
-        kind,
-        textMn: r.querySelector('[name=textMn]').value.trim(),
-        textEn: r.querySelector('[name=textEn]').value.trim(),
-        textKr: r.querySelector('[name=textKr]').value.trim(),
-      }));
-
     const payload = {
       slug: val(form, 'slug'),
       sortOrder: num(form, 'sortOrder'),
       isActive: val(form, 'isActive') === '1',
       cover: val(form, 'cover'),
-      regionKey: val(form, 'regionKey'),
-      titleMn: val(form, 'title_mn'),
-      titleEn: val(form, 'title_en'),
-      titleKr: val(form, 'title_kr'),
-      areaMn: val(form, 'area_mn'),
-      areaEn: val(form, 'area_en'),
-      areaKr: val(form, 'area_kr'),
-      summaryMn: val(form, 'summary_mn'),
-      summaryEn: val(form, 'summary_en'),
-      summaryKr: val(form, 'summary_kr'),
-      bodyMn: val(form, 'body_mn'),
-      bodyEn: val(form, 'body_en'),
-      bodyKr: val(form, 'body_kr'),
-      days: num(form, 'days'),
-      kmTotal: num(form, 'kmTotal'),
-      groupMin: num(form, 'groupMin'),
-      groupMax: num(form, 'groupMax'),
-      seasonFrom: num(form, 'seasonFrom', 5),
-      seasonTo: num(form, 'seasonTo', 9),
-      itinerary: [...daysBox.children].map((r, i) => ({
-        dayNo: i + 1,
-        routeMn: r.querySelector('[name=routeMn]').value.trim(),
-        routeEn: r.querySelector('[name=routeEn]').value.trim(),
-        routeKr: r.querySelector('[name=routeKr]').value.trim(),
-        sleepMn: r.querySelector('[name=sleepMn]').value.trim(),
-        sleepEn: r.querySelector('[name=sleepEn]').value.trim(),
-        sleepKr: r.querySelector('[name=sleepKr]').value.trim(),
-        km: Number(r.querySelector('[name=km]').value) || 0,
-      })),
-      includes: [...rows(highBox, 'high'), ...rows(inBox, 'in'), ...rows(outBox, 'out')],
+      nameKr: val(form, 'name_kr'),
+      nameEn: val(form, 'name_en'),
+      subKr: val(form, 'sub_kr'),
+      subEn: val(form, 'sub_en'),
+      noteKr: val(form, 'note_kr'),
+      noteEn: val(form, 'note_en'),
     };
+    try {
+      if (isNew) await api('/categories', { method: 'POST', body: payload });
+      else await api(`/categories/${id}`, { method: 'PUT', body: payload });
+      toast('Хадгаллаа');
+      go('/admin/tours');
+    } catch (err) {
+      showErrors(form, err.details);
+      toast(err.message, 'err');
+    }
+  });
 
+  view.replaceChildren(
+    el(
+      'div',
+      { class: 'head' },
+      el('h1', { text: isNew ? 'Шинэ ангилал' : `Ангилал — ${g('name_kr')}` }),
+      el(
+        'div',
+        { class: 'tools' },
+        el('a', { class: 'btn btn-line', href: '/admin/tours' }, 'Жагсаалт')
+      )
+    ),
+    form
+  );
+}
+
+/* ---- Аялал засах -------------------------------------------------------- */
+async function viewTourEdit(id) {
+  const isNew = id === 'new';
+  const [{ categories }, tour] = await Promise.all([
+    api('/categories'),
+    isNew ? null : api(`/tours/${id}`).then((d) => d.tour),
+  ]);
+  const g = (k, d = '') => tour?.[k] ?? d;
+  const presetCat = new URLSearchParams(location.search).get('cat');
+  const catOptions = categories.map((c) => ({
+    value: c.id,
+    label: `${c.name_kr} ${c.sub_kr}`.trim(),
+  }));
+  const images = imagesField('Зургууд', g('images', []));
+
+  const form = el(
+    'form',
+    {},
+    el(
+      'div',
+      { class: 'card' },
+      el('div', { class: 'card-h' }, el('h2', { text: 'Үндсэн мэдээлэл' })),
+      el(
+        'div',
+        { class: 'card-b' },
+        el(
+          'div',
+          { class: 'row row-3' },
+          field(
+            'Ангилал',
+            select('categoryId', catOptions, g('category_id', presetCat || catOptions[0]?.value))
+          ),
+          field('Slug (URL)', input('slug', g('slug'), { required: true, pattern: '[a-z0-9-]+' })),
+          field(
+            'Өдөр (0 = дугааргүй)',
+            input('dayNo', String(g('day_no', 0)), { type: 'number', min: 0, max: 60 })
+          )
+        ),
+        el(
+          'div',
+          { class: 'row row-2' },
+          field(
+            'Дараалал',
+            input('sortOrder', String(g('sort_order', 0)), { type: 'number', min: 0 })
+          ),
+          field(
+            'Төлөв',
+            select(
+              'isActive',
+              [
+                { value: '1', label: 'Идэвхтэй' },
+                { value: '0', label: 'Нуусан' },
+              ],
+              String(g('is_active', 1))
+            )
+          )
+        ),
+        i18nFields('Гарчиг (газрын нэр)', 'title', tour),
+        i18nFields('Дэд гарчиг (аймаг, тайлбар)', 'place', tour),
+        i18nFields('Зам, цаг (ж: 약 350km / 6-7시간 이동)', 'meta', tour),
+        i18nFields('Гол үйл ажиллагаа (нэг мөр)', 'summary', tour),
+        i18nFields('Дэлгэрэнгүй (мөр бүр = нэг цэг)', 'body', tour, 'textarea', 6)
+      )
+    ),
+    el(
+      'div',
+      { class: 'card' },
+      el(
+        'div',
+        { class: 'card-h' },
+        el(
+          'div',
+          {},
+          el('h2', { text: 'Зургууд' }),
+          el('span', { class: 'mono', text: 'Эхнийх нь карт дээр гарна' })
+        )
+      ),
+      el('div', { class: 'card-b' }, images)
+    ),
+    el(
+      'div',
+      { style: { display: 'flex', gap: '9px', marginTop: '16px', flexWrap: 'wrap' } },
+      el('button', { class: 'btn btn-pine', type: 'submit' }, isNew ? 'Үүсгэх' : 'Хадгалах'),
+      el('a', { class: 'btn btn-line', href: '/admin/tours' }, 'Болих')
+    )
+  );
+
+  form.addEventListener('submit', async (e) => {
+    e.preventDefault();
+    const payload = {
+      categoryId: num(form, 'categoryId'),
+      slug: val(form, 'slug'),
+      sortOrder: num(form, 'sortOrder'),
+      isActive: val(form, 'isActive') === '1',
+      dayNo: num(form, 'dayNo'),
+      images: images.values(),
+      titleKr: val(form, 'title_kr'),
+      titleEn: val(form, 'title_en'),
+      placeKr: val(form, 'place_kr'),
+      placeEn: val(form, 'place_en'),
+      metaKr: val(form, 'meta_kr'),
+      metaEn: val(form, 'meta_en'),
+      summaryKr: val(form, 'summary_kr'),
+      summaryEn: val(form, 'summary_en'),
+      bodyKr: val(form, 'body_kr'),
+      bodyEn: val(form, 'body_en'),
+    };
     try {
       if (isNew) await api('/tours', { method: 'POST', body: payload });
       else await api(`/tours/${id}`, { method: 'PUT', body: payload });
@@ -790,8 +1050,12 @@ async function viewTourEdit(id) {
     el(
       'div',
       { class: 'head' },
-      el('h1', { text: isNew ? 'Шинэ аялал' : `Засах — ${g('title_mn')}` }),
-      el('div', { class: 'tools' }, el('a', { class: 'btn btn-line', href: '/admin/tours' }, 'Жагсаалт'))
+      el('h1', { text: isNew ? 'Шинэ аялал' : `Засах — ${g('title_kr')}` }),
+      el(
+        'div',
+        { class: 'tools' },
+        el('a', { class: 'btn btn-line', href: '/admin/tours' }, 'Жагсаалт')
+      )
     ),
     form
   );
@@ -814,10 +1078,21 @@ async function viewGallery() {
         'div',
         { class: 'row row-3' },
         field('Нутаг', select('regionKey', regionOptions(), p?.region_key ?? 'other')),
-        field('Дараалал', input('sortOrder', String(p?.sort_order ?? photos.length), { type: 'number', min: 0 })),
-        field('Төлөв', select('isActive',
-          [{ value: '1', label: 'Харагдана' }, { value: '0', label: 'Нуусан' }],
-          String(p?.is_active ?? 1)))
+        field(
+          'Дараалал',
+          input('sortOrder', String(p?.sort_order ?? photos.length), { type: 'number', min: 0 })
+        ),
+        field(
+          'Төлөв',
+          select(
+            'isActive',
+            [
+              { value: '1', label: 'Харагдана' },
+              { value: '0', label: 'Нуусан' },
+            ],
+            String(p?.is_active ?? 1)
+          )
+        )
       ),
       i18nFields('Газрын нэр', 'place', p),
       i18nFields('Тайлбар', 'caption', p),
@@ -826,7 +1101,11 @@ async function viewGallery() {
         'div',
         { style: { display: 'flex', gap: '9px', flexWrap: 'wrap' } },
         el('button', { class: 'btn btn-pine', type: 'submit' }, isNew ? 'Нэмэх' : 'Хадгалах'),
-        el('button', { class: 'btn btn-line', type: 'button', onclick: () => (editor.hidden = true) }, 'Хаах')
+        el(
+          'button',
+          { class: 'btn btn-line', type: 'button', onclick: () => (editor.hidden = true) },
+          'Хаах'
+        )
       )
     );
 
@@ -837,12 +1116,10 @@ async function viewGallery() {
         sortOrder: num(form, 'sortOrder'),
         isActive: val(form, 'isActive') === '1',
         regionKey: val(form, 'regionKey'),
-        placeMn: val(form, 'place_mn'),
-        placeEn: val(form, 'place_en'),
         placeKr: val(form, 'place_kr'),
-        captionMn: val(form, 'caption_mn'),
-        captionEn: val(form, 'caption_en'),
+        placeEn: val(form, 'place_en'),
         captionKr: val(form, 'caption_kr'),
+        captionEn: val(form, 'caption_en'),
         credit: val(form, 'credit'),
       };
       try {
@@ -864,6 +1141,22 @@ async function viewGallery() {
     editor.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
   }
 
+  const toggle = (p) =>
+    api(`/gallery/${p.id}`, {
+      method: 'PUT',
+      body: {
+        image: p.image,
+        sortOrder: p.sort_order,
+        isActive: !p.is_active,
+        regionKey: p.region_key,
+        placeKr: p.place_kr,
+        placeEn: p.place_en,
+        captionKr: p.caption_kr,
+        captionEn: p.caption_en,
+        credit: p.credit,
+      },
+    });
+
   const grid = el(
     'div',
     { class: 'gal' },
@@ -871,40 +1164,27 @@ async function viewGallery() {
       el(
         'figure',
         { class: p.is_active ? '' : 'off' },
-        el('img', {
-          src: p.image.replace('/images/gallery/', '/images/gallery/thumbs/'),
-          alt: p.place_mn || '',
-          loading: 'lazy',
-          onerror: (e) => {
-            e.target.onerror = null;
-            e.target.src = p.image;
-          },
-        }),
+        thumbImg(p.image, p.place_kr || ''),
         el(
           'figcaption',
           {},
-          el('b', { text: p.place_mn || p.image.split('/').pop() }),
+          el('b', { text: p.place_kr || p.image.split('/').pop() }),
           el('span', { class: 'mono', text: REGION_LABEL[p.region_key] || p.region_key }),
           el(
             'div',
             { class: 'ops' },
-            el('button', { class: 'btn btn-line btn-sm', type: 'button', onclick: () => openEditor(p) }, 'Засах'),
+            el(
+              'button',
+              { class: 'btn btn-line btn-sm', type: 'button', onclick: () => openEditor(p) },
+              'Засах'
+            ),
             el(
               'button',
               {
                 class: 'btn btn-line btn-sm',
                 type: 'button',
                 onclick: async () => {
-                  await api(`/gallery/${p.id}`, {
-                    method: 'PUT',
-                    body: {
-                      image: p.image, sortOrder: p.sort_order, isActive: !p.is_active,
-                      regionKey: p.region_key,
-                      placeMn: p.place_mn, placeEn: p.place_en, placeKr: p.place_kr,
-                      captionMn: p.caption_mn, captionEn: p.caption_en, captionKr: p.caption_kr,
-                      credit: p.credit,
-                    },
-                  });
+                  await toggle(p);
                   route();
                 },
               },
@@ -916,7 +1196,8 @@ async function viewGallery() {
                 class: 'btn btn-danger btn-sm',
                 type: 'button',
                 onclick: async () => {
-                  if (!(await confirmDialog('Зураг устгах', 'Энэ зургийг цомгоос устгах уу?'))) return;
+                  if (!(await confirmDialog('Зураг устгах', 'Энэ зургийг цомгоос устгах уу?')))
+                    return;
                   await api(`/gallery/${p.id}`, { method: 'DELETE' });
                   toast('Устгалаа');
                   route();
@@ -935,93 +1216,157 @@ async function viewGallery() {
       'div',
       { class: 'head' },
       el('h1', { text: 'Зургийн цомог' }),
-      el('div', { class: 'tools' },
-        el('button', { class: 'btn btn-pine', type: 'button', onclick: () => openEditor(null) }, 'Зураг нэмэх'))
+      el(
+        'div',
+        { class: 'tools' },
+        el(
+          'button',
+          { class: 'btn btn-pine', type: 'button', onclick: () => openEditor(null) },
+          'Зураг нэмэх'
+        )
+      )
     ),
     editor,
-    el('div', { class: 'card' },
-      el('div', { class: 'card-b' }, photos.length ? grid : el('p', { class: 'empty', text: 'Зураг алга' })))
+    el(
+      'div',
+      { class: 'card' },
+      el(
+        'div',
+        { class: 'card-b' },
+        photos.length ? grid : el('p', { class: 'empty', text: 'Зураг алга' })
+      )
+    )
   );
 }
 
 /* ==========================================================================
-   4. Тохиргоо — зөвхөн холбоо барих + лого
+   4. Тохиргоо — сайтын бүх бичвэр, зураг, холбоос
    ========================================================================== */
 async function viewSettings() {
   const { settings } = await api('/settings');
-  const c = settings?.contact || {};
+  const s = settings?.site || {};
+  const f = settings?.footer || {};
+  const hero = s.hero || {};
+  const nav = s.nav || {};
 
-  const i18nGroup = (label, prefix, obj) =>
+  const card = (title, note, ...body) =>
     el(
       'div',
-      { class: 'row row-3' },
-      field(`${label} · MN`, input(`${prefix}Mn`, obj?.mn ?? '')),
-      field(`${label} · EN`, input(`${prefix}En`, obj?.en ?? '')),
-      field(`${label} · KR`, input(`${prefix}Kr`, obj?.kr ?? ''))
+      { class: 'card' },
+      el(
+        'div',
+        { class: 'card-h' },
+        el('div', {}, el('h2', { text: title }), note && el('span', { class: 'mono', text: note }))
+      ),
+      el('div', { class: 'card-b' }, body)
     );
-  const i18nOf = (form, prefix) => ({
-    mn: val(form, `${prefix}Mn`),
-    en: val(form, `${prefix}En`),
-    kr: val(form, `${prefix}Kr`),
-  });
 
   const form = el(
     'form',
     {},
-    el(
-      'div',
-      { class: 'card' },
-      el('div', { class: 'card-h' },
-        el('div', {},
-          el('h2', { text: 'Лого' }),
-          el('span', { class: 'mono', text: 'Толгой, хөл, favicon-д ашиглана' }))),
-      el('div', { class: 'card-b' }, imageField('Логоны зураг', 'logo', c.logo ?? ''))
+    card(
+      'Лого ба брэнд',
+      'Толгой, favicon',
+      imageField('Логоны зураг', 'logo', s.logo ?? ''),
+      field('Брэндийн нэр (толгойд)', input('brand', s.brand ?? '', { placeholder: 'Dream Spark' }))
     ),
 
-    el(
-      'div',
-      { class: 'card' },
-      el('div', { class: 'card-h' },
-        el('div', {},
-          el('h2', { text: 'Холбоо барих' }),
-          el('span', { class: 'mono', text: 'Хоосон талбар нь сайтад огт харагдахгүй' }))),
+    card(
+      'Нүүр хуудас',
+      'Дэлгэц дүүрэн зураг, уриа, товч',
+      imageField('Нүүрний зураг', 'heroImage', hero.image ?? ''),
+      i18nFields('Уриа — 1-р мөр', 'line1', hero.line1),
+      i18nFields('Уриа — 2-р мөр (шар)', 'line2', hero.line2),
+      i18nFields('Товчны бичвэр', 'button', hero.button)
+    ),
+
+    card(
+      'Цэс ба гарчиг',
+      '',
+      i18nFields('Цэс — Нүүр', 'navHome', nav.home),
+      i18nFields('Цэс — Аялал', 'navTours', nav.tours),
+      i18nFields('Цэс — Цомог', 'navGallery', nav.gallery),
+      i18nFields('Цомгийн хуудасны гарчиг', 'galleryTitle', s.galleryTitle)
+    ),
+
+    card(
+      'Холбоос',
+      'Instagram нь баруун доод булангийн хөвөгч товч болон хөлд гарна',
       el(
         'div',
-        { class: 'card-b' },
-        el('div', { class: 'row row-2' },
-          field('KakaoTalk сувгийн холбоос', input('kakao', c.kakao ?? '', { placeholder: 'https://pf.kakao.com/…' })),
-          field('Instagram', input('instagram', c.instagram ?? ''))),
-        el('div', { class: 'row row-2' },
-          field('Naver блог', input('naver', c.naver ?? '')),
-          field('Утас', input('phone', c.phone ?? '', { placeholder: '+976 …' }))),
-        field('И-мэйл', input('email', c.email ?? '')),
-        i18nGroup('Хаяг', 'address', c.address),
-        i18nGroup('Ажлын цаг', 'hours', c.hours)
-      )
+        { class: 'row row-2' },
+        field(
+          'Instagram',
+          input('instagram', s.instagram ?? '', { placeholder: 'https://www.instagram.com/…' })
+        ),
+        field(
+          'Naver блог',
+          input('naver', s.naver ?? '', { placeholder: 'https://blog.naver.com/…' })
+        )
+      ),
+      i18nFields('Хөвөгч товчны бичвэр', 'instaLabel', s.instaLabel)
     ),
 
-    el('div', { style: { display: 'flex', gap: '9px', flexWrap: 'wrap' } },
-      el('button', { class: 'btn btn-pine', type: 'submit' }, 'Хадгалах'))
+    card(
+      'Хөл (footer)',
+      'Хоосон талбар сайтад харагдахгүй',
+      i18nFields('Компанийн нэр', 'company', f.company),
+      el(
+        'div',
+        { class: 'row row-2' },
+        field('Захирал (대표)', input('ceo', f.ceo ?? '')),
+        field('Бүртгэлийн дугаар (사업자등록번호)', input('regNo', f.regNo ?? ''))
+      ),
+      i18nFields('Хаяг (회사주소)', 'address', f.address),
+      el(
+        'div',
+        { class: 'row row-2' },
+        field('Утас (고객센터)', input('phone', f.phone ?? '', { placeholder: '+976 …' })),
+        field('И-мэйл', input('email', f.email ?? ''))
+      ),
+      i18nFields('© мөр ({year} = одоогийн он)', 'copyright', f.copyright)
+    ),
+
+    el(
+      'div',
+      { style: { display: 'flex', gap: '9px', flexWrap: 'wrap' } },
+      el('button', { class: 'btn btn-pine', type: 'submit' }, 'Хадгалах')
+    )
   );
 
   form.addEventListener('submit', async (e) => {
     e.preventDefault();
+    const site = {
+      logo: val(form, 'logo'),
+      brand: val(form, 'brand'),
+      instagram: val(form, 'instagram'),
+      naver: val(form, 'naver'),
+      nav: {
+        home: i18nOf(form, 'navHome'),
+        tours: i18nOf(form, 'navTours'),
+        gallery: i18nOf(form, 'navGallery'),
+      },
+      hero: {
+        image: val(form, 'heroImage'),
+        line1: i18nOf(form, 'line1'),
+        line2: i18nOf(form, 'line2'),
+        button: i18nOf(form, 'button'),
+      },
+      instaLabel: i18nOf(form, 'instaLabel'),
+      galleryTitle: i18nOf(form, 'galleryTitle'),
+    };
+    const footer = {
+      company: i18nOf(form, 'company'),
+      ceo: val(form, 'ceo'),
+      regNo: val(form, 'regNo'),
+      address: i18nOf(form, 'address'),
+      phone: val(form, 'phone'),
+      email: val(form, 'email'),
+      copyright: i18nOf(form, 'copyright'),
+    };
     try {
-      await api('/settings/contact', {
-        method: 'PUT',
-        body: {
-          value: {
-            phone: val(form, 'phone'),
-            email: val(form, 'email'),
-            kakao: val(form, 'kakao'),
-            instagram: val(form, 'instagram'),
-            naver: val(form, 'naver'),
-            logo: val(form, 'logo'),
-            address: i18nOf(form, 'address'),
-            hours: i18nOf(form, 'hours'),
-          },
-        },
-      });
+      await api('/settings/site', { method: 'PUT', body: { value: site } });
+      await api('/settings/footer', { method: 'PUT', body: { value: footer } });
       toast('Хадгаллаа');
     } catch (err) {
       showErrors(form, err.details);
@@ -1046,12 +1391,16 @@ async function route() {
   const param = parts[2];
 
   for (const a of document.querySelectorAll('#sideNav a')) {
-    a.classList.toggle('on', a.dataset.view === section);
+    a.classList.toggle(
+      'on',
+      a.dataset.view === section || (section === 'categories' && a.dataset.view === 'tours')
+    );
   }
 
   view.replaceChildren(el('p', { class: 'empty', text: 'Ачаалж байна…' }));
   try {
     if (section === 'tours') await (param ? viewTourEdit(param) : viewTours());
+    else if (section === 'categories') await (param ? viewCategoryEdit(param) : viewTours());
     else if (section === 'gallery') await viewGallery();
     else if (section === 'settings') await viewSettings();
     else await viewDashboard();

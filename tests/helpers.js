@@ -43,8 +43,7 @@ export async function startApp({ admin = true } = {}) {
 /** Cookie-г санадаг жижиг fetch бүрхүүл. */
 export function makeClient(base) {
   const jar = new Map();
-  const cookieHeader = () =>
-    [...jar.entries()].map(([k, v]) => `${k}=${v}`).join('; ');
+  const cookieHeader = () => [...jar.entries()].map(([k, v]) => `${k}=${v}`).join('; ');
 
   return {
     csrf: '',
@@ -65,47 +64,58 @@ export function makeClient(base) {
         jar.set(pair.slice(0, i), pair.slice(i + 1));
       }
       const ct = res.headers.get('content-type') || '';
-      const data = ct.includes('json')
-        ? await res.json().catch(() => null)
-        : await res.text();
+      const data = ct.includes('json') ? await res.json().catch(() => null) : await res.text();
       return { status: res.status, data, headers: res.headers };
     },
     async login(username = 'tester', password = 'Passw0rd!test') {
-      const r = await this.req('/api/admin/login', { method: 'POST', body: { username, password } });
+      const r = await this.req('/api/admin/login', {
+        method: 'POST',
+        body: { username, password },
+      });
       if (r.status === 200) this.csrf = r.data.csrf;
       return r;
+    },
+    /** Жишээ ангилал үүсгээд id-г буцаана. */
+    async makeCategory(over = {}) {
+      const r = await this.req('/api/admin/categories', {
+        method: 'POST',
+        body: sampleCategory(over),
+      });
+      return r.data?.category?.id;
     },
   };
 }
 
-/** Жишээ чиглэл үүсгэх (admin API-аар). */
-export const sampleTour = (over = {}) => ({
+/** Жишээ ангилал (admin API-аар). */
+export const sampleCategory = (over = {}) => ({
+  slug: 'test-cat',
+  sortOrder: 1,
+  isActive: true,
+  cover: '/images/tours/central-cover.jpg',
+  nameKr: '테스트 투어',
+  nameEn: 'Test tour',
+  subKr: '4박5일',
+  subEn: '4 nights · 5 days',
+  ...over,
+});
+
+/** Жишээ аялал (admin API-аар). */
+export const sampleTour = (categoryId, over = {}) => ({
+  categoryId,
   slug: 'test-route',
   sortOrder: 1,
   isActive: true,
-  cover: '/images/tours/gobi-02.jpg',
-  regionKey: 'gobi',
-  titleMn: 'Туршилтын чиглэл',
-  titleEn: 'Test route',
-  titleKr: '테스트 코스',
-  areaMn: 'Өмнөговь',
-  summaryMn: 'Товч тайлбар',
-  bodyMn: 'Дэлгэрэнгүй',
-  days: 3,
-  kmTotal: 900,
-  groupMin: 4,
-  groupMax: 6,
-  seasonFrom: 5,
-  seasonTo: 9,
-  itinerary: [
-    { dayNo: 1, routeMn: 'УБ → А', sleepMn: 'Гэр', km: 300 },
-    { dayNo: 2, routeMn: 'А — амралт', sleepMn: 'Гэр', km: 0 },
-    { dayNo: 3, routeMn: 'А → УБ', sleepMn: '—', km: 600 },
-  ].map((d) => ({ routeEn: '', routeKr: '', sleepEn: '', sleepKr: '', ...d })),
-  includes: [
-    { kind: 'high', textMn: 'Онцлох мөч', textEn: '', textKr: '' },
-    { kind: 'in', textMn: 'Хөтөч', textEn: '', textKr: '' },
-    { kind: 'out', textMn: 'Нислэг', textEn: '', textKr: '' },
-  ],
+  dayNo: 1,
+  images: ['/images/tours/ugii-1.jpg', '/images/tours/ugii-2.jpg'],
+  titleKr: '우기 호수',
+  titleEn: 'Ugii Lake',
+  placeKr: '아르항가이',
+  placeEn: '',
+  metaKr: '약 350km / 6-7시간 이동',
+  metaEn: 'About 350 km · 6–7 h drive',
+  summaryKr: '호수 트레킹',
+  summaryEn: 'Lake trekking',
+  bodyKr: '울란바토르에서 출발\n석식: 캠프식',
+  bodyEn: 'Departure from Ulaanbaatar\nDinner: camp meal',
   ...over,
 });

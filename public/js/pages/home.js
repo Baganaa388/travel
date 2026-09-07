@@ -1,32 +1,24 @@
-/* ==========================================================================
-   home.js — нүүр хуудас. Аяллын карт + Монгол улсын нутгаар цомог.
-   ========================================================================== */
-import { getTours } from '../core/api.js';
-import { onLang } from '../core/i18n.js';
-import { boot, reveal } from '../core/ui.js';
-import { initGallery } from '../features/gallery.js';
-import { poster } from './tour-common.js';
+/* home.js — нүүр хуудас: зураг + хөл. Гүйлгэхэд нүүрний зураг зөөлөн хоцорч хөдөлнө. */
+import { boot } from '../core/ui.js';
 
-async function main() {
-  await boot();
+boot();
 
-  const grid = document.querySelector('#tourGrid');
-  if (grid) {
-    try {
-      const tours = await getTours();
-      onLang((lang) => {
-        grid.replaceChildren(...tours.slice(0, 3).map((t) => poster(t, lang)));
-      });
-    } catch {
-      const p = document.createElement('p');
-      p.className = 'state';
-      p.textContent = 'Аяллуудыг ачаалж чадсангүй';
-      grid.replaceChildren(p);
-    }
-  }
-
-  await initGallery(document, { strip: true });
-  reveal();
+const img = document.querySelector('.hero-img img');
+const reduce = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+if (img && !reduce) {
+  let ticking = false;
+  const move = () => {
+    img.style.setProperty('--py', `${Math.min(window.scrollY, window.innerHeight) * 0.28}px`);
+    ticking = false;
+  };
+  window.addEventListener(
+    'scroll',
+    () => {
+      if (!ticking) {
+        ticking = true;
+        requestAnimationFrame(move);
+      }
+    },
+    { passive: true }
+  );
 }
-
-main();

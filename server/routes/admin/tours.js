@@ -1,4 +1,4 @@
-/* Admin — аяллын чиглэлийн CRUD (өдрийн хуваарь, багцын жагсаалт хамт). */
+/* Admin — аяллын ангилал ба аяллын CRUD. */
 import { Router } from 'express';
 import { z } from 'zod';
 import { db } from '../../db/index.js';
@@ -7,158 +7,207 @@ import { validateBody } from '../../middleware/validate.js';
 
 const router = Router();
 
-const REGIONS = ['gobi', 'khuvsgul', 'tuv', 'other'];
-
 const text = (max = 400) => z.string().trim().max(max).default('');
+const slug = z
+  .string()
+  .trim()
+  .min(2)
+  .max(60)
+  .regex(/^[a-z0-9]+(?:-[a-z0-9]+)*$/, 'Зөвхөн жижиг латин үсэг, тоо, зураас');
 
-const daySchema = z.object({
-  dayNo: z.number().int().min(1).max(60),
-  routeMn: text(300),
-  routeEn: text(300),
-  routeKr: text(300),
-  sleepMn: text(120),
-  sleepEn: text(120),
-  sleepKr: text(120),
-  km: z.number().int().min(0).max(3000).default(0),
-});
-
-const inclSchema = z.object({
-  kind: z.enum(['in', 'out', 'high']),
-  textMn: text(300),
-  textEn: text(300),
-  textKr: text(300),
-});
-
-const tourSchema = z.object({
-  slug: z
-    .string()
-    .trim()
-    .min(2)
-    .max(60)
-    .regex(/^[a-z0-9]+(?:-[a-z0-9]+)*$/, 'Зөвхөн жижиг латин үсэг, тоо, зураас'),
+/* ── Ангилал ────────────────────────────────────────────────────────────── */
+const catSchema = z.object({
+  slug,
   sortOrder: z.number().int().min(0).max(999).default(0),
   isActive: z.boolean().default(true),
   cover: text(300),
-  regionKey: z.enum(REGIONS).default('other'),
-  titleMn: z.string().trim().min(1, 'Гарчиг шаардлагатай').max(120),
-  titleEn: text(120),
-  titleKr: text(120),
-  areaMn: text(120),
-  areaEn: text(120),
-  areaKr: text(120),
-  summaryMn: text(600),
-  summaryEn: text(600),
-  summaryKr: text(600),
-  bodyMn: text(4000),
-  bodyEn: text(4000),
-  bodyKr: text(4000),
-  days: z.number().int().min(0).max(60).default(0),
-  kmTotal: z.number().int().min(0).max(100000).default(0),
-  groupMin: z.number().int().min(1).max(50).default(4),
-  groupMax: z.number().int().min(1).max(50).default(6),
-  seasonFrom: z.number().int().min(1).max(12).default(5),
-  seasonTo: z.number().int().min(1).max(12).default(9),
-  itinerary: z.array(daySchema).max(60).default([]),
-  includes: z.array(inclSchema).max(40).default([]),
+  nameKr: z.string().trim().min(1, 'Нэр шаардлагатай').max(120),
+  nameEn: text(120),
+  subKr: text(80),
+  subEn: text(80),
+  noteKr: text(300),
+  noteEn: text(300),
 });
 
-function loadFull(id) {
-  const tour = db.prepare('SELECT * FROM tours WHERE id = ?').get(id);
-  if (!tour) return null;
-  tour.itinerary = db
-    .prepare('SELECT * FROM tour_days WHERE tour_id = ? ORDER BY day_no')
-    .all(id);
-  tour.includes = db
-    .prepare('SELECT * FROM tour_includes WHERE tour_id = ? ORDER BY kind, sort_order, id')
-    .all(id);
-  return tour;
-}
+const catArgs = (v) => [
+  v.slug,
+  v.sortOrder,
+  v.isActive ? 1 : 0,
+  v.cover,
+  v.nameKr,
+  v.nameEn,
+  v.subKr,
+  v.subEn,
+  v.noteKr,
+  v.noteEn,
+];
 
-const writeChildren = db.transaction((tourId, itinerary, includes) => {
-  db.prepare('DELETE FROM tour_days WHERE tour_id = ?').run(tourId);
-  const insDay = db.prepare(
-    `INSERT INTO tour_days
-     (tour_id, day_no, route_mn, route_en, route_kr, sleep_mn, sleep_en, sleep_kr, km)
-     VALUES (?,?,?,?,?,?,?,?,?)`
-  );
-  for (const d of itinerary) {
-    insDay.run(tourId, d.dayNo, d.routeMn, d.routeEn, d.routeKr, d.sleepMn, d.sleepEn, d.sleepKr, d.km);
+router.get('/categories', (req, res) => {
+  const cats = db.prepare('SELECT * FROM tour_categories ORDER BY sort_order, id').all();
+  const counts = db.prepare('SELECT category_id k, COUNT(*) n FROM tours GROUP BY k').all();
+  res.json({
+    categories: cats.map((c) => ({ ...c, tours: counts.find((x) => x.k === c.id)?.n ?? 0 })),
+  });
+});
+
+router.get('/categories/:id', (req, res, next) => {
+  const cat = db.prepare('SELECT * FROM tour_categories WHERE id = ?').get(Number(req.params.id));
+  if (!cat) return next(notFound('Ангилал олдсонгүй'));
+  cat.tours = db
+    .prepare('SELECT * FROM tours WHERE category_id = ? ORDER BY sort_order, day_no, id')
+    .all(cat.id);
+  res.json({ category: cat });
+});
+
+router.post('/categories', validateBody(catSchema), (req, res, next) => {
+  const v = req.valid;
+  if (db.prepare('SELECT 1 FROM tour_categories WHERE slug = ?').get(v.slug)) {
+    return next(badRequest('Энэ slug аль хэдийн бий', { slug: 'Давхардсан' }));
   }
-
-  db.prepare('DELETE FROM tour_includes WHERE tour_id = ?').run(tourId);
-  const insInc = db.prepare(
-    `INSERT INTO tour_includes (tour_id, kind, sort_order, text_mn, text_en, text_kr)
-     VALUES (?,?,?,?,?,?)`
-  );
-  includes.forEach((x, i) => insInc.run(tourId, x.kind, i, x.textMn, x.textEn, x.textKr));
+  const info = db
+    .prepare(
+      `INSERT INTO tour_categories
+       (slug, sort_order, is_active, cover, name_kr, name_en, sub_kr, sub_en, note_kr, note_en)
+       VALUES (?,?,?,?,?,?,?,?,?,?)`
+    )
+    .run(...catArgs(v));
+  res.status(201).json({
+    category: db.prepare('SELECT * FROM tour_categories WHERE id = ?').get(info.lastInsertRowid),
+  });
 });
+
+router.put('/categories/:id', validateBody(catSchema), (req, res, next) => {
+  const id = Number(req.params.id);
+  const v = req.valid;
+  if (db.prepare('SELECT id FROM tour_categories WHERE slug = ? AND id <> ?').get(v.slug, id)) {
+    return next(badRequest('Энэ slug аль хэдийн бий', { slug: 'Давхардсан' }));
+  }
+  const info = db
+    .prepare(
+      `UPDATE tour_categories SET slug=?, sort_order=?, is_active=?, cover=?,
+         name_kr=?, name_en=?, sub_kr=?, sub_en=?, note_kr=?, note_en=?, updated_at=datetime('now')
+       WHERE id=?`
+    )
+    .run(...catArgs(v), id);
+  if (!info.changes) return next(notFound('Ангилал олдсонгүй'));
+  res.json({ category: db.prepare('SELECT * FROM tour_categories WHERE id = ?').get(id) });
+});
+
+router.delete('/categories/:id', (req, res, next) => {
+  const info = db.prepare('DELETE FROM tour_categories WHERE id = ?').run(Number(req.params.id));
+  if (!info.changes) return next(notFound('Ангилал олдсонгүй'));
+  res.json({ ok: true });
+});
+
+/* ── Аялал ──────────────────────────────────────────────────────────────── */
+const tourSchema = z.object({
+  categoryId: z.number().int().positive(),
+  slug,
+  sortOrder: z.number().int().min(0).max(999).default(0),
+  isActive: z.boolean().default(true),
+  dayNo: z.number().int().min(0).max(60).default(0),
+  images: z.array(z.string().trim().min(1).max(300)).max(20).default([]),
+  titleKr: z.string().trim().min(1, 'Гарчиг шаардлагатай').max(120),
+  titleEn: text(120),
+  placeKr: text(120),
+  placeEn: text(120),
+  metaKr: text(160),
+  metaEn: text(160),
+  summaryKr: text(300),
+  summaryEn: text(300),
+  bodyKr: text(3000),
+  bodyEn: text(3000),
+});
+
+const tourArgs = (v) => [
+  v.categoryId,
+  v.slug,
+  v.sortOrder,
+  v.isActive ? 1 : 0,
+  v.dayNo,
+  JSON.stringify(v.images),
+  v.titleKr,
+  v.titleEn,
+  v.placeKr,
+  v.placeEn,
+  v.metaKr,
+  v.metaEn,
+  v.summaryKr,
+  v.summaryEn,
+  v.bodyKr,
+  v.bodyEn,
+];
+
+const withImages = (row) => row && { ...row, images: JSON.parse(row.images || '[]') };
 
 router.get('/tours', (req, res) => {
-  const rows = db.prepare('SELECT * FROM tours ORDER BY sort_order, id').all();
-  res.json({ tours: rows });
+  const rows = db
+    .prepare(
+      `SELECT t.*, c.name_kr AS category_name FROM tours t
+       JOIN tour_categories c ON c.id = t.category_id
+       ORDER BY c.sort_order, c.id, t.sort_order, t.day_no, t.id`
+    )
+    .all();
+  res.json({ tours: rows.map(withImages) });
 });
 
 router.get('/tours/:id', (req, res, next) => {
-  const tour = loadFull(Number(req.params.id));
-  if (!tour) return next(notFound('Чиглэл олдсонгүй'));
-  res.json({ tour });
+  const tour = db.prepare('SELECT * FROM tours WHERE id = ?').get(Number(req.params.id));
+  if (!tour) return next(notFound('Аялал олдсонгүй'));
+  res.json({ tour: withImages(tour) });
 });
+
+function checkCategory(v, next) {
+  if (!db.prepare('SELECT 1 FROM tour_categories WHERE id = ?').get(v.categoryId)) {
+    next(badRequest('Ангилал олдсонгүй', { categoryId: 'Байхгүй ангилал' }));
+    return false;
+  }
+  return true;
+}
 
 router.post('/tours', validateBody(tourSchema), (req, res, next) => {
   const v = req.valid;
+  if (!checkCategory(v, next)) return;
   if (db.prepare('SELECT 1 FROM tours WHERE slug = ?').get(v.slug)) {
     return next(badRequest('Энэ slug аль хэдийн бий', { slug: 'Давхардсан' }));
   }
   const info = db
     .prepare(
       `INSERT INTO tours
-       (slug, sort_order, is_active, cover, region_key,
-        title_mn, title_en, title_kr, area_mn, area_en, area_kr,
-        summary_mn, summary_en, summary_kr, body_mn, body_en, body_kr,
-        days, km_total, group_min, group_max, season_from, season_to)
-       VALUES (?,?,?,?,?, ?,?,?,?,?,?, ?,?,?,?,?,?, ?,?,?,?,?,?)`
+       (category_id, slug, sort_order, is_active, day_no, images,
+        title_kr, title_en, place_kr, place_en, meta_kr, meta_en,
+        summary_kr, summary_en, body_kr, body_en)
+       VALUES (?,?,?,?,?,?, ?,?,?,?,?,?, ?,?,?,?)`
     )
-    .run(
-      v.slug, v.sortOrder, v.isActive ? 1 : 0, v.cover, v.regionKey,
-      v.titleMn, v.titleEn, v.titleKr, v.areaMn, v.areaEn, v.areaKr,
-      v.summaryMn, v.summaryEn, v.summaryKr, v.bodyMn, v.bodyEn, v.bodyKr,
-      v.days, v.kmTotal, v.groupMin, v.groupMax, v.seasonFrom, v.seasonTo
-    );
-  writeChildren(info.lastInsertRowid, v.itinerary, v.includes);
-  res.status(201).json({ tour: loadFull(info.lastInsertRowid) });
+    .run(...tourArgs(v));
+  res.status(201).json({
+    tour: withImages(db.prepare('SELECT * FROM tours WHERE id = ?').get(info.lastInsertRowid)),
+  });
 });
 
 router.put('/tours/:id', validateBody(tourSchema), (req, res, next) => {
   const id = Number(req.params.id);
-  if (!db.prepare('SELECT 1 FROM tours WHERE id = ?').get(id)) {
-    return next(notFound('Чиглэл олдсонгүй'));
-  }
   const v = req.valid;
-  const dup = db.prepare('SELECT id FROM tours WHERE slug = ? AND id <> ?').get(v.slug, id);
-  if (dup) return next(badRequest('Энэ slug аль хэдийн бий', { slug: 'Давхардсан' }));
-
-  db.prepare(
-    `UPDATE tours SET
-       slug=?, sort_order=?, is_active=?, cover=?, region_key=?,
-       title_mn=?, title_en=?, title_kr=?, area_mn=?, area_en=?, area_kr=?,
-       summary_mn=?, summary_en=?, summary_kr=?, body_mn=?, body_en=?, body_kr=?,
-       days=?, km_total=?, group_min=?, group_max=?, season_from=?, season_to=?,
-       updated_at=datetime('now')
-     WHERE id=?`
-  ).run(
-    v.slug, v.sortOrder, v.isActive ? 1 : 0, v.cover, v.regionKey,
-    v.titleMn, v.titleEn, v.titleKr, v.areaMn, v.areaEn, v.areaKr,
-    v.summaryMn, v.summaryEn, v.summaryKr, v.bodyMn, v.bodyEn, v.bodyKr,
-    v.days, v.kmTotal, v.groupMin, v.groupMax, v.seasonFrom, v.seasonTo,
-    id
-  );
-  writeChildren(id, v.itinerary, v.includes);
-  res.json({ tour: loadFull(id) });
+  if (!checkCategory(v, next)) return;
+  if (db.prepare('SELECT id FROM tours WHERE slug = ? AND id <> ?').get(v.slug, id)) {
+    return next(badRequest('Энэ slug аль хэдийн бий', { slug: 'Давхардсан' }));
+  }
+  const info = db
+    .prepare(
+      `UPDATE tours SET
+         category_id=?, slug=?, sort_order=?, is_active=?, day_no=?, images=?,
+         title_kr=?, title_en=?, place_kr=?, place_en=?, meta_kr=?, meta_en=?,
+         summary_kr=?, summary_en=?, body_kr=?, body_en=?, updated_at=datetime('now')
+       WHERE id=?`
+    )
+    .run(...tourArgs(v), id);
+  if (!info.changes) return next(notFound('Аялал олдсонгүй'));
+  res.json({ tour: withImages(db.prepare('SELECT * FROM tours WHERE id = ?').get(id)) });
 });
 
 router.delete('/tours/:id', (req, res, next) => {
   const info = db.prepare('DELETE FROM tours WHERE id = ?').run(Number(req.params.id));
-  if (!info.changes) return next(notFound('Чиглэл олдсонгүй'));
+  if (!info.changes) return next(notFound('Аялал олдсонгүй'));
   res.json({ ok: true });
 });
 

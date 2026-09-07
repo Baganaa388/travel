@@ -23,7 +23,10 @@ const storage = multer.diskStorage({
   destination: (req, file, cb) => cb(null, UPLOAD_DIR),
   // Хэрэглэгчийн өгсөн нэрийг ХЭЗЭЭ Ч ашиглахгүй — path traversal-аас сэргийлнэ
   filename: (req, file, cb) =>
-    cb(null, `${Date.now().toString(36)}-${randomBytes(6).toString('hex')}${ALLOWED.get(file.mimetype)}`),
+    cb(
+      null,
+      `${Date.now().toString(36)}-${randomBytes(6).toString('hex')}${ALLOWED.get(file.mimetype)}`
+    ),
 });
 
 const upload = multer({

@@ -1,6 +1,6 @@
 /* ==========================================================================
    base.css — design token, reset, бичвэр, товч, туслах анги
-   Үсэг: Oswald (гарчиг, mixed case) · Golos Text (бичвэр) · JetBrains Mono (зөвхөн тоо)
+   Үсэг: Marcellus (брэнд) · Oswald (гарчиг) · Golos Text (бичвэр) · Noto Sans KR (солонгос)
    Өнгө: газар нутгаас — Говийн улаан хад, Хөвсгөлийн хөх, талын ногоон.
          Логоны хар-ногоон нь шөнийн хэсэг, шар нар нь гол товч.
    ========================================================================== */
@@ -77,8 +77,9 @@ button,input,select,textarea{font:inherit;color:inherit}
 button{background:none;border:0;cursor:pointer}
 ::selection{background:var(--sun-soft);color:var(--ink)}
 :focus-visible{outline:2px solid var(--sun-deep);outline-offset:3px;border-radius:2px}
-:lang(ko) body,:lang(ko) .h1,:lang(ko) .h2,:lang(ko) .h3{font-family:'Noto Sans KR',var(--body)}
-:lang(ko) .h1,:lang(ko) .h2{font-weight:700;letter-spacing:-.02em}
+:lang(ko) body,:lang(ko) .h1,:lang(ko) .h2,:lang(ko) .h3,:lang(ko) .h4,:lang(ko) .btn{font-family:'Noto Sans KR',var(--body)}
+:lang(ko) .h1,:lang(ko) .h2,:lang(ko) .h3{font-weight:700;letter-spacing:-.02em}
+:lang(ko) .btn{font-weight:500;letter-spacing:0}
 
 /* ---- Layout ------------------------------------------------------------- */
 .wrap{max-width:var(--max);margin:0 auto;padding-inline:var(--gut)}
@@ -107,14 +108,6 @@ button{background:none;border:0;cursor:pointer}
 .muted{color:var(--ink-2)}
 .accent{color:var(--pine)}
 
-/* Хэсгийн гарчгийн өмнөх шар нар (логоны нар) */
-.dot-head{display:flex;align-items:baseline;gap:14px}
-.dot-head::before{content:"";flex:0 0 auto;width:9px;height:9px;border-radius:50%;
-  background:var(--sun);transform:translateY(-.3em);box-shadow:0 0 0 4px var(--sun-soft)}
-.bg-night .dot-head::before{box-shadow:0 0 0 4px rgba(240,180,41,.22)}
-.sect-head{display:flex;flex-wrap:wrap;align-items:flex-end;justify-content:space-between;
-  gap:12px 24px;margin-bottom:clamp(26px,3.6vw,48px)}
-.sect-head .lede{margin-top:12px}
 
 /* ---- Товч --------------------------------------------------------------- */
 .btn{display:inline-flex;align-items:center;justify-content:center;gap:10px;
@@ -134,13 +127,6 @@ button{background:none;border:0;cursor:pointer}
 .btn-sm{padding:9px 16px;font-size:14px}
 .btn-block{width:100%}
 
-/* Заагч холбоос */
-.lnk-go{display:inline-flex;align-items:center;gap:8px;font-family:var(--disp);font-weight:500;
-  font-size:16px;color:var(--pine);padding-bottom:3px;border-bottom:1.5px solid var(--sun);
-  transition:color .2s,border-color .2s}
-.lnk-go:hover{color:var(--ink);border-color:var(--ink)}
-.bg-night .lnk-go{color:var(--mint)}
-.bg-night .lnk-go:hover{color:#fff;border-color:#fff}
 
 /* ---- Нутгийн шошго ------------------------------------------------------ */
 .rtag{display:inline-flex;align-items:center;gap:8px;font-size:13.5px;font-weight:500;
@@ -158,7 +144,6 @@ button{background:none;border:0;cursor:pointer}
 .rv-stg.in>*:nth-child(3){transition-delay:.12s}
 .rv-stg.in>*:nth-child(4){transition-delay:.18s}
 
-[data-lang-hide]{display:none}
 
 /* ---- Ачаалж буй / хоосон төлөв ------------------------------------------ */
 .state{padding:34px 0;text-align:center;color:var(--ink-3);font-size:14.5px}
@@ -172,3 +157,12 @@ button{background:none;border:0;cursor:pointer}
   html{scroll-behavior:auto}
   .rv,.rv-stg>*{opacity:1!important;transform:none!important}
 }
+
+/* ---- Хуудас ачаалахад зөөлөн илрэх, цуваа хөдөлгөөн (--i) ---------------- */
+main{animation:page-in .55s ease both}
+@keyframes page-in{from{opacity:0}to{opacity:1}}
+.rv-stg>*{transition-delay:calc(var(--i,0) * 55ms)}
+.btn{will-change:transform}
+.btn:hover{transform:translateY(-1px);box-shadow:0 8px 20px rgba(15,26,43,.14)}
+.btn:active{transform:translateY(1px);box-shadow:none}
+@media(prefers-reduced-motion:reduce){main{animation:none}}

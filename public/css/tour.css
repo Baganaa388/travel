@@ -1,119 +1,100 @@
 /* ==========================================================================
-   tour.css — аяллын жагсаалт (гурван том зурвас) ба дэлгэрэнгүй хуудас
-   Нутгийн өнгө (data-region) шошго, зураас, тэмдэглэгээнд давтагдана.
+   tour.css — аяллын хуудас: ангилал (хөтөлбөр) доошоо цувна, дотор нь
+   дөрвөлжин картууд; карт дээр дарахад дэлгэрэнгүй цонх.
    ========================================================================== */
 
-/* ---- Аяллын карт -------------------------------------------------------- */
-.tour-list{display:grid;gap:clamp(16px,2vw,24px)}
-.tc{position:relative;display:grid;grid-template-columns:1fr;background:var(--white);
-  border:1px solid var(--line);border-radius:var(--r-lg);overflow:hidden;
-  scroll-margin-top:calc(var(--hd-h) + 20px);transition:transform .25s,box-shadow .25s,border-color .25s}
-.tc:hover{transform:translateY(-3px);box-shadow:var(--shadow-lg);border-color:transparent}
-.tc::before{content:"";position:absolute;left:0;top:0;bottom:0;width:6px;background:var(--rc);z-index:2}
-@media(min-width:820px){.tc{grid-template-columns:minmax(0,.9fr) minmax(0,1.1fr)}}
-.tc-shot{position:relative;display:block;aspect-ratio:4/3;overflow:hidden;background:var(--bg-2)}
-@media(min-width:820px){.tc-shot{aspect-ratio:auto;min-height:340px}}
-.tc-shot img{position:absolute;inset:0;width:100%;height:100%;object-fit:cover;
-  transition:transform 1s cubic-bezier(.2,.7,.3,1)}
-.tc:hover .tc-shot img{transform:scale(1.04)}
-.tc-shot .rtag{position:absolute;left:20px;top:16px;background:rgba(255,255,255,.92);
-  backdrop-filter:blur(6px);-webkit-backdrop-filter:blur(6px)}
-.tc-body{display:grid;gap:12px;align-content:start;padding:clamp(20px,2.6vw,34px)}
-.tc-area{font-size:14.5px;font-weight:500;color:var(--rc)}
-.tc-body h2{font-size:clamp(26px,2.8vw,36px)}
-.tc-body h2 a:hover{color:var(--rc)}
-.tc-sum{font-size:15.5px;color:var(--ink-2);max-width:54ch;line-height:1.6}
-.tc-high{list-style:none;display:grid;gap:6px;margin-top:2px}
-.tc-high li{display:flex;gap:10px;align-items:flex-start;font-size:15px;line-height:1.5}
-.tc-high li::before{content:"";flex:0 0 auto;width:7px;height:7px;border-radius:50%;background:var(--rc);margin-top:9px}
-.tc-foot{display:flex;flex-wrap:wrap;align-items:center;justify-content:space-between;gap:12px 20px;
-  margin-top:8px;padding-top:16px;border-top:1px solid var(--line)}
-.tc-meta{display:flex;flex-wrap:wrap;gap:6px 14px;font-size:14px;color:var(--ink-2)}
-.tc-meta span+span::before{content:"";display:inline-block;width:3px;height:3px;border-radius:50%;
-  background:var(--ink-3);margin:0 10px 3px 0;vertical-align:middle}
+/* ---- Ангилал ------------------------------------------------------------ */
+.cat-list{display:grid;gap:clamp(40px,5.4vw,76px);padding-top:clamp(8px,1.6vw,18px)}
+.cat-head{display:flex;flex-wrap:wrap;align-items:flex-end;justify-content:space-between;gap:8px 20px;
+  padding-left:18px;border-left:5px solid var(--sun);margin-bottom:clamp(16px,2.2vw,26px)}
+.cat-head h2{display:flex;align-items:baseline;flex-wrap:wrap;gap:6px 14px;line-height:1.05}
+.cat-head h2 small{font-family:var(--body);font-weight:500;font-size:14.5px;color:var(--ink-3);
+  letter-spacing:0}
+:lang(ko) .cat-head h2 small{font-family:'Noto Sans KR',var(--body)}
+.cat-note{font-size:15px;color:var(--ink-2);max-width:60ch}
 
-/* ---- Дэлгэрэнгүй — толгойн зураг ---------------------------------------- */
-.tour-hero{position:relative;aspect-ratio:21/9;min-height:320px;overflow:hidden;
-  background:var(--night);margin-top:calc(var(--hd-h) * -1)}
-@media(max-width:760px){.tour-hero{aspect-ratio:4/3}}
-.tour-hero img{width:100%;height:100%;object-fit:cover;filter:brightness(.86)}
-.tour-hero .veil{position:absolute;inset:0;background:linear-gradient(180deg,
-  rgba(15,26,43,.5) 0%,rgba(15,26,43,.1) 34%,rgba(15,26,43,.82) 100%)}
-.tour-hero .cap{position:absolute;left:0;right:0;bottom:0;padding-block:clamp(22px,3.4vw,46px);color:#fff}
-.tour-hero .crumbs{display:flex;flex-wrap:wrap;align-items:center;gap:10px;margin-bottom:14px}
-.tour-hero .rtag{background:rgba(255,255,255,.92)}
-.tour-hero .area{font-size:15px;color:rgba(255,255,255,.8)}
-.tour-hero h1{color:#fff;max-width:16ch}
+/* ---- Дөрвөлжин карт ----------------------------------------------------- */
+.tour-grid{display:grid;grid-template-columns:repeat(2,1fr);gap:clamp(8px,1.2vw,14px)}
+@media(min-width:640px){.tour-grid{grid-template-columns:repeat(3,1fr)}}
+@media(min-width:960px){.tour-grid{grid-template-columns:repeat(4,1fr)}}
+.tcard{position:relative;display:block;padding:0;aspect-ratio:1;overflow:hidden;border-radius:12px;
+  background:var(--bg-2);text-align:left;color:#fff;
+  transition:transform .3s,box-shadow .3s}
+.tcard:hover,.tcard:focus-visible{transform:translateY(-3px);box-shadow:var(--shadow-lg)}
+.tcard:focus-visible{outline:3px solid var(--sun);outline-offset:-3px}
+.tcard img{position:absolute;inset:0;width:100%;height:100%;object-fit:cover;
+  transition:transform .8s cubic-bezier(.2,.7,.3,1)}
+.tcard:hover img{transform:scale(1.05)}
+.tcard-day{position:absolute;left:12px;top:12px;z-index:2;font-size:12.5px;font-weight:500;
+  padding:5px 10px;border-radius:999px;background:var(--sun);color:#1B1607;line-height:1.2}
+.tcard-cap{position:absolute;left:0;right:0;bottom:0;z-index:2;display:grid;gap:2px;
+  padding:44px 14px 13px;
+  background:linear-gradient(180deg,rgba(15,26,43,0),rgba(15,26,43,.82))}
+.tcard-cap b{font-family:var(--disp);font-weight:500;font-size:clamp(17px,1.7vw,22px);line-height:1.15}
+:lang(ko) .tcard-cap b{font-family:'Noto Sans KR',var(--body);font-weight:700}
+.tcard-cap small{font-size:12.5px;color:rgba(255,255,255,.78);overflow:hidden;text-overflow:ellipsis;
+  white-space:nowrap}
 
-/* ---- Дэлгэрэнгүйн бүтэц ------------------------------------------------- */
-.tour-body{display:grid;grid-template-columns:1fr;gap:clamp(28px,3.6vw,56px);align-items:start}
-@media(min-width:1000px){.tour-body{grid-template-columns:minmax(0,1fr) 320px}}
-.tour-prose p{margin-bottom:18px;color:var(--ink-2);max-width:62ch;font-size:16.5px}
-.tour-prose p:first-of-type{font-size:clamp(18px,1.6vw,22px);color:var(--ink);line-height:1.55;
-  font-family:var(--disp);font-weight:400}
+/* ---- Дэлгэрэнгүй цонх --------------------------------------------------- */
+.ts{position:fixed;inset:0;z-index:100;display:none;align-items:center;justify-content:center;
+  background:rgba(10,16,27,.9);padding:clamp(10px,2.4vw,32px)}
+.ts.open{display:flex;animation:ts-in .22s ease both}
+@keyframes ts-in{from{opacity:0}to{opacity:1}}
+.ts-card{position:relative;width:min(1080px,100%);max-height:100%;display:grid;grid-template-columns:1fr;
+  background:var(--white);border-radius:var(--r-lg);overflow:hidden;box-shadow:var(--shadow-lg);
+  animation:ts-up .3s cubic-bezier(.2,.8,.3,1) both}
+@keyframes ts-up{from{transform:translateY(18px)}to{transform:none}}
+@media(min-width:820px){.ts-card{grid-template-columns:minmax(0,1.15fr) minmax(0,1fr);max-height:min(720px,100%)}}
+.ts-close{position:absolute;top:10px;right:10px;z-index:3;width:40px;height:40px;border-radius:50%;
+  background:rgba(15,26,43,.55);color:#fff;font-size:24px;line-height:1;transition:background .2s}
+.ts-close:hover{background:var(--night)}
+.ts-media{position:relative;display:flex;flex-direction:column;background:var(--night);min-height:0}
+.ts-big{width:100%;flex:1 1 auto;min-height:0;aspect-ratio:4/3;object-fit:cover}
+@media(min-width:820px){.ts-big{aspect-ratio:auto;height:100%;position:absolute;inset:0}}
+.ts-thumbs{position:relative;z-index:2;display:flex;gap:6px;padding:8px;overflow-x:auto;
+  background:rgba(15,26,43,.6);margin-top:auto}
+.ts-thumbs[hidden]{display:none}
+.ts-thumbs button{flex:0 0 auto;width:58px;height:58px;padding:0;border-radius:6px;overflow:hidden;
+  opacity:.55;border:2px solid transparent;transition:opacity .2s,border-color .2s}
+.ts-thumbs button.on,.ts-thumbs button:hover{opacity:1;border-color:var(--sun)}
+.ts-thumbs img{width:100%;height:100%;object-fit:cover}
+.ts-body{padding:clamp(20px,3vw,34px);overflow-y:auto;display:grid;align-content:start;gap:8px}
+.ts-day{font-size:13.5px;color:var(--ink-3);font-weight:500}
+.ts-day b{color:var(--sun-deep);font-weight:600}
+.ts-title{font-size:clamp(26px,3vw,38px);margin-top:2px}
+.ts-place{font-size:15px;color:var(--pine);font-weight:500}
+.ts-meta{display:inline-flex;align-items:center;gap:8px;font-size:14px;color:var(--ink-2);
+  padding:6px 12px;border-radius:999px;background:var(--bg-2);justify-self:start;margin-top:4px}
+.ts-meta::before{content:"";width:7px;height:7px;border-radius:50%;background:var(--sun)}
+.ts-sum{font-size:16.5px;color:var(--ink);font-weight:500;margin-top:8px}
+.ts-list{list-style:none;display:grid;gap:6px;margin-top:6px;padding-top:12px;border-top:1px solid var(--line)}
+.ts-list li{display:flex;gap:10px;align-items:flex-start;font-size:15px;color:var(--ink-2);line-height:1.55}
+.ts-list li::before{content:"";flex:0 0 auto;width:6px;height:6px;border-radius:50%;background:var(--pine);margin-top:9px}
+.ts-nav{display:flex;align-items:center;justify-content:space-between;gap:10px;margin-top:18px;
+  padding-top:14px;border-top:1px solid var(--line)}
+.ts-nav .btn[disabled]{opacity:.35;cursor:default}
+.ts-count{font-size:13px;color:var(--ink-3)}
+body.lb-open{overflow:hidden}
+@media(max-width:819px){
+  .ts{padding:0;align-items:flex-end}
+  .ts-card{border-radius:var(--r-lg) var(--r-lg) 0 0;max-height:94svh}
+  .ts-media{flex:0 0 auto}
+  .ts-big{max-height:42svh}
+}
 
-.tour-side{border-radius:var(--r-lg);overflow:hidden;background:var(--white);border:1px solid var(--line);
-  position:sticky;top:calc(var(--hd-h) + 16px)}
-@media(max-width:999px){.tour-side{position:static}}
-.tour-side::before{content:"";display:block;height:6px;background:var(--rc,var(--pine))}
-.tour-side h3{padding:18px 22px 6px;font-size:20px}
-.tour-side dl{padding:6px 22px 8px}
-.tour-side dl div{display:flex;justify-content:space-between;gap:14px;align-items:baseline;
-  padding:11px 0;border-bottom:1px solid var(--line-2)}
-.tour-side dl div:last-child{border-bottom:0}
-.tour-side dt{font-size:13.5px;color:var(--ink-3);font-weight:500}
-.tour-side dd{font-family:var(--disp);font-weight:500;font-size:16.5px;text-align:right}
-.tour-side .act{padding:14px 22px 22px;display:grid;gap:9px}
-
-/* ---- Замын уртын багана ------------------------------------------------- */
-.drive{margin-block:clamp(26px,3.4vw,44px)}
-.drive figcaption{display:flex;flex-wrap:wrap;justify-content:space-between;gap:8px;
-  font-size:13.5px;font-weight:500;color:var(--ink-3);padding-bottom:14px}
-.drive-plot{display:flex;align-items:flex-end;gap:4px;height:112px;border-bottom:1px solid var(--line)}
-.bar{position:relative;flex:1 1 0;height:100%;display:flex;flex-direction:column;justify-content:flex-end}
-.bar i{display:block;flex:0 0 auto;width:min(100%,28px);margin:0 auto;height:var(--v,0%);
-  min-height:2px;background:var(--rc,var(--pine));border-radius:4px 4px 0 0}
-.bar.rest i{height:0;min-height:0;background:none}
-.bar.rest::before{content:"";position:absolute;left:50%;bottom:0;transform:translate(-50%,50%);
-  width:9px;height:9px;border-radius:50%;background:var(--sun);box-shadow:0 0 0 3px var(--bg)}
-.bar b{position:absolute;left:50%;transform:translateX(-50%);bottom:calc(var(--v,0%) + 7px);
-  font-family:var(--mono);font-size:11px;font-weight:500;color:var(--ink-2);white-space:nowrap}
-.drive-days{display:flex;gap:4px;padding-top:8px}
-.drive-days span{flex:1 1 0;text-align:center;font-family:var(--mono);font-size:11px;color:var(--ink-3)}
-.drive-key{display:flex;flex-wrap:wrap;gap:8px 18px;padding-top:14px;font-size:13px;color:var(--ink-3)}
-.drive-key span{display:inline-flex;align-items:center;gap:7px}
-.drive-key i{width:9px;height:9px;border-radius:2px;background:var(--rc,var(--pine));flex:0 0 auto}
-.drive-key i.r{border-radius:50%;background:var(--sun)}
-
-/* ---- Өдрийн хүснэгт ----------------------------------------------------- */
-.days-table{width:100%;border-collapse:collapse;font-size:15px;margin-top:18px}
-.days-table th{text-align:left;font-size:13px;font-weight:500;color:var(--ink-3);
-  padding:0 12px 10px 0;border-bottom:1px solid var(--line)}
-.days-table td{padding:12px 12px 12px 0;border-bottom:1px solid var(--line-2);vertical-align:top;color:var(--ink-2)}
-.days-table td:first-child{font-family:var(--mono);font-size:13px;color:var(--rc,var(--pine));width:42px}
-.days-table td:nth-child(2){color:var(--ink);font-weight:500}
-.days-table th:last-child,.days-table td:last-child{text-align:right;padding-right:0;font-family:var(--mono);font-size:13px}
-.days-table tr:last-child td{border-bottom:0}
-.days-table tr.rest td:nth-child(2)::after{content:"";display:inline-block;width:7px;height:7px;
-  border-radius:50%;background:var(--sun);margin-left:8px;vertical-align:middle}
-
-/* ---- Багц --------------------------------------------------------------- */
-.incl{display:grid;grid-template-columns:1fr;gap:clamp(20px,3vw,40px);margin-top:26px}
-@media(min-width:720px){.incl{grid-template-columns:1fr 1fr}}
-.incl > div{background:var(--white);border:1px solid var(--line);border-radius:var(--r-lg);padding:22px 24px 10px}
-.incl h3{font-family:var(--disp);font-weight:500;font-size:20px;padding-bottom:12px;border-bottom:1px solid var(--line)}
-.incl li{list-style:none;display:flex;gap:12px;padding:12px 0;border-bottom:1px solid var(--line-2);
-  font-size:15px;color:var(--ink-2)}
-.incl li:last-child{border-bottom:0}
-.incl li::before{content:"";flex:0 0 auto;width:8px;height:8px;border-radius:50%;
-  background:var(--rc,var(--pine));margin-top:8px}
-.incl .out li::before{background:var(--line);}
-.incl .out li{color:var(--ink-3)}
-
-/* ---- Онцлох мөчүүд ------------------------------------------------------ */
-.high-list{display:grid;gap:0;margin-top:20px;list-style:none}
-.high-list li{display:grid;grid-template-columns:auto 1fr;gap:16px;align-items:baseline;
-  padding:15px 0;border-top:1px solid var(--line);font-size:16.5px;color:var(--ink)}
-.high-list li:last-child{border-bottom:1px solid var(--line)}
-.high-list li::before{content:"";width:9px;height:9px;border-radius:50%;background:var(--rc,var(--pine));
-  transform:translateY(-1px)}
+/* ---- Хөдөлгөөний нэмэлт ------------------------------------------------- */
+.cat-head h2 small{padding:4px 11px;border-radius:999px;background:var(--bg-2);color:var(--ink-2);font-size:13px}
+.tcard::after{content:"";position:absolute;left:0;right:0;bottom:0;height:4px;z-index:3;background:var(--sun);
+  transform:scaleX(0);transform-origin:left;transition:transform .45s cubic-bezier(.2,.8,.3,1)}
+.tcard:hover::after,.tcard:focus-visible::after{transform:scaleX(1)}
+.tcard-day{transition:transform .3s,background .3s}
+.tcard:hover .tcard-day{transform:translateY(-2px)}
+.tcard-cap{transition:padding-bottom .35s cubic-bezier(.2,.8,.3,1)}
+.tcard:hover .tcard-cap{padding-bottom:18px}
+.ts-big{opacity:0;transition:opacity .4s ease}
+.ts-big.in{opacity:1}
+.ts-thumbs button{transform:scale(1);transition:opacity .2s,border-color .2s,transform .2s}
+.ts-thumbs button:hover{transform:translateY(-2px)}
+.ts-body>*{animation:ts-item .5s cubic-bezier(.2,.8,.3,1) both;animation-delay:calc(var(--i,0) * 45ms)}
+@keyframes ts-item{from{opacity:0;transform:translateY(12px)}to{opacity:1;transform:none}}
+@media(prefers-reduced-motion:reduce){.ts-body>*{animation:none}.ts-big{opacity:1;transition:none}}

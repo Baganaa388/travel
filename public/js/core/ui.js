@@ -1,8 +1,10 @@
 /* ==========================================================================
-   ui.js — бүх хуудсанд нийтлэг: толгой, цэс, илрэх хөдөлгөөн, холбоо барих
+   ui.js — бүх хуудсанд нийтлэг: толгой, цэс, илрэх хөдөлгөөн, тохиргоо
+   (лого, брэнд, цэсний нэр, нүүрний бичвэр, хөл, Instagram товч).
+   Бүх бичвэрийг textContent-ээр тавина.
    ========================================================================== */
 import { getSettings } from './api.js';
-import { initLang, onLang, pick } from './i18n.js';
+import { initLang, onLang, pick, refresh } from './i18n.js';
 
 /* ---- Толгой ------------------------------------------------------------- */
 function header() {
@@ -65,51 +67,86 @@ export async function loadSettings() {
   return settingsCache;
 }
 
-/** Холбоо барих сувгуудын нэр, хаяг. Хоосон талбарыг хуудаснаас хасна. */
-export const CHANNELS = [
-  { key: 'kakao', label: 'KakaoTalk', href: (v) => v },
-  { key: 'instagram', label: 'Instagram', href: (v) => v, shown: () => '@dreamspark_travel' },
-  { key: 'naver', label: 'Naver Blog', href: (v) => v, shown: () => 'blog.naver.com' },
-  { key: 'phone', label: 'Утас', href: (v) => `tel:${v.replace(/\s+/g, '')}` },
-  { key: 'email', label: 'И-мэйл', href: (v) => `mailto:${v}` },
-];
+const has = (v) => typeof v === 'string' && v.trim() !== '';
+const hasText = (o) => o && (has(o.kr) || has(o.en));
 
-function fillContact(settings) {
-  const c = settings.contact || {};
+/** data-t="hero.line1" гэх мэт элементэд {kr,en} бичвэрийг data-en attribute-аар тавина. */
+function setText(el, obj, fallback = '') {
+  if (!el) return;
+  if (!hasText(obj)) {
+    if (fallback) el.textContent = fallback;
+    return;
+  }
+  el.textContent = obj.kr || obj.en;
+  el.setAttribute('data-en', obj.en || obj.kr);
+  delete el._kr;
+}
 
-  for (const ch of CHANNELS) {
-    const value = (c[ch.key] || '').trim();
-    for (const el of document.querySelectorAll(`[data-c="${ch.key}"]`)) {
-      if (!value) {
-        el.remove();
-        continue;
-      }
-      el.textContent = ch.shown ? ch.shown(value) : value;
-      if (el.tagName === 'A') {
-        el.href = ch.href(value);
-        if (/^https?:/.test(el.href)) {
-          el.target = '_blank';
-          el.rel = 'noopener';
-        }
-      }
-    }
+function fillSite(site) {
+  const s = site || {};
+
+  if (has(s.logo)) for (const el of document.querySelectorAll('[data-c="logo"]')) el.src = s.logo;
+  if (has(s.brand))
+    for (const el of document.querySelectorAll('[data-c="brand"]')) el.textContent = s.brand;
+
+  const nav = s.nav || {};
+  for (const key of ['home', 'tours', 'gallery']) {
+    for (const el of document.querySelectorAll(`[data-t="nav.${key}"]`)) setText(el, nav[key]);
   }
 
-  if (c.logo) {
-    for (const el of document.querySelectorAll('[data-c="logo"]')) el.src = c.logo;
+  const hero = s.hero || {};
+  const heroImg = document.querySelector('[data-c="hero"]');
+  if (heroImg && has(hero.image) && heroImg.getAttribute('src') !== hero.image)
+    heroImg.src = hero.image;
+  setText(document.querySelector('[data-t="hero.line1"]'), hero.line1);
+  setText(document.querySelector('[data-t="hero.line2"]'), hero.line2);
+  setText(document.querySelector('[data-t="hero.button"]'), hero.button);
+  setText(document.querySelector('[data-t="galleryTitle"]'), s.galleryTitle);
+
+  // Instagram — хөвөгч товч + хөлийн icon
+  const ig = has(s.instagram) ? s.instagram : '';
+  for (const el of document.querySelectorAll('[data-c="instagram"]')) {
+    if (!ig) el.remove();
+    else el.href = ig;
   }
+  setText(document.querySelector('[data-t="instaLabel"]'), s.instaLabel);
+  for (const el of document.querySelectorAll('[data-c="naver"]')) {
+    if (!has(s.naver)) el.remove();
+    else el.href = s.naver;
+  }
+}
 
-  onLang(() => {
-    for (const el of document.querySelectorAll('[data-c="address"]')) {
-      el.textContent = pick(c.address);
-    }
-    for (const el of document.querySelectorAll('[data-c="hours"]')) {
-      el.textContent = pick(c.hours);
-    }
-  });
+function fillFooter(footer) {
+  const f = footer || {};
+  setText(document.querySelector('[data-t="ft.company"]'), f.company);
+  setText(document.querySelector('[data-t="ft.company2"]'), f.company);
+  setText(document.querySelector('[data-t="ft.address"]'), f.address);
 
-  for (const el of document.querySelectorAll('[data-year]')) {
-    el.textContent = String(new Date().getFullYear());
+  const plain = { ceo: f.ceo, regNo: f.regNo, phone: f.phone, email: f.email };
+  for (const [key, value] of Object.entries(plain)) {
+    const el = document.querySelector(`[data-c="ft.${key}"]`);
+    if (!el) continue;
+    if (!has(value)) {
+      el.closest('[data-row]')?.remove() || el.remove();
+      continue;
+    }
+    el.textContent = value;
+    if (key === 'phone' && el.tagName === 'A') el.href = `tel:${value.replace(/[^\d+]/g, '')}`;
+    if (key === 'email' && el.tagName === 'A') el.href = `mailto:${value}`;
+  }
+  if (!hasText(f.address)) document.querySelector('[data-row="address"]')?.remove();
+
+  const year = String(new Date().getFullYear());
+  const copy = document.querySelector('[data-t="ft.copyright"]');
+  if (copy && hasText(f.copyright)) {
+    const sub = (v) => (v || '').replace('{year}', year);
+    setText(copy, { kr: sub(f.copyright.kr), en: sub(f.copyright.en) });
+  }
+  for (const el of document.querySelectorAll('[data-year]')) el.textContent = year;
+
+  // Хоосон хэвээр үлдсэн мөрүүд (зөвхөн тусгаарлагч) — устгана
+  for (const row of document.querySelectorAll('.ft-row')) {
+    if (!row.querySelector('[data-c],[data-t]')) row.remove();
   }
 }
 
@@ -119,6 +156,13 @@ export async function boot() {
   header();
   reveal();
   const s = await loadSettings();
-  fillContact(s);
+  fillSite(s.site);
+  fillFooter(s.footer);
+  refresh();
+  onLang(() => {
+    document.title = document.querySelector('[data-title]')?.textContent || document.title;
+  });
   return s;
 }
+
+export { pick };

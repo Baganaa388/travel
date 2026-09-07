@@ -23,17 +23,29 @@ const ADMIN_DIR = existsSync(path.join(SERVE_DIR, 'admin'))
   ? path.join(SERVE_DIR, 'admin')
   : path.join(ROOT, 'admin');
 
-/** Нийтийн хуудасны зам → файл */
+/** Нийтийн хуудасны зам → файл (гурван хуудас) */
 const PAGES = {
   '/': 'index.html',
   '/tours': 'tours.html',
   '/gallery': 'gallery.html',
-  '/about': 'about.html',
-  '/contact': 'contact.html',
+};
+
+/** Хуучин зам → шинэ зам */
+const MOVED = {
+  '/about': '/',
+  '/contact': '/',
+  '/chat': '/',
 };
 
 /** Admin SPA-ийн замууд */
-const ADMIN_PAGES = ['/admin', '/admin/dashboard', '/admin/tours', '/admin/gallery', '/admin/settings'];
+const ADMIN_PAGES = [
+  '/admin',
+  '/admin/dashboard',
+  '/admin/tours',
+  '/admin/categories',
+  '/admin/gallery',
+  '/admin/settings',
+];
 
 export function createApp() {
   const app = express();
@@ -72,7 +84,10 @@ export function createApp() {
   });
 
   // ── Хуучин зам → шинэ зам ────────────────────────────────────────────────
-  app.get('/chat', (req, res) => res.redirect(301, '/contact'));
+  for (const [from, to] of Object.entries(MOVED)) {
+    app.get(from, (req, res) => res.redirect(301, to));
+  }
+  app.get('/tour/:slug', (req, res) => res.redirect(301, '/tours'));
 
   // ── Статик ───────────────────────────────────────────────────────────────
   app.use(
@@ -98,13 +113,13 @@ export function createApp() {
   for (const [route, file] of Object.entries(PAGES)) {
     app.get(route, (req, res) => res.sendFile(path.join(SERVE_DIR, file)));
   }
-  app.get('/tour/:slug', (req, res) => res.sendFile(path.join(SERVE_DIR, 'tour.html')));
 
   app.get('/admin/login', (req, res) => res.sendFile(path.join(ADMIN_DIR, 'login.html')));
   for (const route of ADMIN_PAGES) {
     app.get(route, (req, res) => res.sendFile(path.join(ADMIN_DIR, 'index.html')));
   }
   app.get('/admin/tours/:id', (req, res) => res.sendFile(path.join(ADMIN_DIR, 'index.html')));
+  app.get('/admin/categories/:id', (req, res) => res.sendFile(path.join(ADMIN_DIR, 'index.html')));
 
   // ── 404 + алдаа ──────────────────────────────────────────────────────────
   app.use((req, res) => res.status(404).sendFile(path.join(SERVE_DIR, '404.html')));

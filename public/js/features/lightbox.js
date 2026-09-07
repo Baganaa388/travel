@@ -16,9 +16,9 @@ function build() {
   el.setAttribute('role', 'dialog');
   el.setAttribute('aria-modal', 'true');
   el.innerHTML = `
-    <button class="lb-close" type="button" aria-label="Хаах">&times;</button>
-    <button class="lb-prev" type="button" aria-label="Өмнөх">&#8249;</button>
-    <button class="lb-next" type="button" aria-label="Дараах">&#8250;</button>
+    <button class="lb-close" type="button" aria-label="Close">&times;</button>
+    <button class="lb-prev" type="button" aria-label="Previous">&#8249;</button>
+    <button class="lb-next" type="button" aria-label="Next">&#8250;</button>
     <figure class="lb-fig">
       <img alt="">
       <figcaption class="lb-cap">
@@ -44,15 +44,23 @@ function build() {
 
   // Шүргэлтээр гүйлгэх
   let x0 = null;
-  el.addEventListener('touchstart', (e) => {
-    x0 = e.changedTouches[0].clientX;
-  }, { passive: true });
-  el.addEventListener('touchend', (e) => {
-    if (x0 === null) return;
-    const dx = e.changedTouches[0].clientX - x0;
-    if (Math.abs(dx) > 55) step(dx > 0 ? -1 : 1);
-    x0 = null;
-  }, { passive: true });
+  el.addEventListener(
+    'touchstart',
+    (e) => {
+      x0 = e.changedTouches[0].clientX;
+    },
+    { passive: true }
+  );
+  el.addEventListener(
+    'touchend',
+    (e) => {
+      if (x0 === null) return;
+      const dx = e.changedTouches[0].clientX - x0;
+      if (Math.abs(dx) > 55) step(dx > 0 ? -1 : 1);
+      x0 = null;
+    },
+    { passive: true }
+  );
 
   onLang(() => {
     if (el.classList.contains('open')) render();
@@ -65,7 +73,7 @@ function render() {
   if (!p) return;
   const img = el.querySelector('img');
   img.src = p.image;
-  img.alt = pick(p.place) || 'Монголын гэрэл зураг';
+  img.alt = pick(p.place) || 'Photo';
   el.querySelector('.lb-cap b').textContent = pick(p.place);
   el.querySelector('.lb-cap p').textContent = pick(p.caption);
   el.querySelector('.lb-cap .credit').textContent = p.credit || '';

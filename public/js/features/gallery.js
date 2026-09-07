@@ -4,22 +4,21 @@
    (21 аймаг + Улаанбаатар, data/aimags.js). Аймаг бүр өөрийн нутгийн
    (Говь / Хөвсгөл / Төв / Баруун) зургаас нэгийг авна. Нутаг сонгоход бусад
    нутаг бүдгэрнэ. Дарахад lightbox. Бүх бичвэрийг textContent-ээр тавина.
-
-   initGallery(root, { strip })  — strip: цомгийн оронд нэг мөрөнд урсах зурвас (нүүр).
    ========================================================================== */
 import { getGallery } from '../core/api.js';
 import { pick, onLang } from '../core/i18n.js';
+import { reveal } from '../core/ui.js';
 import { AIMAGS, W } from '../data/aimags.js';
 import * as lb from './lightbox.js';
 
 const REGIONS = [
-  { key: 'khuvsgul', mn: 'Хөвсгөл', en: 'Khövsgöl', kr: '홉스골', pin: { x: 40, y: 12 } },
-  { key: 'tuv', mn: 'Төв нутаг', en: 'Central', kr: '중부', pin: { x: 60, y: 42 } },
-  { key: 'gobi', mn: 'Говь', en: 'Gobi', kr: '고비', pin: { x: 50, y: 78 } },
-  { key: 'other', mn: 'Баруун ба бусад', en: 'West & elsewhere', kr: '서부 및 기타', pin: { x: 12, y: 34 } },
+  { key: 'khuvsgul', kr: '홉스골', en: 'Khövsgöl', pin: { x: 40, y: 12 } },
+  { key: 'tuv', kr: '중부', en: 'Central', pin: { x: 60, y: 42 } },
+  { key: 'gobi', kr: '고비', en: 'Gobi', pin: { x: 50, y: 78 } },
+  { key: 'other', kr: '서부 및 기타', en: 'West & elsewhere', pin: { x: 12, y: 34 } },
 ];
-const ALL = { key: 'all', mn: 'Бүгд', en: 'All', kr: '전체' };
-const PHOTOS_WORD = { mn: (n) => `${n} зураг`, en: (n) => `${n} photos`, kr: (n) => `사진 ${n}장` };
+const ALL = { key: 'all', kr: '전체', en: 'All' };
+const PHOTOS_WORD = { kr: (n) => `사진 ${n}장`, en: (n) => `${n} photos` };
 const SVG = 'http://www.w3.org/2000/svg';
 const XLINK = 'http://www.w3.org/1999/xlink';
 
@@ -28,7 +27,11 @@ function columns() {
   return window.matchMedia('(min-width:700px)').matches ? 7 : 3;
 }
 function leadKind(n, cols) {
-  const opts = [['lead', 4], ['lead wide', 2], ['', 1]];
+  const opts = [
+    ['lead', 4],
+    ['lead wide', 2],
+    ['', 1],
+  ];
   for (const [cls, cells] of opts) if ((cells + n - 1) % cols === 0) return cls;
   return n >= 9 ? 'lead' : 'lead wide';
 }
@@ -62,7 +65,7 @@ function assignPhotos(all) {
   return out;
 }
 
-export async function initGallery(root = document, { strip = false } = {}) {
+export async function initGallery(root = document) {
   const gal = root.querySelector('.gal');
   const filterBox = root.querySelector('#galFilter');
   const stage = root.querySelector('.mn-stage');
@@ -72,16 +75,16 @@ export async function initGallery(root = document, { strip = false } = {}) {
 
   let all = [];
   let region = 'all';
-  let lang = 'mn';
+  let lang = 'kr';
 
   try {
     all = await getGallery({ limit: 200 });
   } catch {
-    if (stateBox) stateBox.textContent = 'Зургуудыг ачаалж чадсангүй';
+    if (stateBox) stateBox.textContent = 'Could not load the photos';
     return;
   }
   if (!all.length) {
-    if (stateBox) stateBox.textContent = 'Зураг байхгүй байна';
+    if (stateBox) stateBox.textContent = 'No photos yet';
     return;
   }
   stateBox?.remove();
@@ -101,7 +104,7 @@ export async function initGallery(root = document, { strip = false } = {}) {
       b.dataset.region = r.key;
       b.setAttribute('aria-pressed', String(r.key === region));
       b.classList.toggle('on', r.key === region);
-      b.append(r[lang] || r.mn, ' ');
+      b.append(r[lang] || r.kr, ' ');
       b.append(el('span', 'n', String(n)));
       frag.append(b);
     }
@@ -116,7 +119,11 @@ export async function initGallery(root = document, { strip = false } = {}) {
   function renderMap() {
     if (!stage) return;
     stage.replaceChildren();
-    const svg = svgEl('svg', { class: 'mn-svg', viewBox: `0 0 ${W} 1`, 'aria-label': 'Монгол улсын газрын зураг' });
+    const svg = svgEl('svg', {
+      class: 'mn-svg',
+      viewBox: `0 0 ${W} 1`,
+      'aria-label': 'Map of Mongolia',
+    });
     const defs = svgEl('defs');
     const land = svgEl('g', { class: 'mn-land' });
     const tiles = svgEl('g', { class: 'mn-tiles' });
@@ -128,13 +135,22 @@ export async function initGallery(root = document, { strip = false } = {}) {
       land.append(svgEl('path', { d: a.d, 'vector-effect': 'non-scaling-stroke' }));
 
       const p = photoOf.get(a.id);
-      const g = svgEl('g', { class: 'mn-tile', 'data-region': a.region, tabindex: 0, role: 'button' });
+      const g = svgEl('g', {
+        class: 'mn-tile',
+        'data-region': a.region,
+        tabindex: 0,
+        role: 'button',
+      });
       if (p) {
         g.dataset.id = String(p.id);
         const [x0, y0, x1, y1] = a.box;
         const img = svgEl('image', {
-          x: x0, y: y0, width: x1 - x0, height: y1 - y0,
-          preserveAspectRatio: 'xMidYMid slice', 'clip-path': `url(#ai-${a.id})`,
+          x: x0,
+          y: y0,
+          width: x1 - x0,
+          height: y1 - y0,
+          preserveAspectRatio: 'xMidYMid slice',
+          'clip-path': `url(#ai-${a.id})`,
         });
         img.setAttribute('href', p.thumb || p.image);
         img.setAttributeNS(XLINK, 'xlink:href', p.thumb || p.image);
@@ -142,12 +158,13 @@ export async function initGallery(root = document, { strip = false } = {}) {
       }
       g.append(svgEl('path', { class: 'mn-edge', d: a.d, 'vector-effect': 'non-scaling-stroke' }));
       const title = svgEl('title');
-      title.textContent = p ? `${a.mn} · ${pick(p.place, lang)}` : a.mn;
+      title.textContent = p ? `${a.name} · ${pick(p.place, lang)}` : a.name;
       g.append(title);
       tiles.append(g);
     }
     svg.append(defs, land, tiles);
     stage.append(svg);
+    requestAnimationFrame(() => stage.classList.add('in'));
 
     for (const r of regions) {
       const pin = el('button', 'mn-pin');
@@ -156,14 +173,20 @@ export async function initGallery(root = document, { strip = false } = {}) {
       pin.style.left = `${r.pin.x}%`;
       pin.style.top = `${r.pin.y}%`;
       pin.classList.toggle('on', r.key === region);
-      pin.append(r[lang] || r.mn, ' ');
+      pin.append(r[lang] || r.kr, ' ');
       pin.append(el('b', null, String(byRegion(r.key).length)));
       stage.append(pin);
     }
   }
   function openTile(tile) {
     const list = byRegion(tile.dataset.region);
-    lb.open(list, Math.max(0, list.findIndex((p) => String(p.id) === tile.dataset.id)));
+    lb.open(
+      list,
+      Math.max(
+        0,
+        list.findIndex((p) => String(p.id) === tile.dataset.id)
+      )
+    );
   }
   stage?.addEventListener('click', (e) => {
     const pin = e.target.closest('.mn-pin');
@@ -183,40 +206,9 @@ export async function initGallery(root = document, { strip = false } = {}) {
     }
   });
 
-  /* ---- Урсах зурвас (нүүр) ---------------------------------------------- */
-  function renderStrip() {
-    const track = el('div', 'gal-track');
-    const make = (p) => {
-      const b = el('button');
-      b.type = 'button';
-      b.dataset.id = String(p.id);
-      b.dataset.region = p.regionKey;
-      b.setAttribute('aria-label', pick(p.place, lang) || 'Зураг');
-      const img = el('img');
-      img.src = p.thumb || p.image;
-      img.alt = '';
-      img.loading = 'lazy';
-      img.decoding = 'async';
-      b.append(img, el('span', null, pick(p.place, lang)));
-      return b;
-    };
-    for (const p of all) track.append(make(p));
-    // Тасралтгүй урсгахын тулд нэг удаа давтана (aria-hidden — уншигчид давхардахгүй)
-    const dup = el('div', 'gal-track');
-    dup.setAttribute('aria-hidden', 'true');
-    for (const p of all) {
-      const b = make(p);
-      b.tabIndex = -1;
-      dup.append(b);
-    }
-    album.replaceChildren(track, dup);
-    album.classList.add('gal-strip');
-  }
-
   /* ---- Цомог: нутаг бүр өөрийн хэсэгтэй --------------------------------- */
   function renderAlbum() {
     if (!album) return;
-    if (strip) return renderStrip();
     const frag = document.createDocumentFragment();
     for (const r of regions) {
       const photos = byRegion(r.key);
@@ -226,17 +218,18 @@ export async function initGallery(root = document, { strip = false } = {}) {
       sec.hidden = region !== 'all' && region !== r.key;
 
       const head = el('div', 'gal-sec-head');
-      const h = el('h3', null, r[lang] || r.mn);
+      const h = el('h3', null, r[lang] || r.kr);
       h.append(el('small', null, PHOTOS_WORD[lang](photos.length)));
       head.append(h);
 
-      const grid = el('div', 'gal-grid');
+      const grid = el('div', 'gal-grid rv-stg');
       const lead = leadKind(photos.length, columns());
       photos.forEach((ph, i) => {
         const btn = el('button', i === 0 && lead ? lead : null);
         btn.type = 'button';
+        btn.style.setProperty('--i', String(Math.min(i, 12)));
         btn.dataset.id = String(ph.id);
-        btn.setAttribute('aria-label', pick(ph.place, lang) || 'Зураг');
+        btn.setAttribute('aria-label', pick(ph.place, lang) || 'Photo');
         const img = el('img');
         img.src = ph.thumb || ph.image;
         img.alt = pick(ph.place, lang) || '';
@@ -249,13 +242,20 @@ export async function initGallery(root = document, { strip = false } = {}) {
       frag.append(sec);
     }
     album.replaceChildren(frag);
+    reveal(album);
   }
   album?.addEventListener('click', (e) => {
     const btn = e.target.closest('button[data-id]');
     if (!btn) return;
     const key = btn.dataset.region || btn.closest('.gal-sec')?.dataset.region;
     const list = byRegion(key);
-    lb.open(list, Math.max(0, list.findIndex((p) => String(p.id) === btn.dataset.id)));
+    lb.open(
+      list,
+      Math.max(
+        0,
+        list.findIndex((p) => String(p.id) === btn.dataset.id)
+      )
+    );
   });
 
   /* ---- Сонгох ----------------------------------------------------------- */
@@ -267,8 +267,10 @@ export async function initGallery(root = document, { strip = false } = {}) {
       b.classList.toggle('on', on);
       b.setAttribute('aria-pressed', String(on));
     }
-    for (const p of stage?.querySelectorAll('.mn-pin') || []) p.classList.toggle('on', p.dataset.region === key);
-    for (const s of album?.querySelectorAll('.gal-sec') || []) s.hidden = key !== 'all' && s.dataset.region !== key;
+    for (const p of stage?.querySelectorAll('.mn-pin') || [])
+      p.classList.toggle('on', p.dataset.region === key);
+    for (const s of album?.querySelectorAll('.gal-sec') || [])
+      s.hidden = key !== 'all' && s.dataset.region !== key;
   }
 
   onLang((l) => {
@@ -279,19 +281,17 @@ export async function initGallery(root = document, { strip = false } = {}) {
   });
   gal.dataset.region = region;
 
-  if (!strip) {
-    // Баганы тоо өөрчлөгдвөл (утас ↔ ширээ) цомгийг дахин зурна
-    let cols = columns();
-    let timer = 0;
-    window.addEventListener('resize', () => {
-      window.clearTimeout(timer);
-      timer = window.setTimeout(() => {
-        const c = columns();
-        if (c !== cols) {
-          cols = c;
-          renderAlbum();
-        }
-      }, 150);
-    });
-  }
+  // Баганы тоо өөрчлөгдвөл (утас ↔ ширээ) цомгийг дахин зурна
+  let cols = columns();
+  let timer = 0;
+  window.addEventListener('resize', () => {
+    window.clearTimeout(timer);
+    timer = window.setTimeout(() => {
+      const c = columns();
+      if (c !== cols) {
+        cols = c;
+        renderAlbum();
+      }
+    }, 150);
+  });
 }

@@ -9,20 +9,25 @@ test.before(async () => {
   app = await startApp();
   c = makeClient(app.base);
   await c.login();
-  await c.req('/api/admin/tours', { method: 'POST', body: sampleTour() });
+  const catId = await c.makeCategory();
+  const hiddenCat = await c.makeCategory({ slug: 'hidden-cat', isActive: false, nameKr: '숨김' });
+  await c.req('/api/admin/tours', { method: 'POST', body: sampleTour(catId) });
   await c.req('/api/admin/tours', {
     method: 'POST',
-    body: sampleTour({ slug: 'hidden-route', isActive: false, titleMn: 'Нуусан' }),
+    body: sampleTour(catId, { slug: 'hidden-route', isActive: false, titleKr: '숨김', dayNo: 2 }),
+  });
+  await c.req('/api/admin/tours', {
+    method: 'POST',
+    body: sampleTour(hiddenCat, { slug: 'in-hidden-cat', titleKr: '숨김 안' }),
   });
   await c.req('/api/admin/gallery', {
     method: 'POST',
     body: {
       image: '/images/gallery/gobi-02.jpg',
       regionKey: 'gobi',
-      placeMn: 'Хонгорын элс',
-      placeEn: 'Khongoryn Els',
       placeKr: '홍고린 엘스',
-      captionMn: 'Тайлбар',
+      placeEn: 'Khongoryn Els',
+      captionKr: '설명',
       isActive: true,
       sortOrder: 0,
       credit: 'Author · CC0',
@@ -38,50 +43,49 @@ test('health эсэн мэнд', async () => {
   assert.equal(r.data.ok, true);
 });
 
-test('/api/tours зөвхөн идэвхтэйг буцаана', async () => {
+test('/api/tours зөвхөн идэвхтэй ангилал, идэвхтэй аяллыг буцаана', async () => {
   const r = await c.req('/api/tours');
   assert.equal(r.status, 200);
-  assert.equal(r.data.tours.length, 1);
-  assert.equal(r.data.tours[0].slug, 'test-route');
+  assert.equal(r.data.categories.length, 1);
+  const cat = r.data.categories[0];
+  assert.equal(cat.slug, 'test-cat');
+  assert.equal(cat.tours.length, 1);
+  assert.equal(cat.tours[0].slug, 'test-route');
 });
 
-test('чиглэлийн гурван хэл бүрэн ирнэ', async () => {
+test('ангилал, аяллын хоёр хэл бүрэн ирнэ', async () => {
+  const { data } = await c.req('/api/tours');
+  const cat = data.categories[0];
+  assert.equal(cat.name.kr, '테스트 투어');
+  assert.equal(cat.name.en, 'Test tour');
+  assert.equal(cat.sub.kr, '4박5일');
+  const t = cat.tours[0];
+  assert.equal(t.title.kr, '우기 호수');
+  assert.equal(t.title.en, 'Ugii Lake');
+  assert.equal(t.dayNo, 1);
+});
+
+test('хоосон орчуулга KR руу унана', async () => {
   const { data } = await c.req('/api/tours/test-route');
-  assert.equal(data.tour.title.mn, 'Туршилтын чиглэл');
-  assert.equal(data.tour.title.en, 'Test route');
-  assert.equal(data.tour.title.kr, '테스트 코스');
+  assert.equal(data.tour.place.en, '아르항가이', 'EN хоосон бол KR-ээр нөхөнө');
 });
 
-test('хоосон орчуулга MN руу унана', async () => {
+test('аяллын зургууд thumb замтай ирнэ, эхнийх нь cover', async () => {
   const { data } = await c.req('/api/tours/test-route');
-  assert.equal(data.tour.area.en, 'Өмнөговь', 'EN хоосон бол MN-ээр нөхөнө');
+  assert.equal(data.tour.images.length, 2);
+  assert.equal(data.tour.cover, '/images/tours/ugii-1.jpg');
+  assert.equal(data.tour.coverThumb, '/images/tours/thumbs/ugii-1.jpg');
+  assert.equal(data.tour.images[1].thumb, '/images/tours/thumbs/ugii-2.jpg');
 });
 
-test('өдрийн хуваарь дараалалтай, амралтын өдөр 0 км', async () => {
-  const { data } = await c.req('/api/tours/test-route');
-  const days = data.tour.itinerary;
-  assert.equal(days.length, 3);
-  assert.deepEqual(days.map((d) => d.dayNo), [1, 2, 3]);
-  assert.equal(days[1].km, 0);
-});
-
-test('багц high/in/out болж хуваагдана', async () => {
-  const { data } = await c.req('/api/tours/test-route');
-  assert.equal(data.tour.highlights.length, 1);
-  assert.equal(data.tour.includes.length, 1);
-  assert.equal(data.tour.excludes.length, 1);
-  assert.equal(data.tour.highlights[0].text.mn, 'Онцлох мөч');
-  assert.equal(data.tour.excludes[0].text.mn, 'Нислэг');
-});
-
-test('байхгүй чиглэл 404', async () => {
+test('байхгүй аялал 404', async () => {
   const r = await c.req('/api/tours/no-such-route');
   assert.equal(r.status, 404);
 });
 
-test('нуусан чиглэл нийтэд харагдахгүй', async () => {
-  const r = await c.req('/api/tours/hidden-route');
-  assert.equal(r.status, 404);
+test('нуусан аялал болон нуусан ангиллын аялал нийтэд харагдахгүй', async () => {
+  assert.equal((await c.req('/api/tours/hidden-route')).status, 404);
+  assert.equal((await c.req('/api/tours/in-hidden-cat')).status, 404);
 });
 
 test('/api/gallery thumb замыг өгнө', async () => {
@@ -91,6 +95,7 @@ test('/api/gallery thumb замыг өгнө', async () => {
   assert.equal(p.image, '/images/gallery/gobi-02.jpg');
   assert.equal(p.thumb, '/images/gallery/thumbs/gobi-02.jpg');
   assert.equal(p.place.kr, '홍고린 엘스');
+  assert.equal(p.place.en, 'Khongoryn Els');
 });
 
 test('gallery нутгаар шүүнэ', async () => {
@@ -108,7 +113,7 @@ test('буруу region 400', async () => {
 test('/api/settings нийтийн түлхүүрүүдийг өгнө', async () => {
   const r = await c.req('/api/settings');
   assert.equal(r.status, 200);
-  assert.deepEqual(Object.keys(r.data.settings).sort(), ['contact']);
+  assert.deepEqual(Object.keys(r.data.settings).sort(), ['footer', 'site']);
 });
 
 test('API-ийн үл мэдэгдэх зам JSON 404 буцаана', async () => {

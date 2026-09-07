@@ -3,12 +3,7 @@ import { z } from 'zod';
 import { db } from '../../db/index.js';
 import { unauthorized } from '../../lib/httpError.js';
 import { verifyPassword, hashPassword } from '../../lib/password.js';
-import {
-  createSession,
-  destroySession,
-  cookieOptions,
-  SESSION_COOKIE,
-} from '../../lib/session.js';
+import { createSession, destroySession, cookieOptions, SESSION_COOKIE } from '../../lib/session.js';
 import { loginLimiter } from '../../middleware/security.js';
 import { requireAuth, requireCsrf } from '../../middleware/auth.js';
 import { validateBody } from '../../middleware/validate.js';

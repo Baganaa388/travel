@@ -1,10 +1,10 @@
-/* Нийтийн API — сайтын тохиргоо (холбоо барих, сүлжээ, нүүрний бичвэр). */
+/* Нийтийн API — сайтын тохиргоо (лого, нүүрний бичвэр, хөл, Instagram). */
 import { Router } from 'express';
 import { getSetting } from '../db/index.js';
 
 const router = Router();
 
-export const PUBLIC_KEYS = ['contact'];
+export const PUBLIC_KEYS = ['site', 'footer'];
 
 router.get('/settings', (req, res) => {
   const out = {};

@@ -202,47 +202,6 @@ button{background:none;border:0;cursor:pointer}
 .gal .ops{display:flex;gap:5px;flex-wrap:wrap}
 .gal.off figure{opacity:.5}
 
-/* ---- Чат ---------------------------------------------------------------- */
-.inbox{display:grid;grid-template-columns:1fr;gap:14px}
-@media(min-width:1000px){.inbox{grid-template-columns:320px 1fr;align-items:start}}
-.conv-list{display:grid;gap:2px;max-height:70vh;overflow-y:auto}
-.conv{display:grid;gap:3px;padding:12px 14px;border-radius:var(--r);text-align:left;width:100%;
-  transition:background .16s}
-.conv:hover{background:var(--bg)}
-.conv.on{background:var(--mint-soft)}
-.conv .t{display:flex;align-items:baseline;justify-content:space-between;gap:10px}
-.conv b{font-size:14px;font-weight:600}
-.conv .when{font-family:var(--mono);font-size:9.5px;color:var(--ink-3)}
-.conv .p{font-size:13px;color:var(--ink-2);overflow:hidden;text-overflow:ellipsis;
-  white-space:nowrap}
-
-.thread{display:flex;flex-direction:column;height:min(70vh,640px)}
-.thread-log{flex:1;overflow-y:auto;padding:18px;display:flex;flex-direction:column;gap:10px}
-.bub{max-width:min(76%,520px);padding:10px 14px;border-radius:13px;font-size:14.5px;
-  line-height:1.58;white-space:pre-wrap;overflow-wrap:anywhere;
-  animation:rise .25s ease both}
-.bub.visitor{align-self:flex-start;background:var(--bg);border:1px solid var(--line-2);
-  border-bottom-left-radius:4px}
-.bub.agent{align-self:flex-end;background:var(--pine);color:#fff;border-bottom-right-radius:4px}
-.bub time{display:block;margin-top:5px;font-family:var(--mono);font-size:9.5px;opacity:.6}
-.thread-form{border-top:1px solid var(--line-2);padding:12px;display:flex;gap:9px;align-items:flex-end}
-.thread-form textarea{flex:1;resize:none;min-height:44px;max-height:140px;background:var(--bg);
-  border:1px solid var(--line);border-radius:var(--r);padding:10px 12px;font-size:14.5px}
-.thread-form textarea:focus{outline:0;border-color:var(--pine);background:var(--card)}
-
-/* ---- Өдрийн мөр (аяллын засвар) ---------------------------------------- */
-.days{display:grid;gap:10px}
-.day-row{display:grid;gap:8px;grid-template-columns:56px 1fr;align-items:start;
-  padding:12px;border:1px solid var(--line);border-radius:var(--r);background:var(--bg)}
-.day-row .no{font-family:var(--mono);font-size:12px;color:var(--sun);padding-top:10px}
-.day-row .fields{display:grid;gap:8px}
-@media(min-width:760px){.day-row .fields{grid-template-columns:2fr 1fr 78px auto;align-items:end}}
-.day-row .field{margin:0}
-.day-row .drop{align-self:end}
-
-.lines{display:grid;gap:8px}
-.line-row{display:grid;grid-template-columns:1fr auto;gap:8px;align-items:end}
-
 /* ---- Баталгаажуулах цонх ------------------------------------------------ */
 .modal{position:fixed;inset:0;z-index:80;display:none;align-items:center;justify-content:center;
   background:rgba(10,15,13,.55);padding:20px}
@@ -293,3 +252,17 @@ button{background:none;border:0;cursor:pointer}
 .imgfield input[type="text"]{width:100%;background:var(--card);border:1px solid var(--line);
   border-radius:var(--r);padding:9px 11px;font-size:13px;font-family:var(--mono);flex:0 0 auto}
 .imgfield.drag{border-color:var(--pine);background:var(--mint-soft)}
+
+/* ---- Олон зургийн талбар ------------------------------------------------ */
+.imgfield-multi .if-side{flex:1 1 100%}
+.imgs{display:grid;gap:8px}
+.imgs-row{display:grid;grid-template-columns:64px 1fr auto auto auto auto;gap:8px;align-items:center;
+  background:var(--card);border:1px solid var(--line);border-radius:var(--r);padding:6px 8px}
+.imgs-row .prev{width:64px;height:48px;border-radius:4px;overflow:hidden;background:var(--bg)}
+.imgs-row .prev img{width:100%;height:100%;object-fit:cover}
+.imgs-row input{min-width:0;background:var(--bg);border:1px solid var(--line);border-radius:var(--r);
+  padding:7px 9px;font-size:12.5px;font-family:var(--mono)}
+.imgs-row .mono{min-width:34px;text-align:center}
+@media(max-width:640px){.imgs-row{grid-template-columns:52px 1fr;grid-auto-flow:dense}.imgs-row .btn{grid-column:span 1}}
+.card-h .tools{display:flex;flex-wrap:wrap;gap:6px}
+.card-h h2 .mono{margin-left:6px;font-size:10px}

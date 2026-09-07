@@ -1,17 +1,17 @@
 /* ==========================================================================
-   i18n.js — MN / EN / KR
-   Статик бичвэр: элемент дээр data-en="…" data-kr="…" (MN нь DOM-ийн анхны утга).
-   Динамик бичвэр: API-аас {mn,en,kr} ирнэ → pick() ашиглана.
+   i18n.js — KR (анхдагч) / EN
+   Статик бичвэр: элемент дээр data-en="…" (KR нь DOM-ийн анхны утга).
+   Динамик бичвэр: API-аас {kr,en} ирнэ → pick() ашиглана.
    Хэл солиход `langchange` event цацна.
    ========================================================================== */
 
-const LANGS = ['mn', 'en', 'kr'];
+const LANGS = ['kr', 'en'];
 const KEY = 'ds_lang';
-const HTML_LANG = { mn: 'mn', en: 'en', kr: 'ko' };
+const HTML_LANG = { kr: 'ko', en: 'en' };
 
-let current = 'mn';
+let current = 'kr';
 
-/** Хөтчийн хэлээр анхны сонголтыг таамаглана. */
+/** Хадгалсан сонголт байвал түүнийг, үгүй бол солонгос. */
 function detect() {
   try {
     const saved = localStorage.getItem(KEY);
@@ -19,24 +19,20 @@ function detect() {
   } catch {
     /* localStorage хаалттай байж болно */
   }
-  const nav = (navigator.languages || [navigator.language || '']).join(',').toLowerCase();
-  if (nav.includes('ko')) return 'kr';
-  if (nav.includes('mn')) return 'mn';
-  if (nav.includes('en')) return 'en';
-  return 'mn';
+  return 'kr';
 }
 
 let nodes = [];
 let phNodes = [];
 
 function collect() {
-  nodes = Array.from(document.querySelectorAll('[data-en],[data-kr]'));
-  phNodes = Array.from(document.querySelectorAll('[data-en-ph],[data-kr-ph]'));
+  nodes = Array.from(document.querySelectorAll('[data-en]'));
+  phNodes = Array.from(document.querySelectorAll('[data-en-ph]'));
   for (const el of nodes) {
-    if (!el._mn) el._mn = Array.from(el.childNodes).map((n) => n.cloneNode(true));
+    if (!el._kr) el._kr = Array.from(el.childNodes).map((n) => n.cloneNode(true));
   }
   for (const el of phNodes) {
-    if (el._mnPh === undefined) el._mnPh = el.getAttribute('placeholder') || '';
+    if (el._krPh === undefined) el._krPh = el.getAttribute('placeholder') || '';
   }
 }
 
@@ -47,15 +43,15 @@ function frag(html) {
 
 function paint(lang) {
   for (const el of nodes) {
-    if (lang === 'mn') {
-      el.replaceChildren(...el._mn.map((n) => n.cloneNode(true)));
+    if (lang === 'kr') {
+      el.replaceChildren(...el._kr.map((n) => n.cloneNode(true)));
     } else {
       const v = el.getAttribute(`data-${lang}`);
       if (v != null) el.replaceChildren(frag(v));
     }
   }
   for (const el of phNodes) {
-    if (lang === 'mn') el.setAttribute('placeholder', el._mnPh);
+    if (lang === 'kr') el.setAttribute('placeholder', el._krPh);
     else {
       const v = el.getAttribute(`data-${lang}-ph`);
       if (v != null) el.setAttribute('placeholder', v);
@@ -73,15 +69,15 @@ export function getLang() {
   return current;
 }
 
-/** API-аас ирсэн {mn,en,kr} объектоос идэвхтэй хэлийг сонгоно. */
+/** API-аас ирсэн {kr,en} объектоос идэвхтэй хэлийг сонгоно. */
 export function pick(obj, lang = current) {
   if (!obj) return '';
   if (typeof obj === 'string') return obj;
-  return obj[lang] || obj.mn || obj.en || obj.kr || '';
+  return obj[lang] || obj.kr || obj.en || '';
 }
 
 export function setLang(lang, { silent = false } = {}) {
-  if (!LANGS.includes(lang)) lang = 'mn';
+  if (!LANGS.includes(lang)) lang = 'kr';
   current = lang;
   collect();
   paint(lang);

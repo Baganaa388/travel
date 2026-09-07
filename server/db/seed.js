@@ -22,68 +22,81 @@ if (existsSync(creditsPath)) {
   }
 }
 
-/* ── Аяллын чиглэл ──────────────────────────────────────────────────────── */
-const upsertTour = db.prepare(`
-  INSERT INTO tours
-    (slug, sort_order, is_active, cover, region_key,
-     title_mn, title_en, title_kr, area_mn, area_en, area_kr,
-     summary_mn, summary_en, summary_kr, body_mn, body_en, body_kr,
-     days, km_total, group_min, group_max, season_from, season_to)
-  VALUES (@slug, @sortOrder, 1, @cover, @regionKey,
-          @titleMn, @titleEn, @titleKr, @areaMn, @areaEn, @areaKr,
-          @summaryMn, @summaryEn, @summaryKr, @bodyMn, @bodyEn, @bodyKr,
-          @days, @kmTotal, @groupMin, @groupMax, @seasonFrom, @seasonTo)
+/* ── Аяллын ангилал + аяллууд ───────────────────────────────────────────── */
+const upsertCat = db.prepare(`
+  INSERT INTO tour_categories
+    (slug, sort_order, is_active, cover, name_kr, name_en, sub_kr, sub_en, note_kr, note_en)
+  VALUES (@slug, @sortOrder, 1, @cover, @nameKr, @nameEn, @subKr, @subEn, @noteKr, @noteEn)
   ON CONFLICT(slug) DO UPDATE SET
-    sort_order=excluded.sort_order, cover=excluded.cover, region_key=excluded.region_key,
-    title_mn=excluded.title_mn, title_en=excluded.title_en, title_kr=excluded.title_kr,
-    area_mn=excluded.area_mn, area_en=excluded.area_en, area_kr=excluded.area_kr,
-    summary_mn=excluded.summary_mn, summary_en=excluded.summary_en, summary_kr=excluded.summary_kr,
-    body_mn=excluded.body_mn, body_en=excluded.body_en, body_kr=excluded.body_kr,
-    days=excluded.days, km_total=excluded.km_total,
-    group_min=excluded.group_min, group_max=excluded.group_max,
-    season_from=excluded.season_from, season_to=excluded.season_to,
+    sort_order=excluded.sort_order, cover=excluded.cover,
+    name_kr=excluded.name_kr, name_en=excluded.name_en,
+    sub_kr=excluded.sub_kr, sub_en=excluded.sub_en,
+    note_kr=excluded.note_kr, note_en=excluded.note_en,
     updated_at=datetime('now')
 `);
 
-const insDay = db.prepare(`
-  INSERT INTO tour_days (tour_id, day_no, route_mn, route_en, route_kr, sleep_mn, sleep_en, sleep_kr, km)
-  VALUES (@tourId, @dayNo, @routeMn, @routeEn, @routeKr, @sleepMn, @sleepEn, @sleepKr, @km)
-`);
-const insInc = db.prepare(`
-  INSERT INTO tour_includes (tour_id, kind, sort_order, text_mn, text_en, text_kr)
-  VALUES (?, ?, ?, ?, ?, ?)
+const upsertTour = db.prepare(`
+  INSERT INTO tours
+    (category_id, slug, sort_order, is_active, day_no, images,
+     title_kr, title_en, place_kr, place_en, meta_kr, meta_en,
+     summary_kr, summary_en, body_kr, body_en)
+  VALUES (@categoryId, @slug, @sortOrder, 1, @dayNo, @images,
+          @titleKr, @titleEn, @placeKr, @placeEn, @metaKr, @metaEn,
+          @summaryKr, @summaryEn, @bodyKr, @bodyEn)
+  ON CONFLICT(slug) DO UPDATE SET
+    category_id=excluded.category_id, sort_order=excluded.sort_order, day_no=excluded.day_no,
+    images=excluded.images,
+    title_kr=excluded.title_kr, title_en=excluded.title_en,
+    place_kr=excluded.place_kr, place_en=excluded.place_en,
+    meta_kr=excluded.meta_kr, meta_en=excluded.meta_en,
+    summary_kr=excluded.summary_kr, summary_en=excluded.summary_en,
+    body_kr=excluded.body_kr, body_en=excluded.body_en,
+    updated_at=datetime('now')
 `);
 
 const seedTours = db.transaction(() => {
-  for (const t of data.tours) {
-    upsertTour.run(t);
-    const { id } = db.prepare('SELECT id FROM tours WHERE slug = ?').get(t.slug);
-
-    db.prepare('DELETE FROM tour_days WHERE tour_id = ?').run(id);
-    for (const d of t.itinerary || []) insDay.run({ tourId: id, ...d });
-
-    db.prepare('DELETE FROM tour_includes WHERE tour_id = ?').run(id);
-    (t.highlights || []).forEach((h, i) => insInc.run(id, 'high', i, h.mn, h.en, h.kr));
-    data.includes.forEach((x, i) => insInc.run(id, x.kind, i, x.textMn, x.textEn, x.textKr));
-  }
+  data.categories.forEach((c, ci) => {
+    upsertCat.run({ sortOrder: ci + 1, noteKr: '', noteEn: '', ...c });
+    const { id } = db.prepare('SELECT id FROM tour_categories WHERE slug = ?').get(c.slug);
+    (c.tours || []).forEach((t, ti) => {
+      upsertTour.run({
+        categoryId: id,
+        sortOrder: ti + 1,
+        dayNo: ti + 1,
+        placeKr: '',
+        placeEn: '',
+        metaKr: '',
+        metaEn: '',
+        summaryKr: '',
+        summaryEn: '',
+        bodyKr: '',
+        bodyEn: '',
+        ...t,
+        images: JSON.stringify((t.images || []).map((f) => `/images/tours/${f}`)),
+      });
+    });
+  });
 });
 
 /* ── Зургийн цомог ──────────────────────────────────────────────────────── */
 const seedGallery = db.transaction(() => {
   const ins = db.prepare(`
     INSERT INTO gallery
-      (image, sort_order, is_active, region_key, place_mn, place_en, place_kr,
-       caption_mn, caption_en, caption_kr, credit)
-    VALUES (?,?,1,?,?,?,?,?,?,?,?)
+      (image, sort_order, is_active, region_key, place_kr, place_en, caption_kr, caption_en, credit)
+    VALUES (?,?,1,?,?,?,?,?,?)
   `);
   const has = db.prepare('SELECT 1 FROM gallery WHERE image = ?');
   data.gallery.forEach((g, i) => {
     const url = `/images/gallery/${g.image}`;
     if (has.get(url)) return;
     ins.run(
-      url, i, g.regionKey,
-      g.placeMn, g.placeEn, g.placeKr,
-      g.captionMn, g.captionEn, g.captionKr,
+      url,
+      i,
+      g.regionKey,
+      g.placeKr,
+      g.placeEn,
+      g.captionKr,
+      g.captionEn,
       credits.get(g.image) || ''
     );
   });
@@ -104,7 +117,9 @@ function seedAdmin() {
   const existing = db.prepare('SELECT id FROM admin_users WHERE username = ?').get(username);
   if (existing) return console.log(`· Admin «${username}» аль хэдийн бий`);
   if (!password) {
-    return console.warn('! ADMIN_PASSWORD хоосон — admin үүсгэсэнгүй. .env-д бөглөөд дахин ажиллуулна уу.');
+    return console.warn(
+      '! ADMIN_PASSWORD хоосон — admin үүсгэсэнгүй. .env-д бөглөөд дахин ажиллуулна уу.'
+    );
   }
   db.prepare('INSERT INTO admin_users (username, password_hash) VALUES (?, ?)').run(
     username,
@@ -119,4 +134,6 @@ seedSettings();
 seedAdmin();
 
 const n = (t) => db.prepare(`SELECT COUNT(*) c FROM ${t}`).get().c;
-console.log(`✓ Seed дууслаа — чиглэл ${n('tours')}, өдөр ${n('tour_days')}, зураг ${n('gallery')}`);
+console.log(
+  `✓ Seed дууслаа — ангилал ${n('tour_categories')}, аялал ${n('tours')}, зураг ${n('gallery')}`
+);

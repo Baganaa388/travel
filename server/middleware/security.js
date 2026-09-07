@@ -43,13 +43,25 @@ const limiter = (windowMs, max, message) =>
   });
 
 /** Нийтийн API — уншилтад чөлөөтэй. */
-export const publicLimiter = limiter(60_000, 240, 'Хэт олон хүсэлт. Түр хүлээгээд дахин оролдоно уу.');
+export const publicLimiter = limiter(
+  60_000,
+  240,
+  'Хэт олон хүсэлт. Түр хүлээгээд дахин оролдоно уу.'
+);
 
 /** Чат бичих — spam-аас хамгаална. */
-export const chatLimiter = limiter(60_000, 20, 'Хэт олон мессеж. Минут хүлээгээд дахин илгээнэ үү.');
+export const chatLimiter = limiter(
+  60_000,
+  20,
+  'Хэт олон мессеж. Минут хүлээгээд дахин илгээнэ үү.'
+);
 
 /** Нэвтрэх — brute force-оос хамгаална. */
-export const loginLimiter = limiter(15 * 60_000, 10, 'Хэт олон оролдлого. 15 минутын дараа дахин оролдоно уу.');
+export const loginLimiter = limiter(
+  15 * 60_000,
+  10,
+  'Хэт олон оролдлого. 15 минутын дараа дахин оролдоно уу.'
+);
 
 /** Admin бичих үйлдэл. */
 export const adminWriteLimiter = limiter(60_000, 120, 'Хэт олон хүсэлт.');

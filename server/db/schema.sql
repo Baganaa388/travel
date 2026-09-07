@@ -1,76 +1,52 @@
 -- ============================================================================
 -- Dream Spark Travel — SQLite schema
--- Бүх бичвэр талбар нь _mn / _en / _kr гэсэн 3 хувилбартай.
+-- Бүх бичвэр талбар нь _kr / _en гэсэн 2 хувилбартай (сайтын анхдагч хэл — солонгос).
 -- ============================================================================
 
 PRAGMA journal_mode = WAL;
 PRAGMA foreign_keys = ON;
 
--- ── Аяллын чиглэл ───────────────────────────────────────────────────────────
-CREATE TABLE IF NOT EXISTS tours (
+-- ── Аяллын ангилал (хөтөлбөр: ж. «중부 투어 4박5일») ─────────────────────────
+CREATE TABLE IF NOT EXISTS tour_categories (
   id            INTEGER PRIMARY KEY AUTOINCREMENT,
   slug          TEXT    NOT NULL UNIQUE,
   sort_order    INTEGER NOT NULL DEFAULT 0,
   is_active     INTEGER NOT NULL DEFAULT 1,
-
   cover         TEXT    NOT NULL DEFAULT '',
-  region_key    TEXT    NOT NULL DEFAULT 'other',   -- gobi | khuvsgul | tuv | other
-
-  title_mn      TEXT    NOT NULL,
-  title_en      TEXT    NOT NULL DEFAULT '',
-  title_kr      TEXT    NOT NULL DEFAULT '',
-
-  area_mn       TEXT    NOT NULL DEFAULT '',        -- «Өмнөговь»
-  area_en       TEXT    NOT NULL DEFAULT '',
-  area_kr       TEXT    NOT NULL DEFAULT '',
-
-  summary_mn    TEXT    NOT NULL DEFAULT '',
-  summary_en    TEXT    NOT NULL DEFAULT '',
-  summary_kr    TEXT    NOT NULL DEFAULT '',
-
-  body_mn       TEXT    NOT NULL DEFAULT '',
-  body_en       TEXT    NOT NULL DEFAULT '',
-  body_kr       TEXT    NOT NULL DEFAULT '',
-
-  days          INTEGER NOT NULL DEFAULT 0,
-  km_total      INTEGER NOT NULL DEFAULT 0,
-  group_min     INTEGER NOT NULL DEFAULT 4,
-  group_max     INTEGER NOT NULL DEFAULT 6,
-  season_from   INTEGER NOT NULL DEFAULT 5,         -- сар
-  season_to     INTEGER NOT NULL DEFAULT 9,
-
+  name_kr       TEXT    NOT NULL,
+  name_en       TEXT    NOT NULL DEFAULT '',
+  sub_kr        TEXT    NOT NULL DEFAULT '',        -- «4박5일»
+  sub_en        TEXT    NOT NULL DEFAULT '',
+  note_kr       TEXT    NOT NULL DEFAULT '',        -- нэг мөр тайлбар (заавал биш)
+  note_en       TEXT    NOT NULL DEFAULT '',
   created_at    TEXT    NOT NULL DEFAULT (datetime('now')),
   updated_at    TEXT    NOT NULL DEFAULT (datetime('now'))
 );
-CREATE INDEX IF NOT EXISTS idx_tours_active ON tours(is_active, sort_order);
+CREATE INDEX IF NOT EXISTS idx_cat_active ON tour_categories(is_active, sort_order);
 
--- ── Өдрийн хуваарь ──────────────────────────────────────────────────────────
-CREATE TABLE IF NOT EXISTS tour_days (
-  id         INTEGER PRIMARY KEY AUTOINCREMENT,
-  tour_id    INTEGER NOT NULL REFERENCES tours(id) ON DELETE CASCADE,
-  day_no     INTEGER NOT NULL,
-  route_mn   TEXT    NOT NULL DEFAULT '',
-  route_en   TEXT    NOT NULL DEFAULT '',
-  route_kr   TEXT    NOT NULL DEFAULT '',
-  sleep_mn   TEXT    NOT NULL DEFAULT '',
-  sleep_en   TEXT    NOT NULL DEFAULT '',
-  sleep_kr   TEXT    NOT NULL DEFAULT '',
-  km         INTEGER NOT NULL DEFAULT 0,            -- 0 = амралтын өдөр
-  UNIQUE(tour_id, day_no)
+-- ── Аялал (ангилал доторх дөрвөлжин карт: өдөр / газар) ─────────────────────
+CREATE TABLE IF NOT EXISTS tours (
+  id            INTEGER PRIMARY KEY AUTOINCREMENT,
+  category_id   INTEGER NOT NULL REFERENCES tour_categories(id) ON DELETE CASCADE,
+  slug          TEXT    NOT NULL UNIQUE,
+  sort_order    INTEGER NOT NULL DEFAULT 0,
+  is_active     INTEGER NOT NULL DEFAULT 1,
+  day_no        INTEGER NOT NULL DEFAULT 0,         -- 0 = өдрийн дугааргүй
+  images        TEXT    NOT NULL DEFAULT '[]',      -- JSON: ["/images/tours/….jpg", …] — эхнийх нь нүүр
+  title_kr      TEXT    NOT NULL,
+  title_en      TEXT    NOT NULL DEFAULT '',
+  place_kr      TEXT    NOT NULL DEFAULT '',        -- газрын нэр (дэд гарчиг)
+  place_en      TEXT    NOT NULL DEFAULT '',
+  meta_kr       TEXT    NOT NULL DEFAULT '',        -- «약 350km / 6-7시간 이동»
+  meta_en       TEXT    NOT NULL DEFAULT '',
+  summary_kr    TEXT    NOT NULL DEFAULT '',        -- нэг мөр: гол үйл ажиллагаа
+  summary_en    TEXT    NOT NULL DEFAULT '',
+  body_kr       TEXT    NOT NULL DEFAULT '',        -- мөр бүр = нэг цэг
+  body_en       TEXT    NOT NULL DEFAULT '',
+  created_at    TEXT    NOT NULL DEFAULT (datetime('now')),
+  updated_at    TEXT    NOT NULL DEFAULT (datetime('now'))
 );
-CREATE INDEX IF NOT EXISTS idx_tour_days ON tour_days(tour_id, day_no);
-
--- ── Багцад багтсан / багтаагүй ─────────────────────────────────────────────
-CREATE TABLE IF NOT EXISTS tour_includes (
-  id         INTEGER PRIMARY KEY AUTOINCREMENT,
-  tour_id    INTEGER NOT NULL REFERENCES tours(id) ON DELETE CASCADE,
-  kind       TEXT    NOT NULL DEFAULT 'in',         -- in | out | high
-  sort_order INTEGER NOT NULL DEFAULT 0,
-  text_mn    TEXT    NOT NULL DEFAULT '',
-  text_en    TEXT    NOT NULL DEFAULT '',
-  text_kr    TEXT    NOT NULL DEFAULT ''
-);
-CREATE INDEX IF NOT EXISTS idx_tour_incl ON tour_includes(tour_id, kind, sort_order);
+CREATE INDEX IF NOT EXISTS idx_tours_cat ON tours(category_id, is_active, sort_order);
 
 -- ── Зургийн цомог ───────────────────────────────────────────────────────────
 CREATE TABLE IF NOT EXISTS gallery (
@@ -79,12 +55,10 @@ CREATE TABLE IF NOT EXISTS gallery (
   is_active   INTEGER NOT NULL DEFAULT 1,
   image       TEXT    NOT NULL,
   region_key  TEXT    NOT NULL DEFAULT 'other',     -- gobi | khuvsgul | tuv | other
-  place_mn    TEXT    NOT NULL DEFAULT '',
-  place_en    TEXT    NOT NULL DEFAULT '',
   place_kr    TEXT    NOT NULL DEFAULT '',
-  caption_mn  TEXT    NOT NULL DEFAULT '',
-  caption_en  TEXT    NOT NULL DEFAULT '',
+  place_en    TEXT    NOT NULL DEFAULT '',
   caption_kr  TEXT    NOT NULL DEFAULT '',
+  caption_en  TEXT    NOT NULL DEFAULT '',
   credit      TEXT    NOT NULL DEFAULT '',
   created_at  TEXT    NOT NULL DEFAULT (datetime('now'))
 );

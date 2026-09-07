@@ -17,9 +17,7 @@ router.get('/gallery', validateQuery(q), (req, res) => {
   const where = region ? 'AND region_key = ?' : '';
   const args = region ? [region] : [];
   const rows = db
-    .prepare(
-      `SELECT * FROM gallery WHERE is_active = 1 ${where} ORDER BY sort_order, id LIMIT ?`
-    )
+    .prepare(`SELECT * FROM gallery WHERE is_active = 1 ${where} ORDER BY sort_order, id LIMIT ?`)
     .all(...args, limit ?? 200);
   res.json({ photos: rows.map(publicPhoto) });
 });

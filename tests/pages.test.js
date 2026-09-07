@@ -11,7 +11,7 @@ test.before(async () => {
 });
 test.after(async () => app.close());
 
-const PAGES = ['/', '/tours', '/tour/gobi', '/gallery', '/about', '/contact'];
+const PAGES = ['/', '/tours', '/gallery'];
 
 for (const p of PAGES) {
   test(`хуудас ${p} 200 буцаана`, async () => {
@@ -25,6 +25,26 @@ test('байхгүй хуудас 404 + 404.html', async () => {
   const r = await c.req('/no-such-page', { headers: { accept: 'text/html' } });
   assert.equal(r.status, 404);
   assert.match(r.data, /404/);
+});
+
+test('хуучин хуудсууд нүүр / аялал руу 301', async () => {
+  for (const [from, to] of [
+    ['/about', '/'],
+    ['/contact', '/'],
+    ['/tour/gobi', '/tours'],
+  ]) {
+    const res = await fetch(app.base + from, { redirect: 'manual' });
+    assert.equal(res.status, 301, from);
+    assert.equal(res.headers.get('location'), to, from);
+  }
+});
+
+test('нүүр хуудас солонгос хэлтэй, MN сонголтгүй', async () => {
+  const r = await c.req('/', { headers: { accept: 'text/html' } });
+  assert.match(r.data, /<html lang="ko">/);
+  assert.match(r.data, /data-lang="kr"/);
+  assert.doesNotMatch(r.data, /data-lang="mn"/);
+  assert.match(r.data, /instagram\.com\/dreamspark_travel/);
 });
 
 test('.html зам цэвэр зам руу 301', async () => {

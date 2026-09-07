@@ -14,19 +14,23 @@ const photoSchema = z.object({
   sortOrder: z.number().int().min(0).max(9999).default(0),
   isActive: z.boolean().default(true),
   regionKey: z.enum(['gobi', 'khuvsgul', 'tuv', 'other']).default('other'),
-  placeMn: text(120),
-  placeEn: text(120),
   placeKr: text(120),
-  captionMn: text(300),
-  captionEn: text(300),
+  placeEn: text(120),
   captionKr: text(300),
+  captionEn: text(300),
   credit: text(200),
 });
 
 const args = (v) => [
-  v.image, v.sortOrder, v.isActive ? 1 : 0, v.regionKey,
-  v.placeMn, v.placeEn, v.placeKr,
-  v.captionMn, v.captionEn, v.captionKr, v.credit,
+  v.image,
+  v.sortOrder,
+  v.isActive ? 1 : 0,
+  v.regionKey,
+  v.placeKr,
+  v.placeEn,
+  v.captionKr,
+  v.captionEn,
+  v.credit,
 ];
 
 router.get('/gallery', (req, res) => {
@@ -37,9 +41,8 @@ router.post('/gallery', validateBody(photoSchema), (req, res) => {
   const info = db
     .prepare(
       `INSERT INTO gallery
-       (image, sort_order, is_active, region_key, place_mn, place_en, place_kr,
-        caption_mn, caption_en, caption_kr, credit)
-       VALUES (?,?,?,?,?,?,?,?,?,?,?)`
+       (image, sort_order, is_active, region_key, place_kr, place_en, caption_kr, caption_en, credit)
+       VALUES (?,?,?,?,?,?,?,?,?)`
     )
     .run(...args(req.valid));
   res.status(201).json({
@@ -53,8 +56,7 @@ router.put('/gallery/:id', validateBody(photoSchema), (req, res, next) => {
     .prepare(
       `UPDATE gallery SET
          image=?, sort_order=?, is_active=?, region_key=?,
-         place_mn=?, place_en=?, place_kr=?,
-         caption_mn=?, caption_en=?, caption_kr=?, credit=?
+         place_kr=?, place_en=?, caption_kr=?, caption_en=?, credit=?
        WHERE id=?`
     )
     .run(...args(req.valid), id);
