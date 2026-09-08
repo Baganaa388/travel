@@ -79,8 +79,8 @@ function fillSite(site) {
   const s = site || {};
 
   if (has(s.logo)) for (const el of document.querySelectorAll('[data-c="logo"]')) el.src = s.logo;
-  if (has(s.brand))
-    for (const el of document.querySelectorAll('[data-c="brand"]')) el.textContent = s.brand;
+  const brand = typeof s.brand === 'string' ? { kr: '드림스파크', en: s.brand } : s.brand;
+  for (const el of document.querySelectorAll('[data-t="brand"]')) setText(el, brand);
 
   const nav = s.nav || {};
   for (const key of ['home', 'tours', 'gallery']) {
@@ -95,7 +95,6 @@ function fillSite(site) {
   setText(document.querySelector('[data-t="hero.line2"]'), hero.line2);
   setText(document.querySelector('[data-t="hero.tagline"]'), hero.tagline);
   setText(document.querySelector('[data-t="hero.button"]'), hero.button);
-  setText(document.querySelector('[data-t="galleryTitle"]'), s.galleryTitle);
 
   // Instagram — хөвөгч товч + хөлийн icon
   const ig = has(s.instagram) ? s.instagram : '';
