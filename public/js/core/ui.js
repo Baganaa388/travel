@@ -28,14 +28,6 @@ function header() {
     const href = a.getAttribute('href').replace(/\/$/, '') || '/';
     if (href === here || (href !== '/' && here.startsWith(href))) a.classList.add('on');
   }
-
-  // Доош гүйлгэхэд толгой хар болно (нүүрэнд зурагны талд хүрсний дараа, бусад хуудсанд шууд)
-  const limit = document.body.classList.contains('hd-over')
-    ? () => window.innerHeight * 0.5
-    : () => 24;
-  const onScroll = () => document.body.classList.toggle('hd-solid', window.scrollY > limit());
-  onScroll();
-  window.addEventListener('scroll', onScroll, { passive: true });
 }
 
 /* ---- Илрэх хөдөлгөөн ---------------------------------------------------- */
