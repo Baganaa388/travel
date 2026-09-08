@@ -547,6 +547,7 @@
       },
       "phone": "",
       "email": "",
+      "extra": "",
       "copyright": {
         "kr": "© {year} 드림스파크 트래블. All rights reserved.",
         "en": "© {year} Dream Spark Travel. All rights reserved."
@@ -575,6 +576,10 @@
         "email": {
           "kr": "이메일",
           "en": "Email"
+        },
+        "extra": {
+          "kr": "",
+          "en": ""
         }
       }
     }

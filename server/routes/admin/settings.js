@@ -53,6 +53,7 @@ export const SCHEMAS = {
     address: i18nText(200),
     phone: t(60),
     email: t(120),
+    extra: t(200), // 이메일-ийн ард нэмэлт талбар (шошго нь labels.extra)
     copyright: i18nText(160),
     labels: z
       .object({
@@ -62,6 +63,7 @@ export const SCHEMAS = {
         address: i18nText(40),
         phone: i18nText(40),
         email: i18nText(40),
+        extra: i18nText(60),
       })
       .default({}),
   }),

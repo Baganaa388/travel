@@ -132,6 +132,7 @@ function fillFooter(footer) {
     licenseNo: clean(f.licenseNo),
     phone: clean(f.phone),
     email: clean(f.email),
+    extra: clean(f.extra),
   };
   for (const [key, value] of Object.entries(plain)) {
     const el = document.querySelector(`[data-c="ft.${key}"]`);

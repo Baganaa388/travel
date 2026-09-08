@@ -78,7 +78,7 @@ body.hd-over:not(.hd-solid) .lang button.on{background:var(--sun);color:#1B1607}
 .ft a{color:#fff;transition:color .2s}
 .ft a:hover{color:var(--sun)}
 .ft-social{display:flex;justify-content:center;gap:10px}
-.ft-social a{display:inline-flex;align-items:center;justify-content:center;width:27px;height:27px;
+.ft-social a{display:inline-flex;align-items:center;justify-content:center;width:22px;height:22px;
   border-radius:50%;border:1px solid rgba(255,255,255,.28);color:#fff;
   transition:background .2s,border-color .2s,color .2s,transform .25s}
 .ft-social a:hover{background:var(--sun);border-color:var(--sun);color:#1B1607;transform:translateY(-3px)}
@@ -120,4 +120,4 @@ body.hd-over:not(.hd-solid) .lang button.on{background:var(--sun);color:#1B1607}
 .brand:hover img{transform:rotate(-8deg) scale(1.08);box-shadow:0 0 0 3px var(--sun-soft)}
 .lang button{transition:background .25s,color .25s,transform .2s}
 .lang button:active{transform:scale(.94)}
-.ft-social a svg{width:14px;height:auto}
+.ft-social a svg{width:12px;height:auto}

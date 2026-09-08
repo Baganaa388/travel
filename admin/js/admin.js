@@ -1403,6 +1403,7 @@ const FOOTER_LABELS = {
   address: ['Хаяг', { kr: '회사주소', en: 'Address' }],
   phone: ['Утас', { kr: '대표번호', en: 'Company number' }],
   email: ['И-мэйл', { kr: '이메일', en: 'Email' }],
+  extra: ['Нэмэлт талбар (이메일-ийн ард)', { kr: '', en: '' }],
 };
 
 /* ==========================================================================
@@ -1493,6 +1494,10 @@ async function viewSettings() {
         ),
         field('И-мэйл', input('email', f.email ?? ''))
       ),
+      field(
+        'Нэмэлт талбар — утга (шошгыг доор «Хөлийн шошго»-д бичнэ)',
+        input('extra', f.extra ?? '')
+      ),
       i18nFields('© мөр ({year} = одоогийн он)', 'copyright', f.copyright)
     ),
 
@@ -1544,6 +1549,7 @@ async function viewSettings() {
       address: i18nOf(form, 'address'),
       phone: val(form, 'phone'),
       email: val(form, 'email'),
+      extra: val(form, 'extra'),
       copyright: i18nOf(form, 'copyright'),
       labels: Object.fromEntries(
         Object.keys(FOOTER_LABELS).map((k) => [k, i18nOf(form, `label_${k}`)])
