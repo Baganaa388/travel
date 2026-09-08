@@ -26,14 +26,14 @@ body.hd-solid .hd .nav a:hover{color:#fff}
 .brand img{width:38px;height:38px;border-radius:50%;object-fit:cover;flex:0 0 auto;
   box-shadow:0 0 0 1px rgba(22,28,25,.08)}
 /* Брэндийн үсэг — бусадтай ижил (Golos / Noto Sans KR) */
-.brand-name{font-family:var(--body);font-weight:600;font-size:17px;letter-spacing:.01em;
+.brand-name{font-family:var(--body);font-weight:400;font-size:17px;letter-spacing:.01em;
   line-height:1;white-space:nowrap;color:var(--ink);transition:color .3s;padding-top:1px}
-:lang(ko) .brand-name{font-family:'Noto Sans KR',var(--body);font-weight:700}
+:lang(ko) .brand-name{font-family:'Noto Sans KR',var(--body);font-weight:400}
 
 .nav{margin-left:auto;display:flex;align-items:center;gap:clamp(14px,2.2vw,32px)}
 .nav a{font-family:var(--body);font-weight:400;font-size:15.5px;letter-spacing:0;
   color:var(--ink);padding:6px 0;position:relative;transition:color .2s}
-:lang(ko) .nav a{font-family:'Noto Sans KR',var(--body);font-weight:500}
+:lang(ko) .nav a{font-family:'Noto Sans KR',var(--body);font-weight:400}
 .nav a::after{content:"";position:absolute;left:0;right:0;bottom:0;height:2px;
   background:var(--sun);transform:scaleX(0);transform-origin:left;transition:transform .25s}
 .nav a:hover::after,.nav a.on::after{transform:scaleX(1)}
@@ -42,7 +42,7 @@ body.hd-over:not(.hd-solid) .nav a:hover{color:#fff}
 .lang{display:flex;border:1px solid var(--line);border-radius:999px;overflow:hidden;
   flex:0 0 auto;padding:3px;gap:2px;background:rgba(255,255,255,.5)}
 body.hd-over:not(.hd-solid) .lang{border-color:rgba(255,255,255,.3);background:rgba(255,255,255,.08)}
-.lang button{font-family:var(--body);font-size:12.5px;font-weight:500;letter-spacing:.04em;
+.lang button{font-family:var(--body);font-size:12.5px;font-weight:400;letter-spacing:.04em;
   padding:5px 10px;border-radius:999px;color:var(--ink-2);transition:background .2s,color .2s}
 .lang button:hover{color:var(--ink)}
 .lang button.on{background:var(--ink);color:#fff}
@@ -85,7 +85,7 @@ body.hd-over:not(.hd-solid) .lang button.on{background:var(--sun);color:#1B1607}
 .ft-rows{margin-top:24px;display:grid;gap:6px;font-size:14.5px;color:#fff;line-height:1.7}
 .ft-row{display:flex;flex-wrap:wrap;justify-content:center;gap:4px 0}
 .ft-row>span+span::before{content:"|";margin:0 12px;color:rgba(255,255,255,.4)}
-.ft-row .k{color:#fff;font-weight:600}
+.ft-row .k{color:#fff;font-weight:400}
 .ft-copy{margin-top:24px;padding-top:16px;border-top:1px solid rgba(255,255,255,.16);
   font-size:13px;color:#fff;text-align:left}
 @media(max-width:560px){
