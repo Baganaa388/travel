@@ -29,9 +29,9 @@ const insCat = db.prepare(`
 `);
 const insTour = db.prepare(`
   INSERT INTO tours (category_id, slug, sort_order, is_active, cover, title_kr, title_en,
-    duration_kr, duration_en, summary_kr, summary_en)
+    duration_kr, duration_en, summary_kr, summary_en, info_kr, info_en)
   VALUES (@categoryId, @slug, @sortOrder, 1, @cover, @titleKr, @titleEn,
-    @durationKr, @durationEn, @summaryKr, @summaryEn)
+    @durationKr, @durationEn, @summaryKr, @summaryEn, @infoKr, @infoEn)
 `);
 const insDay = db.prepare(`
   INSERT INTO tour_days (tour_id, day_no, images, title_kr, title_en, place_kr, place_en,
@@ -50,13 +50,22 @@ const seedTours = db.transaction(() => {
       cat = bySlug('tour_categories').get(c.slug);
     }
     (c.tours || []).forEach((t, ti) => {
-      if (bySlug('tours').get(t.slug)) return;
+      const existing = bySlug('tours').get(t.slug);
+      if (existing) {
+        // Байгаа багцын «투어 안내» хоосон бол л нөхнө (admin-ийн засварыг дарахгүй)
+        db.prepare(
+          `UPDATE tours SET info_kr = @infoKr, info_en = @infoEn WHERE id = @id AND info_kr = ''`
+        ).run({ id: existing.id, infoKr: t.infoKr || '', infoEn: t.infoEn || '' });
+        return;
+      }
       const { lastInsertRowid: tourId } = insTour.run({
         categoryId: cat.id,
         sortOrder: ti + 1,
         cover: '',
         summaryKr: '',
         summaryEn: '',
+        infoKr: '',
+        infoEn: '',
         ...t,
       });
       (t.days || []).forEach((d, di) =>

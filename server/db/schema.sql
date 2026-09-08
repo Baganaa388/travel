@@ -35,6 +35,8 @@ CREATE TABLE IF NOT EXISTS tours (
   duration_en   TEXT    NOT NULL DEFAULT '',
   summary_kr    TEXT    NOT NULL DEFAULT '',        -- нэг мөр тайлбар
   summary_en    TEXT    NOT NULL DEFAULT '',
+  info_kr       TEXT    NOT NULL DEFAULT '',        -- «투어 안내»: мөр бүр = нэг цэг
+  info_en       TEXT    NOT NULL DEFAULT '',
   created_at    TEXT    NOT NULL DEFAULT (datetime('now')),
   updated_at    TEXT    NOT NULL DEFAULT (datetime('now'))
 );

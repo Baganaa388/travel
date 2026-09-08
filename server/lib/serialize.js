@@ -71,7 +71,10 @@ export function publicTour(row, { days = null, category = null } = {}) {
     summary: i18n(row, 'summary'),
     daysCount: row.days_count ?? (days ? days.length : undefined),
   };
-  if (days) t.days = days.map(publicDay);
+  if (days) {
+    t.days = days.map(publicDay);
+    t.info = i18n(row, 'info');
+  }
   if (category) t.category = { slug: category.slug, name: i18n(category, 'name') };
   return t;
 }

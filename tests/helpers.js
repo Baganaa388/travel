@@ -130,6 +130,8 @@ export const sampleTour = (categoryId, over = {}) => ({
   durationEn: '4 nights · 5 days',
   summaryKr: '우기 호수 · 테를지',
   summaryEn: 'Ugii Lake · Terelj',
+  infoKr: '가이드: 한국어 가능\n숙박: 게르',
+  infoEn: 'Guide: Korean-speaking\nLodging: ger',
   days: [
     sampleDay(),
     sampleDay({ titleKr: '테를지', titleEn: 'Terelj', images: ['/images/tours/terelj-1.jpg'] }),

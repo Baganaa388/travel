@@ -1127,6 +1127,7 @@ async function viewTourEdit(id) {
         i18nFields('Нэр', 'title', tour),
         i18nFields('Хоног (ж: 4박5일 / 4 nights · 5 days)', 'duration', tour),
         i18nFields('Товч тайлбар (нэг мөр, заавал биш)', 'summary', tour),
+        i18nFields('Аяллын мэдээлэл — 투어 안내 (мөр бүр = нэг цэг)', 'info', tour, 'textarea', 7),
         imageField('Картын зураг (хоосон бол 1-р өдрийн эхний зураг)', 'cover', g('cover'))
       )
     ),
@@ -1183,6 +1184,8 @@ async function viewTourEdit(id) {
       durationEn: blockVal(form.querySelector('.card'), 'duration_en'),
       summaryKr: blockVal(form.querySelector('.card'), 'summary_kr'),
       summaryEn: blockVal(form.querySelector('.card'), 'summary_en'),
+      infoKr: blockVal(form.querySelector('.card'), 'info_kr'),
+      infoEn: blockVal(form.querySelector('.card'), 'info_en'),
       days: [...daysBox.children].map((b) => b.read()),
     };
     try {

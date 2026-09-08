@@ -72,6 +72,7 @@ if (
         title_kr TEXT NOT NULL, title_en TEXT NOT NULL DEFAULT '',
         duration_kr TEXT NOT NULL DEFAULT '', duration_en TEXT NOT NULL DEFAULT '',
         summary_kr TEXT NOT NULL DEFAULT '', summary_en TEXT NOT NULL DEFAULT '',
+        info_kr TEXT NOT NULL DEFAULT '', info_en TEXT NOT NULL DEFAULT '',
         created_at TEXT NOT NULL DEFAULT (datetime('now')),
         updated_at TEXT NOT NULL DEFAULT (datetime('now')));
       CREATE TABLE tour_days (
@@ -142,6 +143,14 @@ if (
       DROP TABLE tour_categories; ALTER TABLE cat_v8 RENAME TO tour_categories;`);
   })();
   console.log('· v7 → v8: ангилал бүрд багц үүсгэж, картуудыг өдрүүд болгов');
+}
+
+/* ── v8.1: багцад «투어 안내» талбар ───────────────────────────────────── */
+if (has('tours') && cols('tours').includes('duration_kr') && !cols('tours').includes('info_kr')) {
+  db.exec(
+    "ALTER TABLE tours ADD COLUMN info_kr TEXT NOT NULL DEFAULT ''; ALTER TABLE tours ADD COLUMN info_en TEXT NOT NULL DEFAULT ''"
+  );
+  console.log('· Багцад info_kr / info_en багана нэмэв');
 }
 
 db.pragma('foreign_keys = ON');

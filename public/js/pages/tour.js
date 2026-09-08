@@ -10,6 +10,7 @@ import * as lb from '../features/lightbox.js';
 const L = {
   day: { kr: (n) => `${n}일차`, en: (n) => `Day ${n}` },
   days: { kr: (n) => `${n}일 일정`, en: (n) => `${n}-day itinerary` },
+  info: { kr: '투어 안내', en: 'Tour information' },
   notFound: { kr: '해당 투어를 찾을 수 없습니다', en: 'This tour could not be found' },
   fail: { kr: '투어를 불러오지 못했습니다', en: 'Could not load the tour' },
 };
@@ -22,7 +23,7 @@ const el = (tag, cls, text) => {
 };
 
 function dayBlock(d, i, lang, tour) {
-  const box = el('article', 'td-day rv');
+  const box = el('article', 'td-day');
   box.id = `day-${d.dayNo}`;
 
   const media = el('div', 'td-media');
@@ -127,6 +128,18 @@ async function main() {
     }
     const back = document.querySelector('#tdBack');
     if (back && tour.category) back.href = `/tours#${tour.category.slug}`;
+
+    const info = document.querySelector('#tdInfo');
+    if (info) {
+      const lines = String(pick(tour.info, lang))
+        .split(/\n+/)
+        .map((s) => s.trim())
+        .filter(Boolean);
+      info.hidden = !lines.length;
+      const ul = el('ul', 'td-info-list');
+      for (const s of lines) ul.append(el('li', null, s));
+      info.replaceChildren(el('h2', 'h3', L.info[lang]), ul);
+    }
 
     const days = document.querySelector('#tdDays');
     if (days) {

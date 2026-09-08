@@ -137,6 +137,8 @@ const tourSchema = z.object({
   durationEn: text(60),
   summaryKr: text(400),
   summaryEn: text(400),
+  infoKr: text(3000),
+  infoEn: text(3000),
   days: z.array(daySchema).max(60).default([]),
 });
 
@@ -210,7 +212,7 @@ router.post('/tours', validateBody(tourSchema), (req, res, next) => {
   const info = db
     .prepare(
       `INSERT INTO tours (category_id, slug, sort_order, is_active, cover, title_kr, title_en,
-         duration_kr, duration_en, summary_kr, summary_en) VALUES (?,?,?,?,?,?,?,?,?,?,?)`
+         duration_kr, duration_en, summary_kr, summary_en, info_kr, info_en) VALUES (?,?,?,?,?,?,?,?,?,?,?,?,?)`
     )
     .run(
       v.categoryId,
@@ -223,7 +225,9 @@ router.post('/tours', validateBody(tourSchema), (req, res, next) => {
       v.durationKr,
       v.durationEn,
       v.summaryKr,
-      v.summaryEn
+      v.summaryEn,
+      v.infoKr,
+      v.infoEn
     );
   writeDays(info.lastInsertRowid, v.days);
   res.status(201).json({ tour: loadFull(info.lastInsertRowid) });
@@ -237,7 +241,7 @@ router.put('/tours/:id', validateBody(tourSchema), (req, res, next) => {
   if (!checkCategory(v, next)) return;
   db.prepare(
     `UPDATE tours SET category_id=?, sort_order=?, is_active=?, cover=?, title_kr=?, title_en=?,
-       duration_kr=?, duration_en=?, summary_kr=?, summary_en=?, updated_at=datetime('now') WHERE id=?`
+       duration_kr=?, duration_en=?, summary_kr=?, summary_en=?, info_kr=?, info_en=?, updated_at=datetime('now') WHERE id=?`
   ).run(
     v.categoryId,
     v.sortOrder ?? cur.sort_order,
@@ -249,6 +253,8 @@ router.put('/tours/:id', validateBody(tourSchema), (req, res, next) => {
     v.durationEn,
     v.summaryKr,
     v.summaryEn,
+    v.infoKr,
+    v.infoEn,
     id
   );
   writeDays(id, v.days);

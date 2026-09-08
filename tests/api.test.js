@@ -76,6 +76,7 @@ test('багцын хуудас өдрүүд, ангиллаа хамт өгнө
   assert.equal(t.days[0].title.kr, '우기 호수');
   assert.equal(t.days[0].images[1].thumb, '/images/tours/thumbs/ugii-2.jpg');
   assert.equal(t.days[0].place.en, '아르항가이', 'EN хоосон бол KR-ээр нөхөнө');
+  assert.equal(t.info.kr, '가이드: 한국어 가능\n숙박: 게르');
 });
 
 test('байхгүй багц 404', async () => {
