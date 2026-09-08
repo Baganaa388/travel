@@ -1,5 +1,5 @@
-/* Анхны агуулга — идэмпотент (дахин ажиллуулбал байгаа мөрийг шинэчилнэ).
-   Зургийн зохиогч/лицензийг public/images/gallery/CREDITS.json-оос уншиж бичнэ. */
+/* Анхны агуулга — идэмпотент. Ангилал, багц нь slug-аар байхгүй үед л нэмэгдэнэ
+   (admin-аас засварласан агуулгыг дарж бичихгүй). Цомгийн зураг нь зам давхардахгүй бол нэмэгдэнэ. */
 import 'dotenv/config';
 import { readFileSync, existsSync } from 'node:fs';
 import path from 'node:path';
@@ -22,58 +22,60 @@ if (existsSync(creditsPath)) {
   }
 }
 
-/* ── Аяллын ангилал + аяллууд ───────────────────────────────────────────── */
-const upsertCat = db.prepare(`
-  INSERT INTO tour_categories
-    (slug, sort_order, is_active, cover, name_kr, name_en, sub_kr, sub_en, note_kr, note_en)
-  VALUES (@slug, @sortOrder, 1, @cover, @nameKr, @nameEn, @subKr, @subEn, @noteKr, @noteEn)
-  ON CONFLICT(slug) DO UPDATE SET
-    sort_order=excluded.sort_order, cover=excluded.cover,
-    name_kr=excluded.name_kr, name_en=excluded.name_en,
-    sub_kr=excluded.sub_kr, sub_en=excluded.sub_en,
-    note_kr=excluded.note_kr, note_en=excluded.note_en,
-    updated_at=datetime('now')
+/* ── Аяллын ангилал → багц → өдрүүд ────────────────────────────────────── */
+const insCat = db.prepare(`
+  INSERT INTO tour_categories (slug, sort_order, is_active, cover, name_kr, name_en)
+  VALUES (@slug, @sortOrder, 1, @cover, @nameKr, @nameEn)
 `);
-
-const upsertTour = db.prepare(`
-  INSERT INTO tours
-    (category_id, slug, sort_order, is_active, day_no, images,
-     title_kr, title_en, place_kr, place_en, meta_kr, meta_en,
-     summary_kr, summary_en, body_kr, body_en)
-  VALUES (@categoryId, @slug, @sortOrder, 1, @dayNo, @images,
-          @titleKr, @titleEn, @placeKr, @placeEn, @metaKr, @metaEn,
-          @summaryKr, @summaryEn, @bodyKr, @bodyEn)
-  ON CONFLICT(slug) DO UPDATE SET
-    category_id=excluded.category_id, sort_order=excluded.sort_order, day_no=excluded.day_no,
-    images=excluded.images,
-    title_kr=excluded.title_kr, title_en=excluded.title_en,
-    place_kr=excluded.place_kr, place_en=excluded.place_en,
-    meta_kr=excluded.meta_kr, meta_en=excluded.meta_en,
-    summary_kr=excluded.summary_kr, summary_en=excluded.summary_en,
-    body_kr=excluded.body_kr, body_en=excluded.body_en,
-    updated_at=datetime('now')
+const insTour = db.prepare(`
+  INSERT INTO tours (category_id, slug, sort_order, is_active, cover, title_kr, title_en,
+    duration_kr, duration_en, summary_kr, summary_en)
+  VALUES (@categoryId, @slug, @sortOrder, 1, @cover, @titleKr, @titleEn,
+    @durationKr, @durationEn, @summaryKr, @summaryEn)
 `);
+const insDay = db.prepare(`
+  INSERT INTO tour_days (tour_id, day_no, images, title_kr, title_en, place_kr, place_en,
+    meta_kr, meta_en, summary_kr, summary_en, body_kr, body_en)
+  VALUES (@tourId, @dayNo, @images, @titleKr, @titleEn, @placeKr, @placeEn,
+    @metaKr, @metaEn, @summaryKr, @summaryEn, @bodyKr, @bodyEn)
+`);
+const bySlug = (table) => db.prepare(`SELECT id FROM ${table} WHERE slug = ?`);
 
+let added = 0;
 const seedTours = db.transaction(() => {
   data.categories.forEach((c, ci) => {
-    upsertCat.run({ sortOrder: ci + 1, noteKr: '', noteEn: '', ...c });
-    const { id } = db.prepare('SELECT id FROM tour_categories WHERE slug = ?').get(c.slug);
+    let cat = bySlug('tour_categories').get(c.slug);
+    if (!cat) {
+      insCat.run({ sortOrder: ci + 1, cover: '', ...c });
+      cat = bySlug('tour_categories').get(c.slug);
+    }
     (c.tours || []).forEach((t, ti) => {
-      upsertTour.run({
-        categoryId: id,
+      if (bySlug('tours').get(t.slug)) return;
+      const { lastInsertRowid: tourId } = insTour.run({
+        categoryId: cat.id,
         sortOrder: ti + 1,
-        dayNo: ti + 1,
-        placeKr: '',
-        placeEn: '',
-        metaKr: '',
-        metaEn: '',
+        cover: '',
         summaryKr: '',
         summaryEn: '',
-        bodyKr: '',
-        bodyEn: '',
         ...t,
-        images: JSON.stringify((t.images || []).map((f) => `/images/tours/${f}`)),
       });
+      (t.days || []).forEach((d, di) =>
+        insDay.run({
+          tourId,
+          dayNo: di + 1,
+          placeKr: '',
+          placeEn: '',
+          metaKr: '',
+          metaEn: '',
+          summaryKr: '',
+          summaryEn: '',
+          bodyKr: '',
+          bodyEn: '',
+          ...d,
+          images: JSON.stringify((d.images || []).map((f) => `/images/tours/${f}`)),
+        })
+      );
+      added++;
     });
   });
 });
@@ -135,5 +137,5 @@ seedAdmin();
 
 const n = (t) => db.prepare(`SELECT COUNT(*) c FROM ${t}`).get().c;
 console.log(
-  `✓ Seed дууслаа — ангилал ${n('tour_categories')}, аялал ${n('tours')}, зураг ${n('gallery')}`
+  `✓ Seed дууслаа — шинээр ${added} багц; нийт ангилал ${n('tour_categories')}, багц ${n('tours')}, өдөр ${n('tour_days')}, зураг ${n('gallery')}`
 );

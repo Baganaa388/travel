@@ -33,20 +33,6 @@
 .hero h1 em{animation-delay:.45s}
 .hero-acts{display:flex;animation-delay:.7s}
 @keyframes hero-rise{from{opacity:0;transform:translateY(28px)}to{opacity:1;transform:none}}
-.hero h1 em{position:relative}
-.hero h1 em::after{content:"";position:absolute;left:0;bottom:.04em;height:.08em;width:100%;
-  background:var(--sun);transform:scaleX(0);transform-origin:left;
-  animation:hero-line .8s cubic-bezier(.2,.8,.3,1) 1.05s both;opacity:.9}
-@keyframes hero-line{to{transform:scaleX(1)}}
-/* Доош гүйлгэх сануулга */
-.hero-cue{position:absolute;left:50%;bottom:clamp(14px,2.4vh,26px);z-index:3;transform:translateX(-50%);
-  width:28px;height:44px;border:1.5px solid rgba(255,255,255,.55);border-radius:14px;
-  opacity:0;animation:hero-rise 1s ease 1.4s both}
-.hero-cue::before{content:"";position:absolute;left:50%;top:8px;width:3px;height:8px;margin-left:-1.5px;
-  border-radius:2px;background:var(--sun);animation:cue 1.8s ease-in-out infinite}
-@keyframes cue{0%{transform:translateY(0);opacity:1}70%{transform:translateY(16px);opacity:0}100%{opacity:0}}
-@media(max-width:640px){.hero-cue{display:none}}
 @media(prefers-reduced-motion:reduce){
-  .hero h1 span,.hero h1 em,.hero-acts,.hero-cue{animation:none;opacity:1}
-  .hero h1 em::after{animation:none;transform:none}
+  .hero h1 span,.hero h1 em,.hero-acts{animation:none;opacity:1}
 }

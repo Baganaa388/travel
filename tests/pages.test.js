@@ -11,7 +11,7 @@ test.before(async () => {
 });
 test.after(async () => app.close());
 
-const PAGES = ['/', '/tours', '/gallery'];
+const PAGES = ['/', '/tours', '/tours/any-slug', '/gallery'];
 
 for (const p of PAGES) {
   test(`хуудас ${p} 200 буцаана`, async () => {
@@ -31,7 +31,7 @@ test('хуучин хуудсууд нүүр / аялал руу 301', async () 
   for (const [from, to] of [
     ['/about', '/'],
     ['/contact', '/'],
-    ['/tour/gobi', '/tours'],
+    ['/tour/gobi', '/tours/gobi'],
   ]) {
     const res = await fetch(app.base + from, { redirect: 'manual' });
     assert.equal(res.status, 301, from);

@@ -8,7 +8,14 @@ import { badRequest } from '../../lib/httpError.js';
 
 const router = Router();
 
-const t = (max = 200) => z.string().trim().max(max).default('');
+/* Утгын өмнөх «:» тэмдгийг хасна — шошго нь өөрөө хоёр цэгтэй харагдана. */
+const t = (max = 200) =>
+  z
+    .string()
+    .trim()
+    .max(max)
+    .default('')
+    .transform((s) => s.replace(/^[\s:：]+/, ''));
 const i18nText = (max = 300) => z.object({ kr: t(max), en: t(max) }).default({ kr: '', en: '' });
 
 export const SCHEMAS = {
@@ -44,6 +51,7 @@ export const SCHEMAS = {
     company: i18nText(120),
     ceo: t(80),
     regNo: t(80),
+    licenseNo: t(80), // 관광사업등록번호 — аялал жуулчлалын бизнесийн бүртгэл
     address: i18nText(200),
     phone: t(60),
     email: t(120),

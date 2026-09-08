@@ -4,18 +4,6 @@
    сонгоход бусад нутаг бүдгэрнэ.
    ========================================================================== */
 
-/* ---- Шүүлтүүр — нутгийн чип ---------------------------------------------- */
-.gal-filter{display:flex;flex-wrap:wrap;gap:8px}
-.gal-filter button{display:inline-flex;align-items:center;gap:9px;font-size:14.5px;font-weight:500;
-  padding:9px 15px 9px 12px;border-radius:999px;border:1px solid var(--line);
-  color:var(--ink-2);background:var(--white);--rc:var(--ink);
-  transition:border-color .2s,color .2s,background .2s,box-shadow .2s}
-.gal-filter button::before{content:"";width:9px;height:9px;border-radius:50%;background:var(--rc);flex:0 0 auto}
-.gal-filter button:hover{border-color:var(--rc);color:var(--ink)}
-.gal-filter button.on{background:var(--rc);border-color:var(--rc);color:#fff}
-.gal-filter button.on::before{background:#fff}
-.gal-filter .n{font-size:12.5px;opacity:.7;font-weight:400}
-
 /* ---- Газрын зураг: аймаг бүр нэг зураг ---------------------------------- */
 .mn-stage{position:relative;width:100%;max-width:1140px;margin:clamp(22px,3vw,40px) auto 0;
   aspect-ratio:2.0865;filter:drop-shadow(0 18px 30px rgba(15,26,43,.16))}

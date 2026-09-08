@@ -122,7 +122,14 @@ function fillFooter(footer) {
   setText(document.querySelector('[data-t="ft.company2"]'), f.company);
   setText(document.querySelector('[data-t="ft.address"]'), f.address);
 
-  const plain = { ceo: f.ceo, regNo: f.regNo, phone: f.phone, email: f.email };
+  const clean = (v) => (typeof v === 'string' ? v.replace(/^[\s:：]+/, '').trim() : '');
+  const plain = {
+    ceo: clean(f.ceo),
+    regNo: clean(f.regNo),
+    licenseNo: clean(f.licenseNo),
+    phone: clean(f.phone),
+    email: clean(f.email),
+  };
   for (const [key, value] of Object.entries(plain)) {
     const el = document.querySelector(`[data-c="ft.${key}"]`);
     if (!el) continue;

@@ -87,7 +87,7 @@ export function createApp() {
   for (const [from, to] of Object.entries(MOVED)) {
     app.get(from, (req, res) => res.redirect(301, to));
   }
-  app.get('/tour/:slug', (req, res) => res.redirect(301, '/tours'));
+  app.get('/tour/:slug', (req, res) => res.redirect(301, `/tours/${req.params.slug}`));
 
   // ── Статик ───────────────────────────────────────────────────────────────
   app.use(
@@ -113,6 +113,8 @@ export function createApp() {
   for (const [route, file] of Object.entries(PAGES)) {
     app.get(route, (req, res) => res.sendFile(path.join(SERVE_DIR, file)));
   }
+
+  app.get('/tours/:slug', (req, res) => res.sendFile(path.join(SERVE_DIR, 'tour.html')));
 
   app.get('/admin/login', (req, res) => res.sendFile(path.join(ADMIN_DIR, 'login.html')));
   for (const route of ADMIN_PAGES) {

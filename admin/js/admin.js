@@ -126,11 +126,9 @@ async function pickImage() {
     const [{ photos }, { tours }] = await Promise.all([api('/gallery'), api('/tours')]);
     const seen = new Set();
     for (const t of tours) {
-      for (const src of t.images || []) {
-        if (seen.has(src)) continue;
-        seen.add(src);
-        items.push({ src, label: t.title_kr });
-      }
+      if (!t.cover || seen.has(t.cover)) continue;
+      seen.add(t.cover);
+      items.push({ src: t.cover, label: t.title_kr });
     }
     for (const p of photos) {
       if (seen.has(p.image)) continue;
@@ -535,7 +533,7 @@ async function viewDashboard() {
 
   const cards = [
     { k: 'Ангилал', v: stats.categoriesActive, s: `нийт ${stats.categories}` },
-    { k: 'Аялал', v: stats.toursActive, s: `нийт ${stats.tours}` },
+    { k: 'Аялал (багц)', v: stats.toursActive, s: `нийт ${stats.tours} · ${stats.days} өдөр` },
     { k: 'Харагдах зураг', v: stats.photosActive, s: `нийт ${stats.photos}` },
     { k: 'Англи орчуулга дутуу', v: missing.length, s: 'аялал', warn: missing.length > 0 },
   ];
@@ -695,35 +693,93 @@ async function viewDashboard() {
 }
 
 /* ==========================================================================
-   2. Аялал — ангилал бүр өөрийн аяллуудтай
+   2. Аялал — ангилал → хоногийн багц (карт, өөрийн хуудастай) → өдрүүд
+   Slug, дараалал зэргийг admin бичихгүй: сервер өөрөө үүсгэнэ, ↑↓ товчоор эрэмбэлнэ.
    ========================================================================== */
+const statusOptions = [
+  { value: '1', label: 'Идэвхтэй' },
+  { value: '0', label: 'Нуусан' },
+];
+
+async function reorder(path, ids) {
+  await api(path, { method: 'POST', body: { order: ids } });
+  route();
+}
+
+function moveButtons(ids, i, path) {
+  const swap = (j) => {
+    const next = [...ids];
+    [next[i], next[j]] = [next[j], next[i]];
+    return reorder(path, next);
+  };
+  return [
+    el(
+      'button',
+      {
+        class: 'btn btn-line btn-sm',
+        type: 'button',
+        title: 'Дээш',
+        disabled: i === 0,
+        onclick: () => swap(i - 1),
+      },
+      '↑'
+    ),
+    ' ',
+    el(
+      'button',
+      {
+        class: 'btn btn-line btn-sm',
+        type: 'button',
+        title: 'Доош',
+        disabled: i === ids.length - 1,
+        onclick: () => swap(i + 1),
+      },
+      '↓'
+    ),
+  ];
+}
+
 async function viewTours() {
   const [{ categories }, { tours }] = await Promise.all([api('/categories'), api('/tours')]);
+  const catIds = categories.map((c) => c.id);
 
-  const tourRow = (t) =>
+  const tourRow = (t, i, ids) =>
     el(
       'tr',
       {},
       el(
         'td',
         {},
-        t.images?.[0]
-          ? el('img', { class: 'thumb', src: thumbOf(t.images[0]), alt: '', loading: 'lazy' })
+        t.cover
+          ? el('img', { class: 'thumb', src: thumbOf(t.cover), alt: '', loading: 'lazy' })
           : el('span', { class: 'mono', text: '—' })
       ),
-      el('td', { class: 'n', text: t.day_no ? `${t.day_no}` : '—' }),
       el(
         'td',
         {},
         el('strong', { text: t.title_kr }),
         el('div', { class: 'mono', text: t.title_en || '' })
       ),
-      el('td', { class: 'mono', text: t.slug }),
+      el('td', { text: t.duration_kr || '—' }),
+      el('td', { class: 'n', text: `${t.days_count} өдөр` }),
       el('td', {}, statusChip(t.is_active)),
       el(
         'td',
         { class: 'act' },
+        ...moveButtons(ids, i, '/tours/reorder'),
+        ' ',
         el('a', { class: 'btn btn-line btn-sm', href: `/admin/tours/${t.id}` }, 'Засах'),
+        ' ',
+        el(
+          'a',
+          {
+            class: 'btn btn-line btn-sm',
+            href: `/tours/${t.slug}`,
+            target: '_blank',
+            rel: 'noopener',
+          },
+          'Сайтад'
+        ),
         ' ',
         el(
           'button',
@@ -731,7 +787,13 @@ async function viewTours() {
             class: 'btn btn-danger btn-sm',
             type: 'button',
             onclick: async () => {
-              if (!(await confirmDialog('Аялал устгах', `«${t.title_kr}» устгах уу?`))) return;
+              if (
+                !(await confirmDialog(
+                  'Аялал устгах',
+                  `«${t.title_kr}» болон бүх өдрийг нь устгах уу?`
+                ))
+              )
+                return;
               await api(`/tours/${t.id}`, { method: 'DELETE' });
               toast('Устгалаа');
               route();
@@ -742,8 +804,9 @@ async function viewTours() {
       )
     );
 
-  const catCard = (c) => {
+  const catCard = (c, ci) => {
     const list = tours.filter((t) => t.category_id === c.id);
+    const ids = list.map((t) => t.id);
     return el(
       'div',
       { class: 'card' },
@@ -753,14 +816,15 @@ async function viewTours() {
         el(
           'div',
           {},
-          el('h2', {}, c.name_kr, ' ', el('span', { class: 'mono', text: c.sub_kr })),
-          el('span', { class: 'mono', text: `${c.slug} · ${list.length} аялал` }),
+          el('h2', {}, c.name_kr, ' ', el('span', { class: 'mono', text: c.name_en || '' })),
+          el('span', { class: 'mono', text: `${list.length} аялал` }),
           ' ',
           statusChip(c.is_active)
         ),
         el(
           'div',
           { class: 'tools' },
+          ...moveButtons(catIds, ci, '/categories/reorder'),
           el(
             'a',
             { class: 'btn btn-pine btn-sm', href: `/admin/tours/new?cat=${c.id}` },
@@ -806,12 +870,16 @@ async function viewTours() {
                 el(
                   'tr',
                   {},
-                  ['', 'Өдөр', 'Нэр', 'Slug', 'Төлөв', ''].map((h) => el('th', { text: h }))
+                  ['', 'Нэр', 'Хоног', 'Өдөр', 'Төлөв', ''].map((h) => el('th', { text: h }))
                 )
               ),
-              el('tbody', {}, list.map(tourRow))
+              el(
+                'tbody',
+                {},
+                list.map((t, i) => tourRow(t, i, ids))
+              )
             )
-          : el('p', { class: 'empty', text: 'Энэ ангилалд аялал алга' })
+          : el('p', { class: 'empty', text: 'Энэ ангилалд аялал алга — «Аялал нэмэх» дарна уу' })
       )
     );
   };
@@ -845,39 +913,27 @@ async function viewCategoryEdit(id) {
     el(
       'div',
       { class: 'card' },
-      el('div', { class: 'card-h' }, el('h2', { text: 'Ангилал' })),
+      el(
+        'div',
+        { class: 'card-h' },
+        el(
+          'div',
+          {},
+          el('h2', { text: 'Ангилал' }),
+          el('span', { class: 'mono', text: 'Ж: 중부 몽골, 고비사막, 홉스골' })
+        )
+      ),
       el(
         'div',
         { class: 'card-b' },
-        el(
-          'div',
-          { class: 'row row-3' },
-          field('Slug (URL)', input('slug', g('slug'), { required: true, pattern: '[a-z0-9-]+' })),
-          field(
-            'Дараалал',
-            input('sortOrder', String(g('sort_order', 0)), { type: 'number', min: 0 })
-          ),
-          field(
-            'Төлөв',
-            select(
-              'isActive',
-              [
-                { value: '1', label: 'Идэвхтэй' },
-                { value: '0', label: 'Нуусан' },
-              ],
-              String(g('is_active', 1))
-            )
-          )
-        ),
         i18nFields('Нэр', 'name', cat),
-        i18nFields('Хугацаа (ж: 4박5일)', 'sub', cat),
-        i18nFields('Тайлбар (заавал биш)', 'note', cat)
+        field('Төлөв', select('isActive', statusOptions, String(g('is_active', 1))))
       )
     ),
     el(
       'div',
       { class: 'card' },
-      el('div', { class: 'card-h' }, el('h2', { text: 'Нүүр зураг (заавал биш)' })),
+      el('div', { class: 'card-h' }, el('div', {}, el('h2', { text: 'Зураг (заавал биш)' }))),
       el('div', { class: 'card-b' }, imageField('Ангиллын зураг', 'cover', g('cover')))
     ),
     el(
@@ -891,16 +947,10 @@ async function viewCategoryEdit(id) {
   form.addEventListener('submit', async (e) => {
     e.preventDefault();
     const payload = {
-      slug: val(form, 'slug'),
-      sortOrder: num(form, 'sortOrder'),
       isActive: val(form, 'isActive') === '1',
       cover: val(form, 'cover'),
       nameKr: val(form, 'name_kr'),
       nameEn: val(form, 'name_en'),
-      subKr: val(form, 'sub_kr'),
-      subEn: val(form, 'sub_en'),
-      noteKr: val(form, 'note_kr'),
-      noteEn: val(form, 'note_en'),
     };
     try {
       if (isNew) await api('/categories', { method: 'POST', body: payload });
@@ -928,7 +978,105 @@ async function viewCategoryEdit(id) {
   );
 }
 
-/* ---- Аялал засах -------------------------------------------------------- */
+/* ---- Өдрийн блок (багцын засварт) -------------------------------------- */
+function dayBlock(d = {}) {
+  const images = imagesField('Зургууд', d.images ?? []);
+  const box = el(
+    'div',
+    { class: 'day-box' },
+    el(
+      'div',
+      { class: 'day-head' },
+      el('b', { class: 'day-no', text: '' }),
+      el(
+        'div',
+        { class: 'tools' },
+        el(
+          'button',
+          {
+            class: 'btn btn-line btn-sm',
+            type: 'button',
+            title: 'Дээш',
+            onclick: () => {
+              box.previousElementSibling?.before(box);
+              renumber(box.parentElement);
+            },
+          },
+          '↑'
+        ),
+        el(
+          'button',
+          {
+            class: 'btn btn-line btn-sm',
+            type: 'button',
+            title: 'Доош',
+            onclick: () => {
+              box.nextElementSibling?.after(box);
+              renumber(box.parentElement);
+            },
+          },
+          '↓'
+        ),
+        el(
+          'button',
+          {
+            class: 'btn btn-danger btn-sm',
+            type: 'button',
+            onclick: async () => {
+              if (
+                !(await confirmDialog(
+                  'Өдөр хасах',
+                  'Энэ өдрийг хасах уу? (Хадгалах дарахад л батлагдана)',
+                  'Хасах'
+                ))
+              )
+                return;
+              const parent = box.parentElement;
+              box.remove();
+              renumber(parent);
+            },
+          },
+          'Хасах'
+        )
+      )
+    ),
+    i18nFields('Газрын нэр', 'title', d),
+    i18nFields('Дэд гарчиг (аймаг, тайлбар)', 'place', d),
+    i18nFields('Зам, цаг (ж: 약 350km / 6-7시간 이동)', 'meta', d),
+    i18nFields('Гол үйл ажиллагаа (нэг мөр)', 'summary', d),
+    i18nFields('Дэлгэрэнгүй (мөр бүр = нэг цэг)', 'body', d, 'textarea', 5),
+    images
+  );
+  box.read = () => ({
+    images: images.values(),
+    titleKr: blockVal(box, 'title_kr'),
+    titleEn: blockVal(box, 'title_en'),
+    placeKr: blockVal(box, 'place_kr'),
+    placeEn: blockVal(box, 'place_en'),
+    metaKr: blockVal(box, 'meta_kr'),
+    metaEn: blockVal(box, 'meta_en'),
+    summaryKr: blockVal(box, 'summary_kr'),
+    summaryEn: blockVal(box, 'summary_en'),
+    bodyKr: blockVal(box, 'body_kr'),
+    bodyEn: blockVal(box, 'body_en'),
+  });
+  return box;
+}
+
+function renumber(list) {
+  if (!list) return;
+  [...list.children].forEach((b, i) => {
+    const n = b.querySelector('.day-no');
+    if (n) n.textContent = `${i + 1}일차`;
+  });
+}
+
+/** Блок дотор нэрээр утга унших (form.elements биш — блок нь form биш). */
+function blockVal(root, name) {
+  return root.querySelector(`[name="${name}"]`)?.value.trim() ?? '';
+}
+
+/* ---- Багц засах ---------------------------------------------------------- */
 async function viewTourEdit(id) {
   const isNew = id === 'new';
   const [{ categories }, tour] = await Promise.all([
@@ -937,11 +1085,16 @@ async function viewTourEdit(id) {
   ]);
   const g = (k, d = '') => tour?.[k] ?? d;
   const presetCat = new URLSearchParams(location.search).get('cat');
-  const catOptions = categories.map((c) => ({
-    value: c.id,
-    label: `${c.name_kr} ${c.sub_kr}`.trim(),
-  }));
-  const images = imagesField('Зургууд', g('images', []));
+  const catOptions = categories.map((c) => ({ value: c.id, label: c.name_kr }));
+
+  const daysBox = el('div', { class: 'days' });
+  for (const d of tour?.days ?? []) daysBox.append(dayBlock(d));
+  renumber(daysBox);
+  const addDay = () => {
+    daysBox.append(dayBlock());
+    renumber(daysBox);
+    daysBox.lastElementChild.scrollIntoView({ behavior: 'smooth', block: 'start' });
+  };
 
   const form = el(
     'form',
@@ -949,47 +1102,32 @@ async function viewTourEdit(id) {
     el(
       'div',
       { class: 'card' },
-      el('div', { class: 'card-h' }, el('h2', { text: 'Үндсэн мэдээлэл' })),
+      el(
+        'div',
+        { class: 'card-h' },
+        el(
+          'div',
+          {},
+          el('h2', { text: 'Багц' }),
+          el('span', { class: 'mono', text: 'Карт дээр: зураг, хоног, нэр' })
+        )
+      ),
       el(
         'div',
         { class: 'card-b' },
         el(
           'div',
-          { class: 'row row-3' },
+          { class: 'row row-2' },
           field(
             'Ангилал',
             select('categoryId', catOptions, g('category_id', presetCat || catOptions[0]?.value))
           ),
-          field('Slug (URL)', input('slug', g('slug'), { required: true, pattern: '[a-z0-9-]+' })),
-          field(
-            'Өдөр (0 = дугааргүй)',
-            input('dayNo', String(g('day_no', 0)), { type: 'number', min: 0, max: 60 })
-          )
+          field('Төлөв', select('isActive', statusOptions, String(g('is_active', 1))))
         ),
-        el(
-          'div',
-          { class: 'row row-2' },
-          field(
-            'Дараалал',
-            input('sortOrder', String(g('sort_order', 0)), { type: 'number', min: 0 })
-          ),
-          field(
-            'Төлөв',
-            select(
-              'isActive',
-              [
-                { value: '1', label: 'Идэвхтэй' },
-                { value: '0', label: 'Нуусан' },
-              ],
-              String(g('is_active', 1))
-            )
-          )
-        ),
-        i18nFields('Гарчиг (газрын нэр)', 'title', tour),
-        i18nFields('Дэд гарчиг (аймаг, тайлбар)', 'place', tour),
-        i18nFields('Зам, цаг (ж: 약 350km / 6-7시간 이동)', 'meta', tour),
-        i18nFields('Гол үйл ажиллагаа (нэг мөр)', 'summary', tour),
-        i18nFields('Дэлгэрэнгүй (мөр бүр = нэг цэг)', 'body', tour, 'textarea', 6)
+        i18nFields('Нэр', 'title', tour),
+        i18nFields('Хоног (ж: 4박5일 / 4 nights · 5 days)', 'duration', tour),
+        i18nFields('Товч тайлбар (нэг мөр, заавал биш)', 'summary', tour),
+        imageField('Картын зураг (хоосон бол 1-р өдрийн эхний зураг)', 'cover', g('cover'))
       )
     ),
     el(
@@ -1001,11 +1139,29 @@ async function viewTourEdit(id) {
         el(
           'div',
           {},
-          el('h2', { text: 'Зургууд' }),
-          el('span', { class: 'mono', text: 'Эхнийх нь карт дээр гарна' })
+          el('h2', { text: 'Өдрүүд' }),
+          el('span', { class: 'mono', text: 'Аяллын хуудсан дээр дарааллаар гарна' })
+        ),
+        el(
+          'button',
+          { class: 'btn btn-line btn-sm', type: 'button', onclick: addDay },
+          'Өдөр нэмэх'
         )
       ),
-      el('div', { class: 'card-b' }, images)
+      el(
+        'div',
+        { class: 'card-b' },
+        daysBox,
+        el(
+          'div',
+          { style: { marginTop: '12px' } },
+          el(
+            'button',
+            { class: 'btn btn-line btn-sm', type: 'button', onclick: addDay },
+            'Өдөр нэмэх'
+          )
+        )
+      )
     ),
     el(
       'div',
@@ -1019,21 +1175,15 @@ async function viewTourEdit(id) {
     e.preventDefault();
     const payload = {
       categoryId: num(form, 'categoryId'),
-      slug: val(form, 'slug'),
-      sortOrder: num(form, 'sortOrder'),
       isActive: val(form, 'isActive') === '1',
-      dayNo: num(form, 'dayNo'),
-      images: images.values(),
-      titleKr: val(form, 'title_kr'),
-      titleEn: val(form, 'title_en'),
-      placeKr: val(form, 'place_kr'),
-      placeEn: val(form, 'place_en'),
-      metaKr: val(form, 'meta_kr'),
-      metaEn: val(form, 'meta_en'),
-      summaryKr: val(form, 'summary_kr'),
-      summaryEn: val(form, 'summary_en'),
-      bodyKr: val(form, 'body_kr'),
-      bodyEn: val(form, 'body_en'),
+      cover: val(form, 'cover'),
+      titleKr: blockVal(form.querySelector('.card'), 'title_kr'),
+      titleEn: blockVal(form.querySelector('.card'), 'title_en'),
+      durationKr: blockVal(form.querySelector('.card'), 'duration_kr'),
+      durationEn: blockVal(form.querySelector('.card'), 'duration_en'),
+      summaryKr: blockVal(form.querySelector('.card'), 'summary_kr'),
+      summaryEn: blockVal(form.querySelector('.card'), 'summary_en'),
+      days: [...daysBox.children].map((b) => b.read()),
     };
     try {
       if (isNew) await api('/tours', { method: 'POST', body: payload });
@@ -1321,7 +1471,10 @@ async function viewSettings() {
       el(
         'div',
         { class: 'row row-2' },
-        field('Утас (고객센터)', input('phone', f.phone ?? '', { placeholder: '+976 …' })),
+        field(
+          'Компанийн утас (대표번호)',
+          input('phone', f.phone ?? '', { placeholder: '+976 …' })
+        ),
         field('И-мэйл', input('email', f.email ?? ''))
       ),
       i18nFields('© мөр ({year} = одоогийн он)', 'copyright', f.copyright)
@@ -1359,6 +1512,7 @@ async function viewSettings() {
       company: i18nOf(form, 'company'),
       ceo: val(form, 'ceo'),
       regNo: val(form, 'regNo'),
+      licenseNo: val(form, 'licenseNo'),
       address: i18nOf(form, 'address'),
       phone: val(form, 'phone'),
       email: val(form, 'email'),

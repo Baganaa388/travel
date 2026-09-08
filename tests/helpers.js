@@ -75,37 +75,36 @@ export function makeClient(base) {
       if (r.status === 200) this.csrf = r.data.csrf;
       return r;
     },
-    /** Жишээ ангилал үүсгээд id-г буцаана. */
+    /** Жишээ ангилал үүсгээд мөрийг буцаана. */
     async makeCategory(over = {}) {
       const r = await this.req('/api/admin/categories', {
         method: 'POST',
         body: sampleCategory(over),
       });
-      return r.data?.category?.id;
+      return r.data?.category;
+    },
+    /** Жишээ багц үүсгээд мөрийг буцаана. */
+    async makeTour(categoryId, over = {}) {
+      const r = await this.req('/api/admin/tours', {
+        method: 'POST',
+        body: sampleTour(categoryId, over),
+      });
+      return r.data?.tour;
     },
   };
 }
 
-/** Жишээ ангилал (admin API-аар). */
+/** Жишээ ангилал (admin API-аар — slug байхгүй, сервер үүсгэнэ). */
 export const sampleCategory = (over = {}) => ({
-  slug: 'test-cat',
-  sortOrder: 1,
   isActive: true,
-  cover: '/images/tours/central-cover.jpg',
-  nameKr: '테스트 투어',
-  nameEn: 'Test tour',
-  subKr: '4박5일',
-  subEn: '4 nights · 5 days',
+  cover: '',
+  nameKr: '중부 몽골',
+  nameEn: 'Central Mongolia',
   ...over,
 });
 
-/** Жишээ аялал (admin API-аар). */
-export const sampleTour = (categoryId, over = {}) => ({
-  categoryId,
-  slug: 'test-route',
-  sortOrder: 1,
-  isActive: true,
-  dayNo: 1,
+/** Жишээ өдөр. */
+export const sampleDay = (over = {}) => ({
   images: ['/images/tours/ugii-1.jpg', '/images/tours/ugii-2.jpg'],
   titleKr: '우기 호수',
   titleEn: 'Ugii Lake',
@@ -117,5 +116,23 @@ export const sampleTour = (categoryId, over = {}) => ({
   summaryEn: 'Lake trekking',
   bodyKr: '울란바토르에서 출발\n석식: 캠프식',
   bodyEn: 'Departure from Ulaanbaatar\nDinner: camp meal',
+  ...over,
+});
+
+/** Жишээ багц (admin API-аар). */
+export const sampleTour = (categoryId, over = {}) => ({
+  categoryId,
+  isActive: true,
+  cover: '',
+  titleKr: '중부 투어',
+  titleEn: 'Central Mongolia Tour',
+  durationKr: '4박5일',
+  durationEn: '4 nights · 5 days',
+  summaryKr: '우기 호수 · 테를지',
+  summaryEn: 'Ugii Lake · Terelj',
+  days: [
+    sampleDay(),
+    sampleDay({ titleKr: '테를지', titleEn: 'Terelj', images: ['/images/tours/terelj-1.jpg'] }),
+  ],
   ...over,
 });

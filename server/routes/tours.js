@@ -1,4 +1,4 @@
-/* Нийтийн API — аяллын ангилал ба аяллууд. Зөвхөн уншина. */
+/* Нийтийн API — аяллын ангилал, багц, өдрүүд. Зөвхөн уншина. */
 import { Router } from 'express';
 import { db } from '../db/index.js';
 import { notFound } from '../lib/httpError.js';
@@ -6,7 +6,7 @@ import { publicCategory, publicTour } from '../lib/serialize.js';
 
 const router = Router();
 
-/** Ангилал бүр аяллуудаа хамт өгнө — нэг л хүсэлт. */
+/** Ангилал бүр багцуудаа (картуудаа) хамт өгнө — нэг л хүсэлт. */
 router.get('/tours', (req, res) => {
   const cats = db
     .prepare('SELECT * FROM tour_categories WHERE is_active = 1 ORDER BY sort_order, id')
@@ -14,8 +14,9 @@ router.get('/tours', (req, res) => {
   const tours = cats.length
     ? db
         .prepare(
-          `SELECT * FROM tours WHERE is_active = 1 AND category_id IN (${cats.map(() => '?').join(',')})
-           ORDER BY sort_order, day_no, id`
+          `SELECT t.*, (SELECT COUNT(*) FROM tour_days d WHERE d.tour_id = t.id) AS days_count
+           FROM tours t WHERE t.is_active = 1 AND t.category_id IN (${cats.map(() => '?').join(',')})
+           ORDER BY t.sort_order, t.id`
         )
         .all(...cats.map((c) => c.id))
     : [];
@@ -29,6 +30,7 @@ router.get('/tours', (req, res) => {
   });
 });
 
+/** Багцын дэлгэрэнгүй — өдрүүдтэй. */
 router.get('/tours/:slug', (req, res, next) => {
   const row = db
     .prepare(
@@ -37,7 +39,11 @@ router.get('/tours/:slug', (req, res, next) => {
     )
     .get(req.params.slug);
   if (!row) return next(notFound('Ийм аялал олдсонгүй'));
-  res.json({ tour: publicTour(row) });
+  const category = db.prepare('SELECT * FROM tour_categories WHERE id = ?').get(row.category_id);
+  const days = db
+    .prepare('SELECT * FROM tour_days WHERE tour_id = ? ORDER BY day_no, id')
+    .all(row.id);
+  res.json({ tour: publicTour(row, { days, category }) });
 });
 
 export default router;

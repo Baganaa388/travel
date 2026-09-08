@@ -45,3 +45,4 @@ export const getGallery = (params = {}) => {
   return get(`/gallery${q ? `?${q}` : ''}`).then((d) => d.photos);
 };
 export const getSettings = () => get('/settings').then((d) => d.settings);
+export const getTour = (slug) => get(`/tours/${encodeURIComponent(slug)}`).then((d) => d.tour);

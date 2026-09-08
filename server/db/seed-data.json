@@ -3,235 +3,241 @@
   "categories": [
     {
       "slug": "central",
-      "cover": "/images/tours/central-cover.jpg",
-      "nameKr": "중부 투어",
-      "nameEn": "Central Mongolia Tour",
-      "subKr": "4박5일",
-      "subEn": "4 nights · 5 days",
+      "nameKr": "중부 몽골",
+      "nameEn": "Central Mongolia",
       "tours": [
         {
-          "slug": "central-ugii",
-          "titleKr": "우기 호수",
-          "titleEn": "Ugii Lake",
-          "placeKr": "아르항가이",
-          "placeEn": "Arkhangai province",
-          "metaKr": "약 350km / 6-7시간 이동",
-          "metaEn": "About 350 km · 6–7 h drive",
-          "summaryKr": "호수 트레킹 + 미니보트",
-          "summaryEn": "Lake trekking + mini boat",
-          "bodyKr": "울란바토르에서 출발\n이동 중 점심식사 (현지 식당)\n숙소 도착 후 자유시간\n석식: 캠프식\n샤워 / 전기 가능",
-          "bodyEn": "Departure from Ulaanbaatar\nLunch on the way (local restaurant)\nFree time after arriving at the camp\nDinner: camp meal\nShower and electricity available",
-          "images": [
-            "ugii-1.jpg",
-            "ugii-2.jpg",
-            "ugii-3.jpg"
-          ]
-        },
-        {
-          "slug": "central-tsenkher",
-          "titleKr": "쳉헤르 온천",
-          "titleEn": "Tsenkher Hot Spring",
-          "placeKr": "아르항가이",
-          "placeEn": "Arkhangai province",
-          "metaKr": "약 120km / 3-4시간 이동",
-          "metaEn": "About 120 km · 3–4 h drive",
-          "summaryKr": "온천 + 트레킹",
-          "summaryEn": "Hot spring + trekking",
-          "bodyKr": "아침 식사 후 이동\n이동 중 점심식사 (현지 식당)\n숙소 도착 후 자유시간\n조식 / 석식: 캠프식\n샤워 / 전기 가능",
-          "bodyEn": "Drive after breakfast\nLunch on the way (local restaurant)\nFree time after arriving at the camp\nBreakfast and dinner: camp meal\nShower and electricity available",
-          "images": [
-            "tsenkher-1.jpg",
-            "tsenkher-2.jpg"
-          ]
-        },
-        {
-          "slug": "central-elsen",
-          "titleKr": "엘승 타사르하이",
-          "titleEn": "Elsen Tasarkhai",
-          "placeKr": "미니 고비",
-          "placeEn": "The Mini Gobi",
-          "metaKr": "약 210km / 3-4시간 이동",
-          "metaEn": "About 210 km · 3–4 h drive",
-          "summaryKr": "모래썰매, 낙타 체험",
-          "summaryEn": "Sand sledding, camel riding",
-          "bodyKr": "아침 식사 후 이동\n이동 중 점심식사 (현지 식당)\n숙소 도착 후 자유시간\n조식 / 석식: 캠프식\n샤워 / 전기 가능",
-          "bodyEn": "Drive after breakfast\nLunch on the way (local restaurant)\nFree time after arriving at the camp\nBreakfast and dinner: camp meal\nShower and electricity available",
-          "images": [
-            "elsen-1.jpg",
-            "elsen-2.jpg",
-            "elsen-3.jpg"
-          ]
-        },
-        {
-          "slug": "central-terelj",
-          "titleKr": "테를지 국립공원",
-          "titleEn": "Terelj National Park",
-          "placeKr": "투브 아이막",
-          "placeEn": "Tuv province",
-          "metaKr": "약 330km / 5-6시간 이동",
-          "metaEn": "About 330 km · 5–6 h drive",
-          "summaryKr": "승마 체험",
-          "summaryEn": "Horse riding",
-          "bodyKr": "아침 식사 후 이동\n거북이바위 · 독수리 · 아리야발 사원\n칭기즈칸 동상\n기념품샵\n조식 / 석식: 캠프식 · 중식: 현지 식당\n샤워 / 전기 가능",
-          "bodyEn": "Drive after breakfast\nTurtle Rock · eagles · Aryabal monastery\nChinggis Khaan statue\nSouvenir shop\nBreakfast and dinner: camp meal · lunch: local restaurant\nShower and electricity available",
-          "images": [
-            "terelj-1.jpg",
-            "terelj-2.jpg",
-            "terelj-3.jpg"
-          ]
-        },
-        {
-          "slug": "central-ub",
-          "titleKr": "울란바토르",
-          "titleEn": "Ulaanbaatar City",
-          "placeKr": "투어 종료",
-          "placeEn": "End of tour",
-          "metaKr": "약 55km / 1-2시간 이동",
-          "metaEn": "About 55 km · 1–2 h drive",
-          "summaryKr": "시내 쇼핑 (선택)",
-          "summaryEn": "City shopping (optional)",
-          "bodyKr": "아침 식사 후 이동\n조식: 캠프식 · 중식: 현지 식당\n시내 쇼핑 (선택)\n공항 또는 숙소 도착 · 투어 종료",
-          "bodyEn": "Drive after breakfast\nBreakfast: camp meal · lunch: local restaurant\nCity shopping (optional)\nArrival at the airport or hotel · end of tour",
-          "images": [
-            "ub-1.jpg",
-            "ub-3.jpg",
-            "ub-2.jpg"
+          "slug": "central",
+          "cover": "/images/tours/central-cover.jpg",
+          "titleKr": "중부 투어",
+          "titleEn": "Central Mongolia Tour",
+          "durationKr": "4박5일",
+          "durationEn": "4 nights · 5 days",
+          "summaryKr": "우기 호수 · 쳉헤르 온천 · 엘승 타사르하이 · 테를지",
+          "summaryEn": "Ugii Lake · Tsenkher hot spring · Elsen Tasarkhai · Terelj",
+          "days": [
+            {
+              "titleKr": "우기 호수",
+              "titleEn": "Ugii Lake",
+              "placeKr": "아르항가이",
+              "placeEn": "Arkhangai province",
+              "metaKr": "약 350km / 6-7시간 이동",
+              "metaEn": "About 350 km · 6–7 h drive",
+              "summaryKr": "호수 트레킹 + 미니보트",
+              "summaryEn": "Lake trekking + mini boat",
+              "bodyKr": "울란바토르에서 출발\n이동 중 점심식사 (현지 식당)\n숙소 도착 후 자유시간\n석식: 캠프식\n샤워 / 전기 가능",
+              "bodyEn": "Departure from Ulaanbaatar\nLunch on the way (local restaurant)\nFree time after arriving at the camp\nDinner: camp meal\nShower and electricity available",
+              "images": [
+                "ugii-1.jpg",
+                "ugii-2.jpg",
+                "ugii-3.jpg"
+              ]
+            },
+            {
+              "titleKr": "쳉헤르 온천",
+              "titleEn": "Tsenkher Hot Spring",
+              "placeKr": "아르항가이",
+              "placeEn": "Arkhangai province",
+              "metaKr": "약 120km / 3-4시간 이동",
+              "metaEn": "About 120 km · 3–4 h drive",
+              "summaryKr": "온천 + 트레킹",
+              "summaryEn": "Hot spring + trekking",
+              "bodyKr": "아침 식사 후 이동\n이동 중 점심식사 (현지 식당)\n숙소 도착 후 자유시간\n조식 / 석식: 캠프식\n샤워 / 전기 가능",
+              "bodyEn": "Drive after breakfast\nLunch on the way (local restaurant)\nFree time after arriving at the camp\nBreakfast and dinner: camp meal\nShower and electricity available",
+              "images": [
+                "tsenkher-1.jpg",
+                "tsenkher-2.jpg"
+              ]
+            },
+            {
+              "titleKr": "엘승 타사르하이",
+              "titleEn": "Elsen Tasarkhai",
+              "placeKr": "미니 고비",
+              "placeEn": "The Mini Gobi",
+              "metaKr": "약 210km / 3-4시간 이동",
+              "metaEn": "About 210 km · 3–4 h drive",
+              "summaryKr": "모래썰매, 낙타 체험",
+              "summaryEn": "Sand sledding, camel riding",
+              "bodyKr": "아침 식사 후 이동\n이동 중 점심식사 (현지 식당)\n숙소 도착 후 자유시간\n조식 / 석식: 캠프식\n샤워 / 전기 가능",
+              "bodyEn": "Drive after breakfast\nLunch on the way (local restaurant)\nFree time after arriving at the camp\nBreakfast and dinner: camp meal\nShower and electricity available",
+              "images": [
+                "elsen-1.jpg",
+                "elsen-2.jpg",
+                "elsen-3.jpg"
+              ]
+            },
+            {
+              "titleKr": "테를지 국립공원",
+              "titleEn": "Terelj National Park",
+              "placeKr": "투브 아이막",
+              "placeEn": "Tuv province",
+              "metaKr": "약 330km / 5-6시간 이동",
+              "metaEn": "About 330 km · 5–6 h drive",
+              "summaryKr": "승마 체험",
+              "summaryEn": "Horse riding",
+              "bodyKr": "아침 식사 후 이동\n거북이바위 · 독수리 · 아리야발 사원\n칭기즈칸 동상\n기념품샵\n조식 / 석식: 캠프식 · 중식: 현지 식당\n샤워 / 전기 가능",
+              "bodyEn": "Drive after breakfast\nTurtle Rock · eagles · Aryabal monastery\nChinggis Khaan statue\nSouvenir shop\nBreakfast and dinner: camp meal · lunch: local restaurant\nShower and electricity available",
+              "images": [
+                "terelj-1.jpg",
+                "terelj-2.jpg",
+                "terelj-3.jpg"
+              ]
+            },
+            {
+              "titleKr": "울란바토르",
+              "titleEn": "Ulaanbaatar City",
+              "placeKr": "투어 종료",
+              "placeEn": "End of tour",
+              "metaKr": "약 55km / 1-2시간 이동",
+              "metaEn": "About 55 km · 1–2 h drive",
+              "summaryKr": "시내 쇼핑 (선택)",
+              "summaryEn": "City shopping (optional)",
+              "bodyKr": "아침 식사 후 이동\n조식: 캠프식 · 중식: 현지 식당\n시내 쇼핑 (선택)\n공항 또는 숙소 도착 · 투어 종료",
+              "bodyEn": "Drive after breakfast\nBreakfast: camp meal · lunch: local restaurant\nCity shopping (optional)\nArrival at the airport or hotel · end of tour",
+              "images": [
+                "ub-1.jpg",
+                "ub-3.jpg",
+                "ub-2.jpg"
+              ]
+            }
           ]
         }
       ]
     },
     {
       "slug": "gobi",
-      "cover": "/images/tours/khongor-1.jpg",
-      "nameKr": "고비사막 투어",
-      "nameEn": "Gobi Desert Tour",
-      "subKr": "6박7일",
-      "subEn": "6 nights · 7 days",
+      "nameKr": "고비사막",
+      "nameEn": "Gobi Desert",
       "tours": [
         {
-          "slug": "gobi-suvraga",
-          "titleKr": "차강 소브라가",
-          "titleEn": "Tsagaan Suvarga",
-          "placeKr": "화이트 스투파 · 둔드고비",
-          "placeEn": "White Stupa · Dundgovi",
-          "metaKr": "약 470km / 7-8시간 이동",
-          "metaEn": "About 470 km · 7–8 h drive",
-          "summaryKr": "차강 소브라가 트레킹",
-          "summaryEn": "Trekking at the White Stupa",
-          "bodyKr": "울란바토르에서 출발\n이동 중 점심식사 (현지 식당)\n숙소 도착 후 자유시간\n석식: 캠프식\n샤워 / 전기 가능",
-          "bodyEn": "Departure from Ulaanbaatar\nLunch on the way (local restaurant)\nFree time after arriving at the camp\nDinner: camp meal\nShower and electricity available",
-          "images": [
-            "suvraga-1.jpg",
-            "suvraga-2.jpg"
-          ]
-        },
-        {
-          "slug": "gobi-yolyn",
-          "titleKr": "욜링암",
-          "titleEn": "Yolyn Am",
-          "placeKr": "남고비",
-          "placeEn": "Umnugovi province",
-          "metaKr": "약 210km / 4-5시간 이동",
-          "metaEn": "About 210 km · 4–5 h drive",
-          "summaryKr": "욜링암 협곡 트레킹",
-          "summaryEn": "Trekking in the Yolyn Am gorge",
-          "bodyKr": "아침 식사 후 이동\n이동 중 점심식사 (현지 식당)\n숙소 도착 후 자유시간\n조식 / 석식: 캠프식\n샤워 / 전기 가능",
-          "bodyEn": "Drive after breakfast\nLunch on the way (local restaurant)\nFree time after arriving at the camp\nBreakfast and dinner: camp meal\nShower and electricity available",
-          "images": [
-            "yolyn-1.jpg",
-            "yolyn-2.jpg"
-          ]
-        },
-        {
-          "slug": "gobi-khongor",
-          "titleKr": "홍고린 엘스",
-          "titleEn": "Khongoryn Els",
-          "placeKr": "고비 모래언덕",
-          "placeEn": "The singing dunes",
-          "metaKr": "약 175km / 4-5시간 이동",
-          "metaEn": "About 175 km · 4–5 h drive",
-          "summaryKr": "모래썰매, 낙타 체험",
-          "summaryEn": "Sand sledding, camel riding",
-          "bodyKr": "아침 식사 후 이동\n이동 중 점심식사 (현지 식당)\n숙소 도착 후 자유시간\n조식 / 석식: 캠프식\n샤워 / 전기 가능",
-          "bodyEn": "Drive after breakfast\nLunch on the way (local restaurant)\nFree time after arriving at the camp\nBreakfast and dinner: camp meal\nShower and electricity available",
-          "images": [
-            "khongor-1.jpg",
-            "khongor-2.jpg",
-            "khongor-3.jpg",
-            "khongor-4.jpg"
-          ]
-        },
-        {
-          "slug": "gobi-bayanzag",
-          "titleKr": "바양작",
-          "titleEn": "Bayanzag",
-          "placeKr": "불타는 절벽",
-          "placeEn": "The Flaming Cliffs",
-          "metaKr": "약 175km / 4-5시간 이동",
-          "metaEn": "About 175 km · 4–5 h drive",
-          "summaryKr": "바양작 트레킹, 낙타인형 쇼핑",
-          "summaryEn": "Cliff trekking, camel-doll shopping",
-          "bodyKr": "아침 식사 후 이동\n이동 중 점심식사 (현지 식당)\n숙소 도착 후 자유시간\n조식 / 석식: 캠프식\n샤워 / 전기 가능",
-          "bodyEn": "Drive after breakfast\nLunch on the way (local restaurant)\nFree time after arriving at the camp\nBreakfast and dinner: camp meal\nShower and electricity available",
-          "images": [
-            "bayanzag-1.jpg",
-            "bayanzag-2.jpg",
-            "bayanzag-3.jpg",
-            "bayanzag-4.jpg"
-          ]
-        },
-        {
-          "slug": "gobi-bagagazar",
-          "titleKr": "바가 가즈린 촐로",
-          "titleEn": "Baga Gazriin Chuluu",
-          "placeKr": "둔드고비",
-          "placeEn": "Dundgovi province",
-          "metaKr": "약 420km / 6-7시간 이동",
-          "metaEn": "About 420 km · 6–7 h drive",
-          "summaryKr": "바가 가즈린 촐로 트레킹",
-          "summaryEn": "Trekking among the granite rocks",
-          "bodyKr": "아침 식사 후 이동\n이동 중 점심식사 (현지 식당)\n숙소 도착 후 자유시간\n조식 / 석식: 캠프식\n샤워 / 전기 가능",
-          "bodyEn": "Drive after breakfast\nLunch on the way (local restaurant)\nFree time after arriving at the camp\nBreakfast and dinner: camp meal\nShower and electricity available",
-          "images": [
-            "bagagazar-1.jpg",
-            "bagagazar-2.jpg",
-            "bagagazar-3.jpg"
-          ]
-        },
-        {
-          "slug": "gobi-terelj",
-          "titleKr": "테를지 국립공원",
-          "titleEn": "Terelj National Park",
-          "placeKr": "투브 아이막",
-          "placeEn": "Tuv province",
-          "metaKr": "약 320km / 4-5시간 이동",
-          "metaEn": "About 320 km · 4–5 h drive",
-          "summaryKr": "승마 체험",
-          "summaryEn": "Horse riding",
-          "bodyKr": "아침 식사 후 이동\n거북이바위 · 독수리 · 아리야발 사원\n칭기즈칸 동상\n기념품샵\n조식 / 석식: 캠프식 · 중식: 현지 식당\n샤워 / 전기 가능",
-          "bodyEn": "Drive after breakfast\nTurtle Rock · eagles · Aryabal monastery\nChinggis Khaan statue\nSouvenir shop\nBreakfast and dinner: camp meal · lunch: local restaurant\nShower and electricity available",
-          "images": [
-            "terelj-1.jpg",
-            "terelj-2.jpg",
-            "terelj-3.jpg"
-          ]
-        },
-        {
-          "slug": "gobi-ub",
-          "titleKr": "울란바토르",
-          "titleEn": "Ulaanbaatar City",
-          "placeKr": "투어 종료",
-          "placeEn": "End of tour",
-          "metaKr": "약 55km / 1-2시간 이동",
-          "metaEn": "About 55 km · 1–2 h drive",
-          "summaryKr": "시내 쇼핑 (선택)",
-          "summaryEn": "City shopping (optional)",
-          "bodyKr": "아침 식사 후 이동\n조식: 캠프식 · 중식: 현지 식당\n시내 쇼핑 (선택)\n공항 또는 숙소 도착 · 투어 종료",
-          "bodyEn": "Drive after breakfast\nBreakfast: camp meal · lunch: local restaurant\nCity shopping (optional)\nArrival at the airport or hotel · end of tour",
-          "images": [
-            "ub-1.jpg",
-            "ub-3.jpg",
-            "ub-2.jpg"
+          "slug": "gobi",
+          "cover": "/images/tours/khongor-1.jpg",
+          "titleKr": "고비사막 투어",
+          "titleEn": "Gobi Desert Tour",
+          "durationKr": "6박7일",
+          "durationEn": "6 nights · 7 days",
+          "summaryKr": "차강 소브라가 · 욜링암 · 홍고린 엘스 · 바양작 · 테를지",
+          "summaryEn": "Tsagaan Suvarga · Yolyn Am · Khongoryn Els · Bayanzag · Terelj",
+          "days": [
+            {
+              "titleKr": "차강 소브라가",
+              "titleEn": "Tsagaan Suvarga",
+              "placeKr": "화이트 스투파 · 둔드고비",
+              "placeEn": "White Stupa · Dundgovi",
+              "metaKr": "약 470km / 7-8시간 이동",
+              "metaEn": "About 470 km · 7–8 h drive",
+              "summaryKr": "차강 소브라가 트레킹",
+              "summaryEn": "Trekking at the White Stupa",
+              "bodyKr": "울란바토르에서 출발\n이동 중 점심식사 (현지 식당)\n숙소 도착 후 자유시간\n석식: 캠프식\n샤워 / 전기 가능",
+              "bodyEn": "Departure from Ulaanbaatar\nLunch on the way (local restaurant)\nFree time after arriving at the camp\nDinner: camp meal\nShower and electricity available",
+              "images": [
+                "suvraga-1.jpg",
+                "suvraga-2.jpg"
+              ]
+            },
+            {
+              "titleKr": "욜링암",
+              "titleEn": "Yolyn Am",
+              "placeKr": "남고비",
+              "placeEn": "Umnugovi province",
+              "metaKr": "약 210km / 4-5시간 이동",
+              "metaEn": "About 210 km · 4–5 h drive",
+              "summaryKr": "욜링암 협곡 트레킹",
+              "summaryEn": "Trekking in the Yolyn Am gorge",
+              "bodyKr": "아침 식사 후 이동\n이동 중 점심식사 (현지 식당)\n숙소 도착 후 자유시간\n조식 / 석식: 캠프식\n샤워 / 전기 가능",
+              "bodyEn": "Drive after breakfast\nLunch on the way (local restaurant)\nFree time after arriving at the camp\nBreakfast and dinner: camp meal\nShower and electricity available",
+              "images": [
+                "yolyn-1.jpg",
+                "yolyn-2.jpg"
+              ]
+            },
+            {
+              "titleKr": "홍고린 엘스",
+              "titleEn": "Khongoryn Els",
+              "placeKr": "고비 모래언덕",
+              "placeEn": "The singing dunes",
+              "metaKr": "약 175km / 4-5시간 이동",
+              "metaEn": "About 175 km · 4–5 h drive",
+              "summaryKr": "모래썰매, 낙타 체험",
+              "summaryEn": "Sand sledding, camel riding",
+              "bodyKr": "아침 식사 후 이동\n이동 중 점심식사 (현지 식당)\n숙소 도착 후 자유시간\n조식 / 석식: 캠프식\n샤워 / 전기 가능",
+              "bodyEn": "Drive after breakfast\nLunch on the way (local restaurant)\nFree time after arriving at the camp\nBreakfast and dinner: camp meal\nShower and electricity available",
+              "images": [
+                "khongor-1.jpg",
+                "khongor-2.jpg",
+                "khongor-3.jpg",
+                "khongor-4.jpg"
+              ]
+            },
+            {
+              "titleKr": "바양작",
+              "titleEn": "Bayanzag",
+              "placeKr": "불타는 절벽",
+              "placeEn": "The Flaming Cliffs",
+              "metaKr": "약 175km / 4-5시간 이동",
+              "metaEn": "About 175 km · 4–5 h drive",
+              "summaryKr": "바양작 트레킹, 낙타인형 쇼핑",
+              "summaryEn": "Cliff trekking, camel-doll shopping",
+              "bodyKr": "아침 식사 후 이동\n이동 중 점심식사 (현지 식당)\n숙소 도착 후 자유시간\n조식 / 석식: 캠프식\n샤워 / 전기 가능",
+              "bodyEn": "Drive after breakfast\nLunch on the way (local restaurant)\nFree time after arriving at the camp\nBreakfast and dinner: camp meal\nShower and electricity available",
+              "images": [
+                "bayanzag-1.jpg",
+                "bayanzag-2.jpg",
+                "bayanzag-3.jpg",
+                "bayanzag-4.jpg"
+              ]
+            },
+            {
+              "titleKr": "바가 가즈린 촐로",
+              "titleEn": "Baga Gazriin Chuluu",
+              "placeKr": "둔드고비",
+              "placeEn": "Dundgovi province",
+              "metaKr": "약 420km / 6-7시간 이동",
+              "metaEn": "About 420 km · 6–7 h drive",
+              "summaryKr": "바가 가즈린 촐로 트레킹",
+              "summaryEn": "Trekking among the granite rocks",
+              "bodyKr": "아침 식사 후 이동\n이동 중 점심식사 (현지 식당)\n숙소 도착 후 자유시간\n조식 / 석식: 캠프식\n샤워 / 전기 가능",
+              "bodyEn": "Drive after breakfast\nLunch on the way (local restaurant)\nFree time after arriving at the camp\nBreakfast and dinner: camp meal\nShower and electricity available",
+              "images": [
+                "bagagazar-1.jpg",
+                "bagagazar-2.jpg",
+                "bagagazar-3.jpg"
+              ]
+            },
+            {
+              "titleKr": "테를지 국립공원",
+              "titleEn": "Terelj National Park",
+              "placeKr": "투브 아이막",
+              "placeEn": "Tuv province",
+              "metaKr": "약 320km / 4-5시간 이동",
+              "metaEn": "About 320 km · 4–5 h drive",
+              "summaryKr": "승마 체험",
+              "summaryEn": "Horse riding",
+              "bodyKr": "아침 식사 후 이동\n거북이바위 · 독수리 · 아리야발 사원\n칭기즈칸 동상\n기념품샵\n조식 / 석식: 캠프식 · 중식: 현지 식당\n샤워 / 전기 가능",
+              "bodyEn": "Drive after breakfast\nTurtle Rock · eagles · Aryabal monastery\nChinggis Khaan statue\nSouvenir shop\nBreakfast and dinner: camp meal · lunch: local restaurant\nShower and electricity available",
+              "images": [
+                "terelj-1.jpg",
+                "terelj-2.jpg",
+                "terelj-3.jpg"
+              ]
+            },
+            {
+              "titleKr": "울란바토르",
+              "titleEn": "Ulaanbaatar City",
+              "placeKr": "투어 종료",
+              "placeEn": "End of tour",
+              "metaKr": "약 55km / 1-2시간 이동",
+              "metaEn": "About 55 km · 1–2 h drive",
+              "summaryKr": "시내 쇼핑 (선택)",
+              "summaryEn": "City shopping (optional)",
+              "bodyKr": "아침 식사 후 이동\n조식: 캠프식 · 중식: 현지 식당\n시내 쇼핑 (선택)\n공항 또는 숙소 도착 · 투어 종료",
+              "bodyEn": "Drive after breakfast\nBreakfast: camp meal · lunch: local restaurant\nCity shopping (optional)\nArrival at the airport or hotel · end of tour",
+              "images": [
+                "ub-1.jpg",
+                "ub-3.jpg",
+                "ub-2.jpg"
+              ]
+            }
           ]
         }
       ]
@@ -530,6 +536,7 @@
       },
       "ceo": "M.BATTSETSEG",
       "regNo": "",
+      "licenseNo": "",
       "address": {
         "kr": "몽골 울란바토르",
         "en": "Ulaanbaatar, Mongolia"

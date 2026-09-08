@@ -11,6 +11,7 @@ router.get('/stats', (req, res) => {
     categoriesActive: one('SELECT COUNT(*) n FROM tour_categories WHERE is_active = 1'),
     tours: one('SELECT COUNT(*) n FROM tours'),
     toursActive: one('SELECT COUNT(*) n FROM tours WHERE is_active = 1'),
+    days: one('SELECT COUNT(*) n FROM tour_days'),
     photos: one('SELECT COUNT(*) n FROM gallery'),
     photosActive: one('SELECT COUNT(*) n FROM gallery WHERE is_active = 1'),
   };
@@ -19,12 +20,13 @@ router.get('/stats', (req, res) => {
     .prepare(`SELECT region_key k, COUNT(*) n FROM gallery WHERE is_active = 1 GROUP BY k`)
     .all();
 
-  // Англи орчуулга дутуу аяллууд — admin-д юу дүүргэхийг шууд харуулна
+  // Англи орчуулга дутуу багцууд — admin-д юу дүүргэхийг шууд харуулна
   const missing = db
     .prepare(
-      `SELECT id, slug, title_kr FROM tours
-       WHERE title_en = '' OR summary_en = '' OR body_en = ''
-       ORDER BY category_id, sort_order, id`
+      `SELECT DISTINCT t.id, t.title_kr FROM tours t
+       LEFT JOIN tour_days d ON d.tour_id = t.id
+       WHERE t.title_en = '' OR d.title_en = '' OR d.body_en = ''
+       ORDER BY t.category_id, t.sort_order, t.id`
     )
     .all();
 

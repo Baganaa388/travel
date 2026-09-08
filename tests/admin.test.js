@@ -1,6 +1,6 @@
 import test from 'node:test';
 import assert from 'node:assert/strict';
-import { startApp, makeClient, sampleTour, sampleCategory } from './helpers.js';
+import { startApp, makeClient, sampleTour, sampleCategory, sampleDay } from './helpers.js';
 
 let app;
 
@@ -54,126 +54,121 @@ test('буруу CSRF токен 403', async () => {
   assert.equal(r.status, 403);
 });
 
-test('ангилал үүсгэх, засах, устгах', async () => {
+test('ангилал үүсгэх, засах, устгах — slug автоматаар, давхардвал -2', async () => {
   const c = makeClient(app.base);
   await c.login();
-  const created = await c.req('/api/admin/categories', {
+  const a = await c.req('/api/admin/categories', {
     method: 'POST',
-    body: sampleCategory({ slug: 'crud-cat' }),
+    body: sampleCategory({ nameEn: 'Gobi' }),
   });
-  assert.equal(created.status, 201);
-  const id = created.data.category.id;
+  assert.equal(a.status, 201);
+  assert.equal(a.data.category.slug, 'gobi');
+  const b = await c.req('/api/admin/categories', {
+    method: 'POST',
+    body: sampleCategory({ nameEn: 'Gobi' }),
+  });
+  assert.equal(b.data.category.slug, 'gobi-2');
+  const kr = await c.req('/api/admin/categories', {
+    method: 'POST',
+    body: sampleCategory({ nameEn: '', nameKr: '홉스골' }),
+  });
+  assert.match(kr.data.category.slug, /^t-[a-f0-9]{6}$/);
 
+  const id = a.data.category.id;
   const updated = await c.req(`/api/admin/categories/${id}`, {
     method: 'PUT',
-    body: sampleCategory({ slug: 'crud-cat', nameKr: '수정됨' }),
+    body: sampleCategory({ nameKr: '수정됨', nameEn: 'Gobi' }),
   });
   assert.equal(updated.status, 200);
   assert.equal(updated.data.category.name_kr, '수정됨');
+  assert.equal(updated.data.category.slug, 'gobi', 'засахад slug өөрчлөгдөхгүй');
 
-  const list = await c.req('/api/admin/categories');
-  assert.ok(list.data.categories.some((x) => x.id === id));
-
-  assert.equal((await c.req(`/api/admin/categories/${id}`, { method: 'DELETE' })).status, 200);
+  for (const x of [a, b, kr]) {
+    assert.equal(
+      (await c.req(`/api/admin/categories/${x.data.category.id}`, { method: 'DELETE' })).status,
+      200
+    );
+  }
   assert.equal((await c.req(`/api/admin/categories/${id}`)).status, 404);
 });
 
-test('аялал үүсгэх, засах, устгах — зургууд JSON-оор хадгалагдана', async () => {
+test('багц үүсгэх, засах, устгах — өдрүүд хамт хадгалагдана', async () => {
   const c = makeClient(app.base);
   await c.login();
-  const catId = await c.makeCategory({ slug: 'tour-cat' });
+  const cat = await c.makeCategory({ nameEn: 'Tour cat' });
 
-  const created = await c.req('/api/admin/tours', {
-    method: 'POST',
-    body: sampleTour(catId, { slug: 'crud-route' }),
-  });
+  const created = await c.req('/api/admin/tours', { method: 'POST', body: sampleTour(cat.id) });
   assert.equal(created.status, 201);
-  const id = created.data.tour.id;
-  assert.deepEqual(created.data.tour.images, [
-    '/images/tours/ugii-1.jpg',
-    '/images/tours/ugii-2.jpg',
-  ]);
+  const t = created.data.tour;
+  assert.equal(t.slug, 'central-mongolia-tour');
+  assert.equal(t.days.length, 2);
+  assert.deepEqual(
+    t.days.map((d) => d.day_no),
+    [1, 2]
+  );
+  assert.deepEqual(t.days[0].images, ['/images/tours/ugii-1.jpg', '/images/tours/ugii-2.jpg']);
+  assert.equal(t.cover, '/images/tours/ugii-1.jpg', 'cover хоосон бол эхний өдрийн зураг');
 
-  const updated = await c.req(`/api/admin/tours/${id}`, {
+  const updated = await c.req(`/api/admin/tours/${t.id}`, {
     method: 'PUT',
-    body: sampleTour(catId, {
-      slug: 'crud-route',
+    body: sampleTour(cat.id, {
       titleKr: '수정됨',
-      dayNo: 3,
-      images: ['/uploads/x.jpg'],
+      cover: '/uploads/x.jpg',
+      days: [sampleDay({ titleKr: '하나' })],
     }),
   });
   assert.equal(updated.status, 200);
   assert.equal(updated.data.tour.title_kr, '수정됨');
-  assert.equal(updated.data.tour.day_no, 3);
-  assert.deepEqual(updated.data.tour.images, ['/uploads/x.jpg']);
+  assert.equal(updated.data.tour.cover, '/uploads/x.jpg');
+  assert.equal(updated.data.tour.days.length, 1);
+  assert.equal(updated.data.tour.days[0].title_kr, '하나');
 
-  assert.equal((await c.req(`/api/admin/tours/${id}`, { method: 'DELETE' })).status, 200);
-  assert.equal((await c.req(`/api/admin/tours/${id}`)).status, 404);
+  assert.equal((await c.req(`/api/admin/tours/${t.id}`, { method: 'DELETE' })).status, 200);
+  assert.equal((await c.req(`/api/admin/tours/${t.id}`)).status, 404);
+  assert.equal(app.db.prepare('SELECT COUNT(*) n FROM tour_days WHERE tour_id = ?').get(t.id).n, 0);
 });
 
-test('давхардсан slug 400 + талбарын алдаа', async () => {
+test('гарчиггүй багц 400, байхгүй ангилалтай багц 400', async () => {
   const c = makeClient(app.base);
   await c.login();
-  const catId = await c.makeCategory({ slug: 'dup-cat' });
-  await c.req('/api/admin/tours', {
-    method: 'POST',
-    body: sampleTour(catId, { slug: 'dup-route' }),
-  });
+  const cat = await c.makeCategory({ nameEn: 'Title cat' });
   const r = await c.req('/api/admin/tours', {
     method: 'POST',
-    body: sampleTour(catId, { slug: 'dup-route' }),
-  });
-  assert.equal(r.status, 400);
-  assert.ok(r.data.details.slug);
-});
-
-test('буруу slug хэлбэр 400', async () => {
-  const c = makeClient(app.base);
-  await c.login();
-  const catId = await c.makeCategory({ slug: 'slug-cat' });
-  const r = await c.req('/api/admin/tours', {
-    method: 'POST',
-    body: sampleTour(catId, { slug: 'Буруу Slug' }),
-  });
-  assert.equal(r.status, 400);
-  assert.ok(r.data.details.slug);
-});
-
-test('гарчиггүй аялал 400, байхгүй ангилалтай аялал 400', async () => {
-  const c = makeClient(app.base);
-  await c.login();
-  const catId = await c.makeCategory({ slug: 'title-cat' });
-  const r = await c.req('/api/admin/tours', {
-    method: 'POST',
-    body: sampleTour(catId, { slug: 'no-title', titleKr: '' }),
+    body: sampleTour(cat.id, { titleKr: '' }),
   });
   assert.equal(r.status, 400);
   assert.ok(r.data.details.titleKr);
-  const r2 = await c.req('/api/admin/tours', {
-    method: 'POST',
-    body: sampleTour(999999, { slug: 'no-cat' }),
-  });
+  const r2 = await c.req('/api/admin/tours', { method: 'POST', body: sampleTour(999999) });
   assert.equal(r2.status, 400);
 });
 
-test('ангилал устахад аяллууд нь хамт устана', async () => {
+test('ангилал устахад багцууд, өдрүүд нь хамт устана', async () => {
   const c = makeClient(app.base);
   await c.login();
-  const catId = await c.makeCategory({ slug: 'cascade-cat' });
-  await c.req('/api/admin/tours', {
-    method: 'POST',
-    body: sampleTour(catId, { slug: 'cascade-route' }),
-  });
+  const cat = await c.makeCategory({ nameEn: 'Cascade cat' });
+  const t = await c.makeTour(cat.id);
+  assert.equal(app.db.prepare('SELECT COUNT(*) n FROM tour_days WHERE tour_id = ?').get(t.id).n, 2);
+  await c.req(`/api/admin/categories/${cat.id}`, { method: 'DELETE' });
   assert.equal(
-    app.db.prepare('SELECT COUNT(*) n FROM tours WHERE category_id = ?').get(catId).n,
-    1
-  );
-  await c.req(`/api/admin/categories/${catId}`, { method: 'DELETE' });
-  assert.equal(
-    app.db.prepare('SELECT COUNT(*) n FROM tours WHERE category_id = ?').get(catId).n,
+    app.db.prepare('SELECT COUNT(*) n FROM tours WHERE category_id = ?').get(cat.id).n,
     0
   );
+  assert.equal(app.db.prepare('SELECT COUNT(*) n FROM tour_days WHERE tour_id = ?').get(t.id).n, 0);
+});
+
+test('ангилал, багцын дараалал солигдоно', async () => {
+  const c = makeClient(app.base);
+  await c.login();
+  const a = await c.makeCategory({ nameEn: 'Order A' });
+  const b = await c.makeCategory({ nameEn: 'Order B' });
+  assert.ok(a.sort_order < b.sort_order);
+  const re = await c.req('/api/admin/categories/reorder', {
+    method: 'POST',
+    body: { order: [b.id, a.id] },
+  });
+  assert.equal(re.status, 200);
+  const list = (await c.req('/api/admin/categories')).data.categories.map((x) => x.id);
+  assert.ok(list.indexOf(b.id) < list.indexOf(a.id));
 });
 
 test('зургийн CRUD ба дараалал', async () => {
@@ -213,7 +208,7 @@ test('зурагт зам заавал', async () => {
   assert.equal(r.status, 400);
 });
 
-test('тохиргоо хадгалж, нийтэд гарна', async () => {
+test('тохиргоо хадгалж, нийтэд гарна; утгын өмнөх «:» хасагдана', async () => {
   const c = makeClient(app.base);
   await c.login();
   const site = await c.req('/api/admin/settings/site', {
@@ -239,8 +234,10 @@ test('тохиргоо хадгалж, нийтэд гарна', async () => {
     body: {
       value: {
         company: { kr: '드림스파크', en: 'Dream Spark' },
-        ceo: 'M.BATTSETSEG',
+        ceo: ':M.Battsetseg',
+        licenseNo: '제2026-000001호',
         phone: '+976 1111 2222',
+        email: ' : x@y.mn',
       },
     },
   });
@@ -249,7 +246,9 @@ test('тохиргоо хадгалж, нийтэд гарна', async () => {
   const pub = await c.req('/api/settings');
   assert.equal(pub.data.settings.site.hero.line1.kr, 'YOUR JOURNEY');
   assert.equal(pub.data.settings.site.instagram, 'https://instagram.com/x');
-  assert.equal(pub.data.settings.footer.ceo, 'M.BATTSETSEG');
+  assert.equal(pub.data.settings.footer.ceo, 'M.Battsetseg');
+  assert.equal(pub.data.settings.footer.email, 'x@y.mn');
+  assert.equal(pub.data.settings.footer.licenseNo, '제2026-000001호');
   assert.equal(pub.data.settings.footer.phone, '+976 1111 2222');
 });
 
@@ -274,6 +273,6 @@ test('stats тоонуудыг буцаана', async () => {
   const r = await c.req('/api/admin/stats');
   assert.equal(r.status, 200);
   assert.equal(typeof r.data.stats.tours, 'number');
-  assert.equal(typeof r.data.stats.categories, 'number');
+  assert.equal(typeof r.data.stats.days, 'number');
   assert.ok(Array.isArray(r.data.byRegion));
 });

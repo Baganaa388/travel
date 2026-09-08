@@ -47,13 +47,10 @@ export function parseImages(json) {
   }
 }
 
-export function publicTour(row) {
+export function publicDay(row) {
   const images = parseImages(row.images);
   return {
-    slug: row.slug,
     dayNo: row.day_no,
-    cover: images[0] || '',
-    coverThumb: thumbFor(images[0] || ''),
     images: images.map((src) => ({ src, thumb: thumbFor(src) })),
     title: i18n(row, 'title'),
     place: i18n(row, 'place'),
@@ -63,15 +60,29 @@ export function publicTour(row) {
   };
 }
 
+/** Багц (карт). days өгвөл дэлгэрэнгүй хуудасны хэлбэр. */
+export function publicTour(row, { days = null, category = null } = {}) {
+  const t = {
+    slug: row.slug,
+    cover: row.cover,
+    coverThumb: thumbFor(row.cover),
+    title: i18n(row, 'title'),
+    duration: i18n(row, 'duration'),
+    summary: i18n(row, 'summary'),
+    daysCount: row.days_count ?? (days ? days.length : undefined),
+  };
+  if (days) t.days = days.map(publicDay);
+  if (category) t.category = { slug: category.slug, name: i18n(category, 'name') };
+  return t;
+}
+
 export function publicCategory(row, tours = []) {
   return {
     slug: row.slug,
     cover: row.cover,
     coverThumb: thumbFor(row.cover),
     name: i18n(row, 'name'),
-    sub: i18n(row, 'sub'),
-    note: i18n(row, 'note'),
-    tours: tours.map(publicTour),
+    tours: tours.map((t) => publicTour(t)),
   };
 }
 

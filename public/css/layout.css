@@ -12,21 +12,20 @@ body.hd-over .hd .brand-name,
 body.hd-over .hd .nav a,
 body.hd-over .hd .lang button{color:#fff}
 body.hd-over .hd .burger span{background:#fff}
-body.hd-over.hd-solid .hd{background:rgba(248,246,241,.92);border-bottom-color:var(--line)}
-body.hd-over.hd-solid .hd .brand-name,
-body.hd-over.hd-solid .hd .nav a,
-body.hd-over.hd-solid .hd .lang button{color:var(--ink)}
-body.hd-over.hd-solid .hd .burger span{background:var(--ink)}
+/* Доош гүйлгэхэд толгой хар болно */
+body.hd-over.hd-solid .hd{background:rgba(10,10,12,.94);border-bottom-color:rgba(255,255,255,.1)}
+body.hd-over.hd-solid .hd .lang{border-color:rgba(255,255,255,.22);background:rgba(255,255,255,.06)}
+body.hd-over.hd-solid .hd .lang button.on{background:var(--sun);color:#1B1607}
 
 .hd-in{display:flex;align-items:center;gap:16px;min-height:var(--hd-h)}
 
 .brand{display:flex;align-items:center;gap:12px;flex-shrink:0}
 .brand img{width:38px;height:38px;border-radius:50%;object-fit:cover;flex:0 0 auto;
   box-shadow:0 0 0 1px rgba(22,28,25,.08)}
-/* Брэндийн үсэг — Marcellus, том үсэг, зайтай */
-.brand-name{font-family:'Marcellus','Noto Sans KR',serif;font-weight:400;font-size:17px;
-  letter-spacing:.14em;text-transform:uppercase;line-height:1;white-space:nowrap;
-  color:var(--ink);transition:color .3s;padding-top:2px}
+/* Брэндийн үсэг — бусадтай ижил (Golos / Noto Sans KR) */
+.brand-name{font-family:var(--body);font-weight:600;font-size:17px;letter-spacing:.01em;
+  line-height:1;white-space:nowrap;color:var(--ink);transition:color .3s;padding-top:1px}
+:lang(ko) .brand-name{font-family:'Noto Sans KR',var(--body);font-weight:700}
 
 .nav{margin-left:auto;display:flex;align-items:center;gap:clamp(14px,2.2vw,32px)}
 .nav a{font-family:var(--body);font-weight:400;font-size:15.5px;letter-spacing:0;
@@ -64,28 +63,28 @@ body.hd-over:not(.hd-solid) .lang button.on{background:var(--sun);color:#1B1607}
   .nav a::after{display:none}
   .nav a.on{color:var(--pine)!important}
   .lang{margin-left:auto}
-  .brand-name{font-size:15px;letter-spacing:.1em}
+  .brand-name{font-size:16px}
 }
 
-/* ---- Хөл ---------------------------------------------------------------- */
-.ft{background:var(--night);color:#C9D4E2;text-align:center;
-  padding-block:clamp(44px,6vw,72px) clamp(22px,3vw,34px);margin-top:auto}
-.ft a{color:#DCE5F0;transition:color .2s}
+/* ---- Хөл — хар дэвсгэр, бүх бичвэр цагаан ------------------------------- */
+.ft{background:#0A0A0C;color:#fff;text-align:center;
+  padding-block:clamp(40px,5.6vw,64px) clamp(18px,2.4vw,28px);margin-top:auto}
+.ft a{color:#fff;transition:color .2s}
 .ft a:hover{color:var(--sun)}
-.ft-company{font-family:'Marcellus','Noto Sans KR',serif;font-size:clamp(20px,2.4vw,28px);
-  letter-spacing:.06em;color:#fff;line-height:1.2}
-:lang(ko) .ft-company{font-family:'Noto Sans KR',var(--body);font-weight:700;letter-spacing:-.01em}
-.ft-social{display:flex;justify-content:center;gap:12px;margin-top:18px}
-.ft-social a{display:inline-flex;align-items:center;justify-content:center;width:44px;height:44px;
-  border-radius:50%;border:1px solid rgba(255,255,255,.18);color:#fff;
-  transition:background .2s,border-color .2s,color .2s}
-.ft-social a:hover{background:var(--sun);border-color:var(--sun);color:#1B1607}
-.ft-rows{margin-top:26px;display:grid;gap:6px;font-size:14px;color:rgba(220,229,240,.8);line-height:1.7}
+.ft-company{font-family:var(--body);font-weight:700;font-size:clamp(17px,1.8vw,20px);
+  letter-spacing:.01em;color:#fff;line-height:1.2}
+:lang(ko) .ft-company{font-family:'Noto Sans KR',var(--body)}
+.ft-social{display:flex;justify-content:center;gap:10px;margin-top:14px}
+.ft-social a{display:inline-flex;align-items:center;justify-content:center;width:38px;height:38px;
+  border-radius:50%;border:1px solid rgba(255,255,255,.28);color:#fff;
+  transition:background .2s,border-color .2s,color .2s,transform .25s}
+.ft-social a:hover{background:var(--sun);border-color:var(--sun);color:#1B1607;transform:translateY(-3px)}
+.ft-rows{margin-top:24px;display:grid;gap:6px;font-size:14.5px;color:#fff;line-height:1.7}
 .ft-row{display:flex;flex-wrap:wrap;justify-content:center;gap:4px 0}
-.ft-row>span+span::before{content:"|";margin:0 12px;color:rgba(255,255,255,.28)}
-.ft-row .k{color:rgba(255,255,255,.5);margin-right:4px}
-.ft-copy{margin-top:26px;padding-top:18px;border-top:1px solid rgba(255,255,255,.12);
-  font-size:12.5px;color:rgba(255,255,255,.42)}
+.ft-row>span+span::before{content:"|";margin:0 12px;color:rgba(255,255,255,.4)}
+.ft-row .k{color:#fff;font-weight:600}
+.ft-copy{margin-top:24px;padding-top:16px;border-top:1px solid rgba(255,255,255,.16);
+  font-size:13px;color:#fff;text-align:left}
 @media(max-width:560px){
   .ft-row{flex-direction:column;gap:2px}
   .ft-row>span+span::before{display:none}
@@ -116,7 +115,5 @@ body.hd-over:not(.hd-solid) .lang button.on{background:var(--sun);color:#1B1607}
 /* ---- Жижиг хөдөлгөөнүүд ------------------------------------------------- */
 .brand img{transition:transform .45s cubic-bezier(.2,.8,.3,1),box-shadow .3s}
 .brand:hover img{transform:rotate(-8deg) scale(1.08);box-shadow:0 0 0 3px var(--sun-soft)}
-.ft-social a{transition:background .2s,border-color .2s,color .2s,transform .25s}
-.ft-social a:hover{transform:translateY(-3px)}
 .lang button{transition:background .25s,color .25s,transform .2s}
 .lang button:active{transform:scale(.94)}

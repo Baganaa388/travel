@@ -3,18 +3,18 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width,initial-scale=1">
-<title>갤러리 — Dream Spark Travel</title>
-<meta name="description" content="몽골 사진 갤러리 — 고비, 홉스골, 중부 몽골. 지역별로 정리했습니다.">
+<title>투어 — Dream Spark Travel</title>
+<meta name="description" content="드림스파크 트래블의 몽골 투어 — 중부 투어 4박5일, 고비사막 투어 6박7일.">
 <link rel="icon" href="/images/site/logo.jpg">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Oswald:wght@400;500&family=Golos+Text:wght@400;500&family=Noto+Sans+KR:wght@400;500;700&display=swap" rel="stylesheet">
 <link rel="stylesheet" href="/css/base.css">
 <link rel="stylesheet" href="/css/layout.css">
-<link rel="stylesheet" href="/css/gallery.css">
-<script type="module" src="/js/pages/gallery.js"></script>
+<link rel="stylesheet" href="/css/tour.css">
+<script type="module" src="/js/pages/tour.js"></script>
 </head>
-<body>
+<body class="hd-over">
 
 <header class="hd">
   <div class="wrap hd-in">
@@ -37,19 +37,22 @@
   </div>
 </header>
 
-<main>
-  <section class="page-head">
-    <div class="wrap">
-      <h1 class="h1" data-t="galleryTitle" data-en="Gallery">갤러리</h1>
+<main id="tourRoot">
+  <section class="td-hero">
+    <div class="td-hero-img"><img id="tdCover" src="" alt="" fetchpriority="high"></div>
+    <div class="td-veil"></div>
+    <div class="td-hero-in">
+      <div class="wrap">
+        <a class="td-back" href="/tours" id="tdBack">‹ <span data-en="All tours">투어 목록</span></a>
+        <p class="td-cat" id="tdCat"></p>
+        <h1 class="h1" id="tdTitle">…</h1>
+        <p class="td-sum" id="tdSum"></p>
+      </div>
     </div>
   </section>
-
-  <section class="sect bg-white">
-    <div class="wrap gal" id="gal">
-      <div class="gal-filter" id="galFilter" role="group" aria-label="Region"></div>
-      <p class="state" id="galState">…</p>
-      <div class="mn-stage" aria-label="Map of Mongolia"></div>
-      <div class="gal-album" id="galAlbum"></div>
+  <section class="sect-tight bg-white">
+    <div class="wrap">
+      <div class="td-days" id="tdDays"><p class="state">…</p></div>
     </div>
   </section>
 </main>
