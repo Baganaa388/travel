@@ -24,13 +24,11 @@ export const SCHEMAS = {
     brand: t(60),
     instagram: t(300),
     naver: t(300),
-    nav: z
-      .object({ home: i18nText(40), tours: i18nText(40), gallery: i18nText(40) })
-      .default({
-        home: { kr: '', en: '' },
-        tours: { kr: '', en: '' },
-        gallery: { kr: '', en: '' },
-      }),
+    nav: z.object({ home: i18nText(40), tours: i18nText(40), gallery: i18nText(40) }).default({
+      home: { kr: '', en: '' },
+      tours: { kr: '', en: '' },
+      gallery: { kr: '', en: '' },
+    }),
     hero: z
       .object({
         image: t(300),
@@ -56,6 +54,16 @@ export const SCHEMAS = {
     phone: t(60),
     email: t(120),
     copyright: i18nText(160),
+    labels: z
+      .object({
+        ceo: i18nText(40),
+        regNo: i18nText(60),
+        licenseNo: i18nText(60),
+        address: i18nText(40),
+        phone: i18nText(40),
+        email: i18nText(40),
+      })
+      .default({}),
   }),
 };
 

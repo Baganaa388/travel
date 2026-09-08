@@ -29,12 +29,13 @@ function header() {
     if (href === here || (href !== '/' && here.startsWith(href))) a.classList.add('on');
   }
 
-  if (document.body.classList.contains('hd-over')) {
-    const onScroll = () =>
-      document.body.classList.toggle('hd-solid', window.scrollY > window.innerHeight * 0.5);
-    onScroll();
-    window.addEventListener('scroll', onScroll, { passive: true });
-  }
+  // Доош гүйлгэхэд толгой хар болно (нүүрэнд зурагны талд хүрсний дараа, бусад хуудсанд шууд)
+  const limit = document.body.classList.contains('hd-over')
+    ? () => window.innerHeight * 0.5
+    : () => 24;
+  const onScroll = () => document.body.classList.toggle('hd-solid', window.scrollY > limit());
+  onScroll();
+  window.addEventListener('scroll', onScroll, { passive: true });
 }
 
 /* ---- Илрэх хөдөлгөөн ---------------------------------------------------- */
@@ -118,8 +119,10 @@ function fillSite(site) {
 
 function fillFooter(footer) {
   const f = footer || {};
-  setText(document.querySelector('[data-t="ft.company"]'), f.company);
   setText(document.querySelector('[data-t="ft.company2"]'), f.company);
+  // Шошго (대표, 회사주소 …) — тохиргооноос, хоосон бол HTML-ийн анхны утга
+  const labels = f.labels || {};
+  for (const el of document.querySelectorAll('[data-l]')) setText(el, labels[el.dataset.l]);
   setText(document.querySelector('[data-t="ft.address"]'), f.address);
 
   const clean = (v) => (typeof v === 'string' ? v.replace(/^[\s:：]+/, '').trim() : '');

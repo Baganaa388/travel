@@ -550,6 +550,32 @@
       "copyright": {
         "kr": "© {year} 드림스파크 트래블. All rights reserved.",
         "en": "© {year} Dream Spark Travel. All rights reserved."
+      },
+      "labels": {
+        "ceo": {
+          "kr": "대표",
+          "en": "CEO"
+        },
+        "regNo": {
+          "kr": "사업자등록번호",
+          "en": "Business reg. no."
+        },
+        "licenseNo": {
+          "kr": "관광사업등록번호",
+          "en": "Tourism business reg. no."
+        },
+        "address": {
+          "kr": "회사주소",
+          "en": "Address"
+        },
+        "phone": {
+          "kr": "대표번호",
+          "en": "Company number"
+        },
+        "email": {
+          "kr": "이메일",
+          "en": "Email"
+        }
       }
     }
   }

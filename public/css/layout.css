@@ -12,10 +12,13 @@ body.hd-over .hd .brand-name,
 body.hd-over .hd .nav a,
 body.hd-over .hd .lang button{color:#fff}
 body.hd-over .hd .burger span{background:#fff}
-/* Доош гүйлгэхэд толгой хар болно */
-body.hd-over.hd-solid .hd{background:rgba(10,10,12,.94);border-bottom-color:rgba(255,255,255,.1)}
-body.hd-over.hd-solid .hd .lang{border-color:rgba(255,255,255,.22);background:rgba(255,255,255,.06)}
-body.hd-over.hd-solid .hd .lang button.on{background:var(--sun);color:#1B1607}
+/* Доош гүйлгэхэд толгой бүх хуудсанд тас хар болно */
+body.hd-solid .hd{background:#0A0A0C;border-bottom-color:rgba(255,255,255,.1)}
+body.hd-solid .hd .brand-name,body.hd-solid .hd .nav a,body.hd-solid .hd .lang button{color:#fff}
+body.hd-solid .hd .burger span{background:#fff}
+body.hd-solid .hd .lang{border-color:rgba(255,255,255,.22);background:rgba(255,255,255,.06)}
+body.hd-solid .hd .lang button.on{background:var(--sun);color:#1B1607}
+body.hd-solid .hd .nav a:hover{color:#fff}
 
 .hd-in{display:flex;align-items:center;gap:16px;min-height:var(--hd-h)}
 
@@ -62,6 +65,9 @@ body.hd-over:not(.hd-solid) .lang button.on{background:var(--sun);color:#1B1607}
   .nav a{padding:14px 0;font-size:17px;border-bottom:1px solid var(--line-2);color:var(--ink)!important}
   .nav a::after{display:none}
   .nav a.on{color:var(--pine)!important}
+  body.hd-solid .nav{background:#0A0A0C;border-bottom-color:rgba(255,255,255,.1)}
+  body.hd-solid .nav a{color:#fff!important;border-bottom-color:rgba(255,255,255,.1)}
+  body.hd-solid .nav a.on{color:var(--sun)!important}
   .lang{margin-left:auto}
   .brand-name{font-size:16px}
 }
@@ -71,10 +77,7 @@ body.hd-over:not(.hd-solid) .lang button.on{background:var(--sun);color:#1B1607}
   padding-block:clamp(40px,5.6vw,64px) clamp(18px,2.4vw,28px);margin-top:auto}
 .ft a{color:#fff;transition:color .2s}
 .ft a:hover{color:var(--sun)}
-.ft-company{font-family:var(--body);font-weight:700;font-size:clamp(17px,1.8vw,20px);
-  letter-spacing:.01em;color:#fff;line-height:1.2}
-:lang(ko) .ft-company{font-family:'Noto Sans KR',var(--body)}
-.ft-social{display:flex;justify-content:center;gap:10px;margin-top:14px}
+.ft-social{display:flex;justify-content:center;gap:10px}
 .ft-social a{display:inline-flex;align-items:center;justify-content:center;width:38px;height:38px;
   border-radius:50%;border:1px solid rgba(255,255,255,.28);color:#fff;
   transition:background .2s,border-color .2s,color .2s,transform .25s}

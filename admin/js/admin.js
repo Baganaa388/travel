@@ -1392,6 +1392,19 @@ async function viewGallery() {
   );
 }
 
+/** Хөлийн шошго: түлхүүр → [admin гарчиг, анхдагч KR/EN] */
+const FOOTER_LABELS = {
+  ceo: ['Захирал', { kr: '대표', en: 'CEO' }],
+  regNo: ['Бүртгэлийн дугаар', { kr: '사업자등록번호', en: 'Business reg. no.' }],
+  licenseNo: [
+    'Аялал жуулчлалын бүртгэл',
+    { kr: '관광사업등록번호', en: 'Tourism business reg. no.' },
+  ],
+  address: ['Хаяг', { kr: '회사주소', en: 'Address' }],
+  phone: ['Утас', { kr: '대표번호', en: 'Company number' }],
+  email: ['И-мэйл', { kr: '이메일', en: 'Email' }],
+};
+
 /* ==========================================================================
    4. Тохиргоо — сайтын бүх бичвэр, зураг, холбоос
    ========================================================================== */
@@ -1483,6 +1496,18 @@ async function viewSettings() {
       i18nFields('© мөр ({year} = одоогийн он)', 'copyright', f.copyright)
     ),
 
+    card(
+      'Хөлийн шошго',
+      'Талбар бүрийн өмнөх нэр — KR / EN',
+      ...Object.entries(FOOTER_LABELS).map(([key, [title, def]]) =>
+        i18nFields(
+          title,
+          `label_${key}`,
+          (f.labels || {})[key]?.kr || (f.labels || {})[key]?.en ? f.labels[key] : def
+        )
+      )
+    ),
+
     el(
       'div',
       { style: { display: 'flex', gap: '9px', flexWrap: 'wrap' } },
@@ -1520,6 +1545,9 @@ async function viewSettings() {
       phone: val(form, 'phone'),
       email: val(form, 'email'),
       copyright: i18nOf(form, 'copyright'),
+      labels: Object.fromEntries(
+        Object.keys(FOOTER_LABELS).map((k) => [k, i18nOf(form, `label_${k}`)])
+      ),
     };
     try {
       await api('/settings/site', { method: 'PUT', body: { value: site } });
