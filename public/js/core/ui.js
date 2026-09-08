@@ -93,6 +93,7 @@ function fillSite(site) {
     heroImg.src = hero.image;
   setText(document.querySelector('[data-t="hero.line1"]'), hero.line1);
   setText(document.querySelector('[data-t="hero.line2"]'), hero.line2);
+  setText(document.querySelector('[data-t="hero.tagline"]'), hero.tagline);
   setText(document.querySelector('[data-t="hero.button"]'), hero.button);
   setText(document.querySelector('[data-t="galleryTitle"]'), s.galleryTitle);
 

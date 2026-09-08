@@ -34,12 +34,14 @@ export const SCHEMAS = {
         image: t(300),
         line1: i18nText(80),
         line2: i18nText(80),
+        tagline: i18nText(160),
         button: i18nText(40),
       })
       .default({
         image: '',
         line1: { kr: '', en: '' },
         line2: { kr: '', en: '' },
+        tagline: { kr: '', en: '' },
         button: { kr: '', en: '' },
       }),
     instaLabel: i18nText(40),

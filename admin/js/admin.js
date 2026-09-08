@@ -1444,6 +1444,7 @@ async function viewSettings() {
       imageField('Нүүрний зураг', 'heroImage', hero.image ?? ''),
       i18nFields('Уриа — 1-р мөр', 'line1', hero.line1),
       i18nFields('Уриа — 2-р мөр (шар)', 'line2', hero.line2),
+      i18nFields('Уриаг тайлбарлах өгүүлбэр (доор нь)', 'tagline', hero.tagline),
       i18nFields('Товчны бичвэр', 'button', hero.button)
     ),
 
@@ -1536,6 +1537,7 @@ async function viewSettings() {
         image: val(form, 'heroImage'),
         line1: i18nOf(form, 'line1'),
         line2: i18nOf(form, 'line2'),
+        tagline: i18nOf(form, 'tagline'),
         button: i18nOf(form, 'button'),
       },
       instaLabel: i18nOf(form, 'instaLabel'),
