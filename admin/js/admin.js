@@ -107,6 +107,55 @@ const thumbOf = (src) =>
     .replace('/images/gallery/', '/images/gallery/thumbs/')
     .replace('/images/tours/', '/images/tours/thumbs/');
 
+/* ---- Зургийн хэмжээ ------------------------------------------------------
+   Санал болгох хэмжээ (сайт дээр яг таарч харагдана) + байршуулсан зургийн
+   жинхэнэ хэмжээ. Харьцаа нь зөрвөл анхааруулна.                            */
+export const SIZE = {
+  card: { w: 1200, h: 1500, text: '1200×1500px (4:5 босоо)' },
+  day: { w: 1600, h: 1200, text: '1600×1200px (4:3 хэвтээ)' },
+  hero: { w: 2000, h: 1125, text: '2000×1125px (16:9 хэвтээ)' },
+  photo: { w: 1600, h: 1200, text: '1600×1200px (4:3 хэвтээ)' },
+  logo: { w: 512, h: 512, text: '512×512px (дөрвөлжин)' },
+};
+
+/** Зургийн хэмжээг rec-тэй харьцуулж бичвэр + төлөв буцаана. */
+function sizeCheck(w, h, rec) {
+  if (!w || !h) return { text: 'хэмжээ тодорхойгүй', kind: 'bad' };
+  const text = `${w}×${h}px`;
+  if (!rec) return { text, kind: '' };
+  const off = Math.abs(w / h - rec.w / rec.h) / (rec.w / rec.h);
+  if (off > 0.12) return { text: `${text} · харьцаа таарахгүй`, kind: 'bad' };
+  if (w < rec.w * 0.7) return { text: `${text} · жижиг байна`, kind: 'bad' };
+  return { text: `${text} · таарч байна`, kind: 'ok' };
+}
+
+/** Санал болгох хэмжээ + жинхэнэ хэмжээг харуулах мөр. `read(img)`-ээр шинэчилнэ. */
+function sizeRow(rec) {
+  const dim = el('span', { class: 'dim' });
+  const node = el(
+    'div',
+    { class: 'sizes' },
+    rec && el('span', { class: 'rec', text: `Санал болгох хэмжээ: ${rec.text}` }),
+    dim
+  );
+  return {
+    node,
+    clear: () => {
+      dim.className = 'dim';
+      dim.textContent = '';
+    },
+    fail: () => {
+      dim.className = 'dim bad';
+      dim.textContent = 'Зураг ачаалагдсангүй';
+    },
+    read: (img) => {
+      const r = sizeCheck(img.naturalWidth, img.naturalHeight, rec);
+      dim.className = `dim ${r.kind}`;
+      dim.textContent = r.text;
+    },
+  };
+}
+
 function thumbImg(src, alt = '') {
   return el('img', {
     src: thumbOf(src),
@@ -202,7 +251,7 @@ function dropZone(box, onFiles) {
 }
 
 /* ---- Зургийн талбар (нэг зураг) ---------------------------------------- */
-function imageField(label, name, value = '') {
+function imageField(label, name, value = '', rec = null) {
   const input = el('input', {
     type: 'text',
     name,
@@ -210,12 +259,22 @@ function imageField(label, name, value = '') {
     placeholder: '/images/… эсвэл /uploads/…',
   });
 
+  const sizes = sizeRow(rec);
   const prevBox = el('div', { class: 'prev' });
   const paint = () => {
     const v = input.value.trim();
-    prevBox.replaceChildren(
-      v ? el('img', { src: v, alt: '' }) : el('span', { class: 'none', text: 'Зураг алга' })
-    );
+    sizes.clear();
+    if (!v) {
+      prevBox.replaceChildren(el('span', { class: 'none', text: 'Зураг алга' }));
+      return;
+    }
+    const img = el('img', {
+      onload: () => sizes.read(img),
+      onerror: () => sizes.fail(),
+      src: v,
+      alt: '',
+    });
+    prevBox.replaceChildren(img);
   };
   input.addEventListener('input', paint);
 
@@ -284,6 +343,7 @@ function imageField(label, name, value = '') {
       { class: 'if-side' },
       ops,
       input,
+      sizes.node,
       el('span', {
         class: 'hint',
         text: 'Зургаа энд чирж оруулж болно · JPG, PNG, WebP · 6 МБ хүртэл',
@@ -298,9 +358,27 @@ function imageField(label, name, value = '') {
 
 /* ---- Олон зургийн талбар (аяллын зургууд) ------------------------------ */
 /** Буцаасан элемент дээр `.values()` дуудвал замуудын массив өгнө. */
-function imagesField(label, values = []) {
+function imagesField(label, values = [], rec = null) {
   let list = [...values];
   const rows = el('div', { class: 'imgs' });
+
+  /** Мөр бүрийн жинхэнэ хэмжээг эх зурагнаас нь уншина. */
+  const rowSize = (src) => {
+    const dim = el('span', { class: 'dim' });
+    if (!src) return dim;
+    const probe = new Image();
+    probe.onload = () => {
+      const r = sizeCheck(probe.naturalWidth, probe.naturalHeight, rec);
+      dim.className = `dim ${r.kind}`;
+      dim.textContent = r.text;
+    };
+    probe.onerror = () => {
+      dim.className = 'dim bad';
+      dim.textContent = 'Зураг алга';
+    };
+    probe.src = src;
+    return dim;
+  };
 
   const paint = () => {
     rows.replaceChildren(
@@ -316,6 +394,7 @@ function imagesField(label, values = []) {
               list[i] = e.target.value.trim();
             },
           }),
+          rowSize(src),
           el('span', { class: 'mono', text: i === 0 ? 'Нүүр' : '' }),
           el(
             'button',
@@ -431,7 +510,9 @@ function imagesField(label, values = []) {
       rows,
       el('span', {
         class: 'hint',
-        text: 'Эхний зураг нь карт дээр харагдана · олон зураг чирж оруулж болно',
+        text:
+          'Эхний зураг нь карт дээр харагдана · олон зураг чирж оруулж болно' +
+          (rec ? ` · санал болгох хэмжээ: ${rec.text}` : ''),
       })
     ),
     file
@@ -934,7 +1015,7 @@ async function viewCategoryEdit(id) {
       'div',
       { class: 'card' },
       el('div', { class: 'card-h' }, el('div', {}, el('h2', { text: 'Зураг (заавал биш)' }))),
-      el('div', { class: 'card-b' }, imageField('Ангиллын зураг', 'cover', g('cover')))
+      el('div', { class: 'card-b' }, imageField('Ангиллын зураг', 'cover', g('cover'), SIZE.card))
     ),
     el(
       'div',
@@ -980,7 +1061,7 @@ async function viewCategoryEdit(id) {
 
 /* ---- Өдрийн блок (багцын засварт) -------------------------------------- */
 function dayBlock(d = {}) {
-  const images = imagesField('Зургууд', d.images ?? []);
+  const images = imagesField('Зургууд', d.images ?? [], SIZE.day);
   const box = el(
     'div',
     { class: 'day-box' },
@@ -1128,7 +1209,12 @@ async function viewTourEdit(id) {
         i18nFields('Хоног (ж: 4박5일 / 4 nights · 5 days)', 'duration', tour),
         i18nFields('Товч тайлбар (нэг мөр, заавал биш)', 'summary', tour),
         i18nFields('Аяллын мэдээлэл — 투어 안내 (мөр бүр = нэг цэг)', 'info', tour, 'textarea', 7),
-        imageField('Картын зураг (хоосон бол 1-р өдрийн эхний зураг)', 'cover', g('cover'))
+        imageField(
+          'Картын зураг (хоосон бол 1-р өдрийн эхний зураг)',
+          'cover',
+          g('cover'),
+          SIZE.card
+        )
       )
     ),
     el(
@@ -1226,7 +1312,7 @@ async function viewGallery() {
     const form = el(
       'form',
       {},
-      imageField('Зураг', 'image', p?.image ?? ''),
+      imageField('Зураг', 'image', p?.image ?? '', SIZE.photo),
       el(
         'div',
         { class: 'row row-3' },
@@ -1434,14 +1520,14 @@ async function viewSettings() {
     card(
       'Лого ба брэнд',
       'Толгой, favicon',
-      imageField('Логоны зураг', 'logo', s.logo ?? ''),
+      imageField('Логоны зураг', 'logo', s.logo ?? '', SIZE.logo),
       field('Брэндийн нэр (толгойд)', input('brand', s.brand ?? '', { placeholder: 'Dream Spark' }))
     ),
 
     card(
       'Нүүр хуудас',
       'Дэлгэц дүүрэн зураг, уриа, товч',
-      imageField('Нүүрний зураг', 'heroImage', hero.image ?? ''),
+      imageField('Нүүрний зураг', 'heroImage', hero.image ?? '', SIZE.hero),
       i18nFields('Уриа — 1-р мөр', 'line1', hero.line1),
       i18nFields('Уриа — 2-р мөр (шар)', 'line2', hero.line2),
       i18nFields('Уриаг тайлбарлах өгүүлбэр (доор нь)', 'tagline', hero.tagline),

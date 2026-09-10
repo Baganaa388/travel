@@ -249,6 +249,16 @@ button{background:none;border:0;cursor:pointer}
 .imgfield .ops{display:flex;flex-wrap:wrap;gap:7px;align-items:flex-start}
 .imgfield .ops .btn{flex:0 0 auto;align-self:flex-start}
 .imgfield .hint{font-family:var(--mono);font-size:9.5px;letter-spacing:.09em;color:var(--ink-3)}
+/* ---- Зургийн хэмжээ (санал болгох + жинхэнэ) ---------------------------- */
+.sizes{display:flex;flex-wrap:wrap;gap:6px 14px;align-items:center}
+.sizes .rec,.dim{font-family:var(--mono);font-size:10.5px;letter-spacing:.04em;color:var(--ink-2)}
+.sizes .rec{padding:3px 8px;border-radius:999px;background:var(--mint-soft);color:var(--pine)}
+.dim{white-space:nowrap}
+.dim:empty{display:none}
+.dim.ok{color:var(--green)}
+.dim.bad{color:var(--red)}
+.imgs-row .dim{font-size:10px;text-align:right}
+.imgs-row .dim:empty{display:block}
 .imgfield input[type="text"]{width:100%;background:var(--card);border:1px solid var(--line);
   border-radius:var(--r);padding:9px 11px;font-size:13px;font-family:var(--mono);flex:0 0 auto}
 .imgfield.drag{border-color:var(--pine);background:var(--mint-soft)}
@@ -256,7 +266,7 @@ button{background:none;border:0;cursor:pointer}
 /* ---- Олон зургийн талбар ------------------------------------------------ */
 .imgfield-multi .if-side{flex:1 1 100%}
 .imgs{display:grid;gap:8px}
-.imgs-row{display:grid;grid-template-columns:64px 1fr auto auto auto auto;gap:8px;align-items:center;
+.imgs-row{display:grid;grid-template-columns:64px minmax(0,1fr) auto auto auto auto auto;gap:8px;align-items:center;
   background:var(--card);border:1px solid var(--line);border-radius:var(--r);padding:6px 8px}
 .imgs-row .prev{width:64px;height:48px;border-radius:4px;overflow:hidden;background:var(--bg)}
 .imgs-row .prev img{width:100%;height:100%;object-fit:cover}

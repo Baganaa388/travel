@@ -22,6 +22,106 @@ const el = (tag, cls, text) => {
   return n;
 };
 
+/* Өдөр бүрийн зургийн слайд — дахин зурахаас өмнө цэвэрлэнэ */
+const shows = [];
+function stopShows() {
+  while (shows.length) shows.pop()();
+}
+const AUTO_MS = 4600;
+const calm = () => matchMedia('(prefers-reduced-motion: reduce)').matches;
+
+/**
+ * Том карт дотор бүх зураг давхарлан байрлаж, доор нь туслах зургууд хөвнө.
+ * Автоматаар ээлжлэн солигдоно; хулгана дээр очих / товч дарахад түр зогсоно.
+ */
+function slideshow(list, alt, eager) {
+  const stage = el('div', 'td-stage');
+  const main = el('button', 'td-main');
+  main.type = 'button';
+  main.setAttribute('aria-label', alt);
+  const slides = list.map((im, k) => {
+    const img = el('img', k === 0 ? 'td-slide on' : 'td-slide');
+    img.src = im.src;
+    img.alt = k === 0 ? alt : '';
+    img.loading = eager && k === 0 ? 'eager' : 'lazy';
+    img.decoding = 'async';
+    return img;
+  });
+  main.append(...slides);
+  stage.append(main);
+
+  let at = 0;
+  const dots = [];
+  const show = (k) => {
+    if (k === at) return;
+    slides[at].classList.remove('on');
+    dots[at]?.classList.remove('on');
+    at = k;
+    slides[at].classList.add('on');
+    dots[at]?.classList.add('on');
+  };
+
+  if (list.length > 1) {
+    const row = el('div', 'td-thumbs');
+    list.forEach((im, k) => {
+      const b = el('button');
+      b.type = 'button';
+      b.className = k === 0 ? 'on' : '';
+      b.setAttribute('aria-label', String(k + 1));
+      const t = el('img');
+      t.src = im.thumb || im.src;
+      t.alt = '';
+      t.loading = 'lazy';
+      b.append(t);
+      b.addEventListener('click', () => {
+        show(k);
+        bump();
+      });
+      row.append(b);
+      dots.push(b);
+    });
+    stage.append(row);
+  }
+
+  let timer = 0;
+  let seen = false;
+  let held = false;
+  const stop = () => {
+    clearInterval(timer);
+    timer = 0;
+  };
+  const start = () => {
+    if (timer || held || !seen || list.length < 2 || calm()) return;
+    timer = setInterval(() => show((at + 1) % list.length), AUTO_MS);
+  };
+  const bump = () => {
+    stop();
+    start();
+  };
+  const io = new IntersectionObserver(
+    (es) => {
+      seen = es[0].isIntersecting;
+      seen ? start() : stop();
+    },
+    { threshold: 0.25 }
+  );
+  io.observe(stage);
+  const hold = (v) => {
+    held = v;
+    v ? stop() : start();
+  };
+  stage.addEventListener('pointerenter', () => hold(true));
+  stage.addEventListener('pointerleave', () => hold(false));
+  stage.addEventListener('focusin', () => hold(true));
+  stage.addEventListener('focusout', () => hold(false));
+  shows.push(() => {
+    stop();
+    io.disconnect();
+  });
+
+  return { stage, main, at: () => at };
+}
+
 function dayBlock(d, i, lang, tour) {
   const box = el('article', 'td-day');
   box.id = `day-${d.dayNo}`;
@@ -29,34 +129,8 @@ function dayBlock(d, i, lang, tour) {
   const media = el('div', 'td-media');
   const list = d.images.length ? d.images : [];
   if (list.length) {
-    const main = el('button', 'td-main');
-    main.type = 'button';
-    main.dataset.i = '0';
-    const img = el('img');
-    img.src = list[0].src;
-    img.alt = pick(d.title, lang);
-    img.loading = i === 0 ? 'eager' : 'lazy';
-    img.decoding = 'async';
-    main.append(img);
-    media.append(main);
-    if (list.length > 1) {
-      const row = el('div', 'td-thumbs');
-      list.slice(1).forEach((im, k) => {
-        const b = el('button');
-        b.type = 'button';
-        b.dataset.i = String(k + 1);
-        const t = el('img');
-        t.src = im.thumb || im.src;
-        t.alt = '';
-        t.loading = 'lazy';
-        b.append(t);
-        row.append(b);
-      });
-      media.append(row);
-    }
-    media.addEventListener('click', (e) => {
-      const b = e.target.closest('button[data-i]');
-      if (!b) return;
+    const show = slideshow(list, pick(d.title, lang), i === 0);
+    show.main.addEventListener('click', () => {
       const photos = list.map((im) => ({
         image: im.src,
         place: d.title,
@@ -65,8 +139,9 @@ function dayBlock(d, i, lang, tour) {
           en: `${L.day.en(d.dayNo)} · ${pick(tour.title, 'en')}`,
         },
       }));
-      lb.open(photos, Number(b.dataset.i));
+      lb.open(photos, show.at());
     });
+    media.append(show.stage);
   }
 
   const body = el('div', 'td-body');
@@ -143,6 +218,7 @@ async function main() {
 
     const days = document.querySelector('#tdDays');
     if (days) {
+      stopShows();
       days.replaceChildren(...(tour.days || []).map((d, i) => dayBlock(d, i, lang, tour)));
       reveal(days);
     }
