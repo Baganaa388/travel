@@ -67,13 +67,16 @@
   border-radius:50%;border:1px solid rgba(255,255,255,.28);color:#fff;
   transition:background .2s,border-color .2s,color .2s,transform .25s}
 .ft-social a:hover{background:var(--sun);border-color:var(--sun);color:#1B1607;transform:translateY(-3px)}
-/* Бичвэр — гар утас, компьютер бүх төхөөрөмж дээр яг ижил байрлал, ижил хэмжээ */
-.ft-rows{margin-top:24px;display:grid;gap:6px;font-size:10pt;color:#fff;line-height:1.7}
-.ft-row{display:flex;flex-wrap:wrap;justify-content:center;gap:4px 0;overflow-wrap:anywhere}
-.ft-row>span+span::before{content:"|";margin:0 12px;color:rgba(255,255,255,.4)}
+/* Бичвэр — гар утсан дээр ч компьютерийнхтэй яг ижил загвар: мөр бүр нэг мөрөндөө,
+   «|» тусгаарлагчтай. Багтахгүй бол ui.js бүх бичвэрийг ижил хувиар жижигрүүлнэ
+   (--ft-fs). Хэмжээ, зай бүгд em тул загвар нь хэвээрээ зөвхөн жижигрэнэ. */
+.ft-rows{margin-top:24px;display:grid;gap:.45em;font-size:var(--ft-fs,10pt);color:#fff;
+  line-height:1.7;overflow:hidden}
+.ft-row{display:flex;flex-wrap:nowrap;justify-content:center;gap:0;white-space:nowrap}
+.ft-row>span+span::before{content:"|";margin:0 .9em;color:rgba(255,255,255,.4)}
 .ft-row .k{color:#fff;font-weight:400}
 .ft-copy{margin-top:24px;padding-top:16px;border-top:1px solid rgba(255,255,255,.16);
-  font-size:10pt;color:#fff;text-align:left}
+  font-size:var(--ft-fs,10pt);color:#fff;text-align:left}
 
 /* ---- Instagram — яг одоо холбогдох (баруун доод булан) ------------------ */
 .ig-float{position:fixed;right:clamp(14px,2.4vw,26px);bottom:clamp(14px,2.4vw,26px);z-index:70;

@@ -1214,7 +1214,13 @@ async function viewTourEdit(id) {
           'cover',
           g('cover'),
           SIZE.card
-        )
+        ),
+        el('p', {
+          class: 'note',
+          text:
+            'Аяллын хуудасны дээд талын ар дэвсгэр зураг эндээс биш — Тохиргоо → «Аяллын ' +
+            'хуудасны ар дэвсгэр»-ээс тавина, тэр нь бүх аялалд нэг ижил байна.',
+        })
       )
     ),
     el(
@@ -1535,6 +1541,19 @@ async function viewSettings() {
     ),
 
     card(
+      'Аяллын хуудасны ар дэвсгэр',
+      'Бүх аялалд нэг ижил зураг',
+      el('p', {
+        class: 'note',
+        text:
+          'Аялал бүрийн хуудасны дээд талын том зураг (гарчгийн ар дэвсгэр). Энд нэг зураг ' +
+          'тавихад БҮХ аяллын хуудсанд ижил гарна. Хоосон орхивол аялал бүр өөрийн ' +
+          '«Картын зураг»-аа ар дэвсгэр болгож харуулна.',
+      }),
+      imageField('Ар дэвсгэр зураг (бүх аялалд)', 'tourHero', s.tourHero ?? '', SIZE.hero)
+    ),
+
+    card(
       'Цэс ба гарчиг',
       '',
       i18nFields('Цэс — Нүүр', 'navHome', nav.home),
@@ -1628,6 +1647,7 @@ async function viewSettings() {
       },
       instaLabel: i18nOf(form, 'instaLabel'),
       galleryTitle: i18nOf(form, 'galleryTitle'),
+      tourHero: val(form, 'tourHero'),
     };
     const footer = {
       company: i18nOf(form, 'company'),

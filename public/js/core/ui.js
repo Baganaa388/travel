@@ -153,6 +153,62 @@ function fillFooter(footer) {
   }
 }
 
+/* ---- Хөлийг багтаах -----------------------------------------------------
+   Хөлийн загвар бүх төхөөрөмж дээр яг ижил: мөр бүр нэг мөрөндөө, «|»
+   тусгаарлагчтай. Өргөнд багтахгүй бол бүх мөрийг ижил хувиар жижигрүүлнэ. */
+const FT_BASE = 13.333; // 10pt
+
+const widestRow = (rows) => {
+  let widest = 0;
+  for (const row of rows.children) {
+    let w = 0;
+    for (const kid of row.children) w += kid.getBoundingClientRect().width;
+    widest = Math.max(widest, Math.ceil(w), row.scrollWidth);
+  }
+  return widest;
+};
+
+export function fitFooter() {
+  const rows = document.querySelector('.ft-rows');
+  const ft = rows?.closest('.ft');
+  if (!rows || !ft || !rows.children.length) return;
+  const avail = rows.clientWidth;
+  if (!avail) return;
+  // Жижиг хэмжээнд үсгийн өргөн яг шугаман биш тул хэдэн удаа нарийвчилна.
+  let size = FT_BASE;
+  ft.style.setProperty('--ft-fs', `${size}px`);
+  for (let i = 0; i < 4; i++) {
+    const widest = widestRow(rows);
+    if (widest <= avail) break;
+    size = Math.max(6, (size * avail) / widest - 0.05);
+    ft.style.setProperty('--ft-fs', `${size.toFixed(2)}px`);
+  }
+}
+
+function watchFooter() {
+  const rows = document.querySelector('.ft-rows');
+  if (!rows) return;
+  let queued = 0;
+  const run = () => {
+    queued = 0;
+    fitFooter();
+  };
+  const soon = () => {
+    if (!queued) queued = setTimeout(run, 16);
+  };
+  window.addEventListener('resize', soon);
+  window.addEventListener('langchange', soon);
+  // Үсгийн фонт сүүлд ачаалагдвал өргөн өөрчлөгддөг тул дахин хэмжинэ.
+  document.fonts?.ready.then(soon).catch(() => {});
+  document.fonts?.addEventListener?.('loadingdone', soon);
+  if ('ResizeObserver' in window) {
+    const ro = new ResizeObserver(soon);
+    ro.observe(rows);
+    for (const row of rows.children) ro.observe(row);
+  }
+  soon();
+}
+
 /* ---- Эхлүүлэх ----------------------------------------------------------- */
 export async function boot() {
   initLang();
@@ -162,6 +218,7 @@ export async function boot() {
   fillSite(s.site);
   fillFooter(s.footer);
   refresh();
+  watchFooter();
   onLang(() => {
     document.title = document.querySelector('[data-title]')?.textContent || document.title;
   });

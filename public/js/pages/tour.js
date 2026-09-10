@@ -168,7 +168,7 @@ function dayBlock(d, i, lang, tour) {
 }
 
 async function main() {
-  await boot();
+  const settings = await boot();
   const slug = decodeURIComponent(location.pathname.split('/').filter(Boolean)[1] || '');
   const root = document.querySelector('#tourRoot');
   if (!root) return;
@@ -183,8 +183,11 @@ async function main() {
     return;
   }
 
+  // Ар дэвсгэр — тохиргоонд нэг зураг байвал бүх аялалд ижил, үгүй бол өөрийн картын зураг
+  const shared = settings?.site?.tourHero;
   const cover = document.querySelector('#tdCover');
-  if (cover && tour.cover) cover.src = tour.cover;
+  const heroSrc = (typeof shared === 'string' && shared.trim()) || tour.cover;
+  if (cover && heroSrc) cover.src = heroSrc;
 
   onLang((lang) => {
     const set = (sel, v) => {

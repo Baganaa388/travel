@@ -46,6 +46,7 @@ export const SCHEMAS = {
       }),
     instaLabel: i18nText(40),
     galleryTitle: i18nText(60),
+    tourHero: t(300), // бүх аяллын хуудасны нэг ижил ар дэвсгэр зураг
   }),
   footer: z.object({
     company: i18nText(120),

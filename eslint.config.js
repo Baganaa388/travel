@@ -30,7 +30,7 @@ export default [
         requestAnimationFrame: 'readonly', performance: 'readonly', console: 'readonly',
         CustomEvent: 'readonly', FormData: 'readonly', IntersectionObserver: 'readonly',
         Node: 'readonly', CSS: 'readonly', URLSearchParams: 'readonly',
-        matchMedia: 'readonly', Image: 'readonly',
+        matchMedia: 'readonly', Image: 'readonly', ResizeObserver: 'readonly',
       },
     },
     rules: {
